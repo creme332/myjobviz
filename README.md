@@ -7,3 +7,4 @@ A web scraper for MyJobs.mu that checks the requirements of a particular job. Fo
  - Create a Top 10 skills in demand in Mauritius.
  - Create a pandas dataframe out of scraped data + maybe  use Jupyter Notebook
 
+![image](https://user-images.githubusercontent.com/65414576/167250513-31366d46-050b-40a8-ad3f-eadee5b45796.png)
