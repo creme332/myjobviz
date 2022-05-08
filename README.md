@@ -5,25 +5,25 @@ A web scraper for MyJobs.mu that checks the requirements of a particular job. Fo
   -  Plot a graph of frequency for each requirement using `graph` in python. 
   - Create a Top 10 skills in demand in Mauritius.
   - Create a pandas dataframe out of scraped data + maybe  use Jupyter Notebook
-  <img src="test.png" width="300">
-
-
 
 Inspired by the Stack Overflow Developer Survey, the goal of this Mauritian Developer Survey is to analyse the trends in technologies, in particular the technologies  in demand, in Mauritius.
 
-# 📝 Methodology #
+#  ⚒️ Methodology #
 
-## 👜Data collection ##
+## 📝Data collection ##
 In the span of x months, k unique IT job listings were scraped from myjob.mu using BeautifulSoup library. These job listings were then saved in `data.csv` file.
 
 ## 🔎 Data analysis ##
 Data from the `data.csv` file was converted into a Panda dataframe. MatlPlotLib was then used for data visualisation.
 
 # 📊 Results #
+> ⚠️ **Interpret the following charts at your own discretion, keeping in mind the sample size and methodology used.**
+> 
 ## Programming languages ## 
 ![image](https://user-images.githubusercontent.com/65414576/167250513-31366d46-050b-40a8-ad3f-eadee5b45796.png)
 
 ## Web frameworks ##
+  <img src="test.png" width="300">
 
 ## Databases ##
 
@@ -31,8 +31,11 @@ Data from the `data.csv` file was converted into a Panda dataframe. MatlPlotLib 
 
 ## Other tools ##
 
+## Salary vs Location ##
+> ⚠️ **Only m% of job listings disclosed the salary**
+
 # 🎊 Conclusion #
-Some technologies (SQL, Git, ...) are without any doubt highly in demand while other technologies (AWS, Clojure, ...) are yet to take off in Mauritius. 
+Some technologies (SQL, Git, ...) are without any doubt highly in demand while other technologies (AWS, Clojure, Cloud technologies ...) are yet to take off in Mauritius. 
 # 🔮 Future work #
 - Collect data from more job websites
 - Contrast the Stack Overflow Developer Survey with my survey
