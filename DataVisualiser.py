@@ -12,15 +12,21 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
+data_source_filename = 'TESTING.csv'
+jobs_df = pd.read_csv(data_source_filename)
+jobs_df.drop_duplicates(
+    subset=None, keep='first', inplace=False)  # drop duplicates
 
-jobs_df = pd.read_csv("data.csv")
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', 500)
 
+# https://towardsdatascience.com/donut-plot-with-matplotlib-python-be3451f22704
+# create donut plot with percentage
 
 # add xlabel, ylabel to parameters
-def HorizontalLollipopChart(dictionary, filename):
 
+
+def HorizontalLollipopChart(dictionary, filename):
     # Create a dataframe
     df = pd.DataFrame(list(dictionary.items()), columns=['Name', 'Value'])
 
@@ -48,13 +54,17 @@ def HorizontalBarChart(dictionary, filename):
 
     my_labels = list(dictionary.keys())
     my_data = list(dictionary.values())
-    plt.style.use('ggplot')
+    #colours = ['red', 'yellow', 'green', 'blue', 'orange', 'black']
+    cmap = plt.cm.tab10
+    colors = cmap(np.arange(len(my_labels)) % cmap.N)
+    # plt.style.use('ggplot')
 
-    plt.barh(my_labels, my_data)
+    plt.barh(my_labels, my_data, color=colors)
     # plt.title('Programming languages')
     plt.ylabel('Language')
     plt.xlabel('Frequency')
 
+    # plt.show()
     plt.savefig(filename, bbox_inches='tight')
     plt.close()
 
@@ -208,28 +218,30 @@ def AnalyseData():
             if tool.lower() in jobs_details.lower():
                 other_tools[tool] += 1
 
-    HorizontalBarChart(languages, "langauges.pdf")
-    HorizontalBarChart(databases, "databases.pdf")
+    HorizontalBarChart(languages, "TEST.pdf")
+    #HorizontalBarChart(databases, "databases.pdf")
 
-    HorizontalBarChart(cloud_platforms, "cloud.pdf")
-    HorizontalBarChart(web_frameworks, "web.pdf")
-    HorizontalBarChart(libraries, "tools.pdf")
-    HorizontalBarChart(other_tools, "other.pdf")
+    #HorizontalBarChart(cloud_platforms, "cloud.pdf")
+    #HorizontalBarChart(web_frameworks, "web.pdf")
+    #HorizontalBarChart(libraries, "tools.pdf")
+    #HorizontalBarChart(other_tools, "other.pdf")
 
     #VerticalBarChart(languages, "test2.pdf")
     # BarChart(languages,"barchartlanguages.pdf")
     # CircularBarChart(databases,"barchartdatabases.pdf")
 
 
-# AnalyseData()
-details = {
-    'c++': 30,
-    'php': 23,
-    'kernel': 13,
-    'tesss': 13,
-
-}
-HorizontalLollipopChart(details, "new.pdf")
+AnalyseData()
+# =============================================================================
+# details = {
+#     'c++': 30,
+#     'php': 23,
+#     'kernel': 13,
+#     'tesss': 13,
+#
+# }
+# =============================================================================
+#HorizontalLollipopChart(details, "new.pdf")
 
 # =============================================================================
 # To-Do
@@ -237,4 +249,8 @@ HorizontalLollipopChart(details, "new.pdf")
 # - Alternate spelling of React.js = ReactJS, React
 # - Black background, change colors of bars
 #
+# =============================================================================
+#
+# =============================================================================
+# =============================================================================
 # =============================================================================
