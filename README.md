@@ -29,6 +29,8 @@ Data from the `data.csv` file was converted into a Panda dataframe. MatlPlotLib 
 > ⚠️ **Interpret the following charts at your own discretion, keeping in mind the sample size and methodology used.**
 > 
 ## Programming languages ## 
+![image](https://user-images.githubusercontent.com/65414576/167571045-bccf3082-e958-4043-ac14-c3d4c5166c5f.png)
+
 ![image](https://user-images.githubusercontent.com/65414576/167336656-88849cb5-5529-494f-b495-a66a19e49bda.png)
 
 ![image](https://user-images.githubusercontent.com/65414576/167250513-31366d46-050b-40a8-ad3f-eadee5b45796.png)
