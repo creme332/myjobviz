@@ -14,6 +14,13 @@ Add table of contents
 
 ## 📝Data collection ##
 In the span of x months, k unique IT job listings were scraped from [myjob.mu](https://www.myjob.mu/) using the BeautifulSoup library. These job listings were then saved in `data.csv` file.
+![image](https://user-images.githubusercontent.com/65414576/167564657-213f37f0-bf25-4dbc-9ea0-21e39062e2bb.png)
+> ⚠️URLS may no longer work as a job post is removed after a certain time. 
+
+The URLS for each job are assumed to be unique but as a safety measure, following code is also used to prevent duplicates :
+```python
+DataFrame.drop_duplicates(subset=None, keep='first', inplace=False)
+```
 
 ## 🔎 Data analysis ##
 Data from the `data.csv` file was converted into a Panda dataframe. MatlPlotLib was then used for data visualisation.
