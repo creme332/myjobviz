@@ -1,4 +1,4 @@
-# Job-Portal-Web-Scraper 2022
+# Mauritius-Job-Portal-Web-Scraper 2022
 A web scraper for MyJobs.mu that checks the requirements of a particular job. For example, 
   - Look at all the ‘software developer’ jobs present in a job portal
   -  Analyze the job requirements 
@@ -50,8 +50,13 @@ Data from the `data.csv` file was converted into a Panda dataframe. MatlPlotLib 
 ## Salary vs Location ##
 > ⚠️ **Only m% of job listings disclosed the salary**
 
+![image](https://user-images.githubusercontent.com/65414576/168006545-46c48e67-9e05-4945-8299-bb6b8e2f1e59.png)
+![image](https://user-images.githubusercontent.com/65414576/168006478-99248f68-6692-4533-8991-f8f6730899bc.png)
+
+
 # 🎊 Conclusion #
 Some technologies (SQL, Git, ...) are without any doubt highly in demand while other technologies (AWS, Clojure, Cloud technologies ...) are yet to take off in Mauritius. 
+
 # 🔮 Future work #
 - Collect data from more job websites
 - Create a folder to store all media files.
