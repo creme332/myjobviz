@@ -1,4 +1,15 @@
-# 🇲🇺 Job-Portal-Web-Scraper 2022
+# Table of contents #
+1. [Introduction](#intro)
+2. [Methodology](#Methodology)
+3. [Data collection](#collection)
+4. [Data analysis](#analysis)
+5. [Results](#results)
+6. [Conclusion](#conclusion)
+7. [Future work](#future)
+8. 
+add subheadings
+
+# 🇲🇺 Job-Portal-Web-Scraper 2022  <a name="intro"></a> #
 A web scraper for MyJobs.mu that checks the requirements of a particular job. For example, 
   - Look at all the ‘software developer’ jobs present in a job portal
   -  Analyze the job requirements 
@@ -8,11 +19,9 @@ A web scraper for MyJobs.mu that checks the requirements of a particular job. Fo
 
 Inspired by the Stack Overflow Developer Survey, the goal of this Mauritian Developer Survey is to analyse the trends in technologies, in particular the technologies  in demand, in Mauritius.
 
+#  ⚒️ Methodology  <a name="Methodology"></a> #
 
-Add table of contents
-#  ⚒️ Methodology #
-
-## 📝Data collection ##
+## 📝Data collection  <a name="collection"></a>##
 In the span of x months, k unique IT job listings were scraped from [myjob.mu](https://www.myjob.mu/) using the BeautifulSoup library. These job listings were then saved in `data.csv` file.
 ![image](https://user-images.githubusercontent.com/65414576/167564657-213f37f0-bf25-4dbc-9ea0-21e39062e2bb.png)
 > ⚠️URLS may no longer work as a job post is removed after a certain time. 
@@ -22,10 +31,10 @@ The URLS for each job are assumed to be unique but as a safety measure, followin
 DataFrame.drop_duplicates(subset=None, keep='first', inplace=False)
 ```
 
-## 🔎 Data analysis ##
+## 🔎 Data analysis <a name="analysis"></a> ##
 Data from the `data.csv` file was converted into a Panda dataframe. MatlPlotLib was then used for data visualisation.
 
-# 📊 Results #
+# 📊 Results <a name="results"></a> #
 > ⚠️ **Interpret the following charts at your own discretion, keeping in mind the sample size and methodology used.**
 > 
 ## Programming languages ## 
@@ -54,12 +63,12 @@ Data from the `data.csv` file was converted into a Panda dataframe. MatlPlotLib 
 ![image](https://user-images.githubusercontent.com/65414576/168006478-99248f68-6692-4533-8991-f8f6730899bc.png)
 
 
-# 🎊 Conclusion #
+# 🎊 Conclusion # <a name="conclusion"></a>
 Some technologies (SQL, Git, ...) are without any doubt highly in demand while other technologies (AWS, Clojure, Cloud technologies ...) are yet to take off in Mauritius. 
-# 🌠Resouces used #
+# 🌠Resouces used # <a name="resources"></a>
 To create map of salary : https://towardsdatascience.com/a-complete-guide-to-an-interactive-geographical-map-using-python-f4c5197e23e0
 To create lollipop chart :
-# 🔮 Future work #
+# 🔮 Future work # <a name="future"></a>
 - Collect data from more job websites
 - Create a folder to store all media files.
 - Make images the same size on README
