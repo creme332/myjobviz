@@ -1,12 +1,18 @@
 # Table of contents #
 1. [Introduction](#intro)
 2. [Methodology](#Methodology)
-3. [Data collection](#collection)
-4. [Data analysis](#analysis)
-5. [Results](#results)
-6. [Conclusion](#conclusion)
-7. [Future work](#future)
-8. 
+   1. [Data collection](#collection)
+   2. [Data analysis](#analysis)
+3. [Results](#results)
+   1. [Programming languages](#collection)
+   2. [Web frameworks](#collection)
+   3. [Databases](#collection)
+   4. [Other libraries](#collection)
+   5. [Other tools](#collection)
+   6. [Salary](#collection)
+5. [Conclusion](#conclusion)
+6. [Future work](#future)
+7. 
 add subheadings
 
 # 🇲🇺 Job-Portal-Web-Scraper 2022  <a name="intro"></a> #
