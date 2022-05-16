@@ -41,7 +41,10 @@ Data from the `data.csv` file was converted into a Panda dataframe. MatlPlotLib 
 
 # 📊 Results <a name="results"></a> #
 > ⚠️ **Interpret the following charts at your own discretion, keeping in mind the sample size and methodology used.**
-> 
+
+- [ ] Barchart for each category is a unique colour. (orange for programming lang, blue for database,...)
+- [ ] Use percentages instead of frequency in barcharts
+- [ ] Add pie chart for job types
 ## Programming languages <a name="prog"></a> ## 
 ![image](https://user-images.githubusercontent.com/65414576/167571045-bccf3082-e958-4043-ac14-c3d4c5166c5f.png)
 
