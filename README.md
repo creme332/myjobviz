@@ -1,3 +1,9 @@
+# To- Do #
+- [ ] Barchart for each category is a unique colour. (orange for programming lang, blue for database,...)
+- [ ] Use percentages instead of frequency in barcharts
+- [ ] Add pie chart for job types
+- [ ] Publish results on GitHub pages
+
 # Table of contents #
 1. [Introduction](#intro)
 2. [Methodology](#Methodology)
@@ -41,10 +47,8 @@ Data from the `data.csv` file was converted into a Panda dataframe. MatlPlotLib 
 
 # 📊 Results <a name="results"></a> #
 > ⚠️ **Interpret the following charts at your own discretion, keeping in mind the sample size and methodology used.**
+> 
 
-- [ ] Barchart for each category is a unique colour. (orange for programming lang, blue for database,...)
-- [ ] Use percentages instead of frequency in barcharts
-- [ ] Add pie chart for job types
 ## Programming languages <a name="prog"></a> ## 
 ![image](https://user-images.githubusercontent.com/65414576/167571045-bccf3082-e958-4043-ac14-c3d4c5166c5f.png)
 
@@ -67,6 +71,9 @@ Data from the `data.csv` file was converted into a Panda dataframe. MatlPlotLib 
 ## Salary vs Location <a name="salary"></a> ##
 > ⚠️ **Only m% of job listings disclosed the salary**
 
+![image](https://user-images.githubusercontent.com/65414576/168541351-38da4b28-205c-4297-abab-eae8191e1513.png)
+
+
 ![image](https://user-images.githubusercontent.com/65414576/168006545-46c48e67-9e05-4945-8299-bb6b8e2f1e59.png)
 ![image](https://user-images.githubusercontent.com/65414576/168006478-99248f68-6692-4533-8991-f8f6730899bc.png)
 
@@ -75,6 +82,7 @@ Data from the `data.csv` file was converted into a Panda dataframe. MatlPlotLib 
 Some technologies (SQL, Git, ...) are without any doubt highly in demand while other technologies (AWS, Clojure, Cloud technologies ...) are yet to take off in Mauritius. 
 # 🌠Resouces used  <a name="resources"></a> #
 To create map of salary : https://towardsdatascience.com/a-complete-guide-to-an-interactive-geographical-map-using-python-f4c5197e23e0
+
 To create lollipop chart :
 
 # 🔮 Future work <a name="future"></a> # 
