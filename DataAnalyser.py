@@ -22,17 +22,19 @@ pd.set_option('display.max_rows', 500)
 # construct a separate csv file for word count
 
 
-def AnalyseLanguages(raw_job_details):
-    header = "C++,Java,Python,Javascript,\
-    PHP,HTML,CSS,Node.js,Clojure,C#,Bash/Shell,\
-    PowerShell,Kotlin,Rust,Typescript,SQL,Ruby,Dart"
+def AnalyseLanguages():
+    # =============================================================================
+    #     header = "C++,Java,Python,Javascript,\
+    #     PHP,HTML,CSS,Node.js,Clojure,C#,Bash/Shell,\
+    #     PowerShell,Kotlin,Rust,Typescript,SQL,Ruby,Dart"
+    # =============================================================================
 
     language_count = {
         "C++": 0, "Java": 0, "Python": 0, "Javascript": 0, "PHP": 0,
         "HTML": 0, "CSS": 0, "Node.js": 0, "Clojure": 0,
         "C#": 0, "Bash/Shell": 0, "PowerShell": 0, "Kotlin": 0,
         "Rust": 0, "Typescript": 0, "SQL": 0, "Ruby": 0, "Dart": 0
-    }  # java is a substring of javascript
+    }
 
     # subtring testing : c++, c#, Node.js, bash/shell
     # languages that contain special characters.
@@ -44,73 +46,62 @@ def AnalyseLanguages(raw_job_details):
                          "PHP", "HTML", "CSS", "Clojure",
                          "PowerShell", "Kotlin", "Rust", "Typescript",
                          "SQL", "Ruby", "Dart"]
-    # Note Java is  a substring of Javascript, hence substring method cannot be used here.
+    # Note Java is  a substring of Javascript
+    # so substring method cannot be used here.
     # Ruby is a substring of "Ruby on Rails"
 
-    lang_filename = "LanguageVsFrequencyData.csv"
-    with open(lang_filename, 'a', encoding='utf-8-sig', newline='') as f:
-        thewriter = writer(f)
+    for row in range(len(jobs_df)):
+        jobs_details = jobs_df.loc[row, "job_details"]
 
-        for row in range(len(jobs_df)):
-            jobs_details = jobs_df.loc[row, "job_details"]
-
-            # search languages using token method
-            words = re.findall(r'\w+', jobs_details)
+        # search languages using token method
+        words = re.findall(r'\w+', jobs_details)  # uses symbols as string
+        # delimiters to create list of words from job_details
+        for word in words:
             for lang in standard_language:
-                if lang.lower() in words.lower():
+                if lang.lower() == word.lower():
                     language_count[lang] += 1
 
-            # search special languages using substring
-            words = jobs_details.text
-            for lang in special_languages:
-                if lang.lower() in words.lower():
-                    language_count[lang] += 1
+        # search special languages using substring
+        for lang in special_languages:
+            if lang.lower() in jobs_details.lower():
+                language_count[lang] += 1
+
+    # save language_count to a csv file
+    lang_filename = "LanguageCountData.csv"
+    tester = pd.DataFrame(language_count.items(), columns=['lang', 'freq'])
+    tester.to_csv(lang_filename, sep='\t', encoding='utf-8-sig', index=False)
+
+    # display(tester)
 
 
-def AnalyseDatabases(raw_job_details):
-    return
-
-
-def AnalyseWebFrameworks(raw_job_details):
-    return
-
-
-def AnalyseCloudPlatforms(raw_job_details):
-    return
-
-
-def AnalyseJobDetails(raw_job_details):
-    return
-
-
-def AnalyseLibraries(raw_job_details):
-    return
-
-
-def AnalyseOtherTools(raw_job_details):
-
-    # =============================================================================
-    #     # words which must be analysed using substring :
-    #         node.js, react.js, Oracle Cloud, vue.js, c++, c
-    # =============================================================================
-    languages = {
-        "C++": 0, "Java": 0, "Python": 0, "Javascript": 0, "PHP": 0,
-        "HTML": 0, "CSS": 0, "Node.js": 0, "Clojure": 0,
-        "C#": 0, "Bash/Shell": 0, "PowerShell": 0, "Kotlin": 0,
-        "Rust": 0, "Typescript": 0, "SQL": 0, "Ruby": 0, "Dart": 0
-    }  # java is a substring of javascript
-
-    databases = {
+def AnalyseDatabases():
+    databases_count = {
         "MySQL": 0, "PostgreSQL": 0, "SQLite": 0, "MongoDB": 0,
         "Microsoft SQL Server": 0, "Redis": 0, "MariaDB": 0, "Firebase": 0,
         "Elasticsearch": 0, "Oracle": 0, "DynamoDB": 0, "Cassandra": 0,
         "IBM DB2": 0, "Couchbase": 0
     }  # Will misflag Oracle Cloud as Oracle database
 
+    for row in range(len(jobs_df)):
+        jobs_details = jobs_df.loc[row, "job_details"]
+
+        for db in databases_count:
+            if db.lower() in jobs_details.lower():
+                databases_count[db] += 1
+
+    # save databases_count to a csv file
+    lang_filename = "DatabaseCountData.csv"
+    tester = pd.DataFrame(databases_count.items(), columns=['lang', 'freq'])
+    tester.to_csv(lang_filename, sep='\t', encoding='utf-8-sig', index=False)
+
+    display(tester)
+
+
+def AnalyseOtherTools():
+
     cloud_platforms = {"AWS": 0,
                        "Google Cloud Platform": 0,
                        "Microsoft Azure": 0,
-                       "React.js": 0,
                        "Heroku": 0,
                        "DigitalOcean": 0,
                        "Watson": 0,
@@ -171,16 +162,6 @@ def AnalyseOtherTools(raw_job_details):
         jobs_details = jobs_df.loc[row, "job_details"]
         words = re.findall(r'\w+', jobs_details)
 
-        # search languages
-        for lang in languages:
-            if lang.lower() in words.lower():
-                languages[lang] += 1
-
-        # search databases
-        for db in databases:
-            if db.lower() in words.lower():
-                databases[db] += 1
-
         # search cloud platforms
         for cp in cloud_platforms:
             if cp.lower() in words.lower():
@@ -201,7 +182,7 @@ def AnalyseOtherTools(raw_job_details):
                 other_tools[tool] += 1
 
 
-AnalyseData()
+AnalyseDatabases()
 
 
 # =============================================================================
