@@ -42,7 +42,7 @@ def AnalyseLanguages():
     # These languages are never substrings of other another language.
 
     # token testing : java, python, javascript, php, html, ...
-    standard_language = ["Java", "Python", "Javascript",
+    standard_languages = ["Java", "Python", "Javascript",
                          "PHP", "HTML", "CSS", "Clojure",
                          "PowerShell", "Kotlin", "Rust", "Typescript",
                          "SQL", "Ruby", "Dart"]
@@ -50,16 +50,26 @@ def AnalyseLanguages():
     # so substring method cannot be used here.
     # Ruby is a substring of "Ruby on Rails"
 
+
+    # languages in language_count, special_languages, standard language must match exactly
     for row in range(len(jobs_df)):
         jobs_details = jobs_df.loc[row, "job_details"]
 
         # search languages using token method
-        words = re.findall(r'\w+', jobs_details)  # uses symbols as string
+        words = re.findall(r'\w+', jobs_details)  # uses any symbol as string
         # delimiters to create list of words from job_details
-        for word in words:
-            for lang in standard_language:
-                if lang.lower() == word.lower():
-                    language_count[lang] += 1
+        for i in range (0,len(words)):
+            for lang in standard_languages:
+                if lang.lower() == words[i].lower():
+                    if(lang=="Ruby"):
+                        if(i<len(words)-2):
+                            if(words[i+1].lower() != "on" and words[i+2].lower() != "rails"):
+                                language_count[lang] += 1
+                        else :
+                            language_count[lang] += 1
+                        
+                    else :
+                        language_count[lang] += 1
 
         # search special languages using substring
         for lang in special_languages:
