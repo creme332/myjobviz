@@ -12,6 +12,9 @@
 - [ ] Use percentages instead of frequency in barcharts
 - [ ] Barchart for each category is a unique colour. (orange for programming lang, blue for database,...)
 - [ ] Add pie chart for job types
+- [ ] Add word cloud
+
+
 - [ ] Publish results on GitHub pages
 
 # Table of contents #
