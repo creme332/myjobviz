@@ -1,5 +1,6 @@
 # To- Do #
 - [ ] Barchart for each category is a unique colour. (orange for programming lang, blue for database,...)
+- [ ] Fix Git-GitHub SQL-NOSQL confusion
 - [ ] Use percentages instead of frequency in barcharts
 - [ ] Add pie chart for job types
 - [ ] Publish results on GitHub pages
@@ -33,17 +34,14 @@ Inspired by the Stack Overflow Developer Survey, the goal of this Mauritian Deve
 #  ⚒️ Methodology  <a name="Methodology"></a> #
 
 ## 📝Data collection  <a name="collection"></a> ##
-In the span of x months, k unique IT job listings were scraped from [myjob.mu](https://www.myjob.mu/) using the BeautifulSoup library. These job listings were then saved in `data.csv` file.
+In the span of x months, k unique IT job listings were scraped from [myjob.mu](https://www.myjob.mu/) using the BeautifulSoup library. These job listings were then saved in `data.csv` file. The job URL of each job was used as a primary key.
 ![image](https://user-images.githubusercontent.com/65414576/167564657-213f37f0-bf25-4dbc-9ea0-21e39062e2bb.png)
 > ⚠️URLS may no longer work as a job post is removed after a certain time. 
 
-The URLS for each job are assumed to be unique but as a safety measure, following code is also used to prevent duplicates :
-```python
-DataFrame.drop_duplicates(subset=None, keep='first', inplace=False)
-```
 Explain contents of files
 ## 🔎 Data analysis <a name="analysis"></a> ##
-Data from the `data.csv` file was converted into a Panda dataframe. MatlPlotLib was then used for data visualisation.
+Relevant data (salary, languages, databases, ...) from each job description was extracted and saved to new files.
+MatlPlotLib was then used to visualise the data from the filtered files.
 
 # 📊 Results <a name="results"></a> #
 > ⚠️ **Interpret the following charts at your own discretion, keeping in mind the sample size and methodology used.**
