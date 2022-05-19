@@ -1,7 +1,16 @@
 # To- Do #
-- [ ] Barchart for each category is a unique colour. (orange for programming lang, blue for database,...)
-- [ ] Fix Git-GitHub SQL-NOSQL confusion
+- [ ] Search each language/framework on site to see if spelling matches expected spelling
+- [ ] Fix Git-GitHub SQL- NOSQL confusion
+- [ ] Remove node.js from programming languages
+- [ ] Separate BASH/SHELL
+
+
+- [ ] Create a separate file to store frequencies
+- [ ] Alternate spelling of React.js = ReactJS, React
+- [ ] https://towardsdatascience.com/donut-plot-with-matplotlib-python-be3451f22704 create donut plot with percentage
+
 - [ ] Use percentages instead of frequency in barcharts
+- [ ] Barchart for each category is a unique colour. (orange for programming lang, blue for database,...)
 - [ ] Add pie chart for job types
 - [ ] Publish results on GitHub pages
 
