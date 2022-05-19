@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Fri May 6 2022
-BeautifulSoup version : 4.10.0
 Python Version : 3.9.7
 Panda version : 1.3.3
 Summary : Create charts to visualise job data from data.csv.
@@ -11,6 +10,7 @@ Summary : Create charts to visualise job data from data.csv.
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+import re
 
 data_source_filename = 'TESTING.csv'
 jobs_df = pd.read_csv(data_source_filename)
@@ -20,40 +20,52 @@ jobs_df.drop_duplicates(
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', 500)
 
-# https://towardsdatascience.com/donut-plot-with-matplotlib-python-be3451f22704
-# create donut plot with percentage
 
-# add xlabel, ylabel to parameters
+def HorizontalLollipopChart(source_filename, destination_filename):
+    # using data from csv file
+    df = pd.read_csv(source_filename, sep='\t')
+    column_headings = df.columns
 
+    # my_labels = df[column_headings[0]].tolist()
+    # my_data = df[column_headings[1]].tolist()
 
-def HorizontalLollipopChart(dictionary, filename):
-    # Create a dataframe
-    df = pd.DataFrame(list(dictionary.items()), columns=['Name', 'Value'])
+    # when using data from dictionary
+    # df = pd.DataFrame(list(dictionary.items()), columns=['Name', 'Value'])
 
     # Reorder it based on the values:
-    ordered_df = df.sort_values(by='Value')
+    ordered_df = df.sort_values(by=column_headings[1])  # VARIABLE
     my_range = range(1, len(df.index)+1)
-
-    # plt.style.use("dark_background")
-    plt.style.use('Solarize_Light2')
-    # plt.style.use('default')
+    plt.style.use('default')
 
     # Horizontal version
-    plt.hlines(y=my_range, xmin=0, xmax=ordered_df['Value'], color='skyblue')
-    plt.plot(ordered_df['Value'], my_range, "D")
-    plt.yticks(my_range, ordered_df['Name'])
+    plt.hlines(y=my_range, xmin=0,
+               xmax=ordered_df[column_headings[1]], color='skyblue')
+    plt.plot(ordered_df[column_headings[1]], my_range, "D")
+    plt.yticks(my_range, ordered_df[column_headings[0]])
 
-    plt.savefig(filename, bbox_inches='tight')
+    # plt.savefig(destination_filename, bbox_inches='tight')
+    plt.show()
     plt.close()
 
 
-def HorizontalBarChart(dictionary, filename):
-    for key in list(dictionary):
-        if dictionary[key] == 0:
-            dictionary.pop(key, None)
+def HorizontalBarChart(source_filename, destination_filename):
+    # =============================================================================
+    #     for key in list(dictionary):
+    #         if dictionary[key] == 0:
+    #             dictionary.pop(key, None)
+    # =============================================================================
+    df = pd.read_csv(source_filename, sep='\t')
+    column_headings = df.columns
 
-    my_labels = list(dictionary.keys())
-    my_data = list(dictionary.values())
+    my_labels = df[column_headings[0]].tolist()
+    my_data = df[column_headings[1]].tolist()
+
+# =============================================================================
+#     # when reading from dictionary
+#     my_labels = list(dictionary.keys())
+#     my_data = list(dictionary.values())
+# =============================================================================
+
     #colours = ['red', 'yellow', 'green', 'blue', 'orange', 'black']
     cmap = plt.cm.tab10
     colors = cmap(np.arange(len(my_labels)) % cmap.N)
@@ -61,11 +73,11 @@ def HorizontalBarChart(dictionary, filename):
 
     plt.barh(my_labels, my_data, color=colors)
     # plt.title('Programming languages')
-    plt.ylabel('Language')
+    plt.ylabel('Language')  # VARIABLE
     plt.xlabel('Frequency')
 
-    # plt.show()
-    plt.savefig(filename, bbox_inches='tight')
+    plt.show()
+    # plt.savefig(destination_filename, bbox_inches='tight')
     plt.close()
 
 
@@ -109,15 +121,18 @@ def PieChart(languages):
     plt.savefig('filename.pdf')
     plt.close()
 
-
-def AnalyseData():
-
+    # =============================================================================
+    #     # words which must be analysed separately :
+    #         node.js, react.js, Oracle Cloud, vue.js
+    # =============================================================================
     languages = {
         "C++": 0, "Java": 0, "Python": 0, "Javascript": 0, "PHP": 0,
         "HTML": 0, "CSS": 0, "Node.js": 0, "Clojure": 0,
         "C#": 0, "Bash/Shell": 0, "PowerShell": 0, "Kotlin": 0,
         "Rust": 0, "Typescript": 0, "SQL": 0, "Ruby": 0, "Dart": 0
     }
+    # java is a substring of javascript
+    # ruby is  a subting of ruby on rails
 
     databases = {
         "MySQL": 0, "PostgreSQL": 0, "SQLite": 0, "MongoDB": 0,
@@ -182,75 +197,54 @@ def AnalyseData():
         "Yarn": 0,
         "Unreal Engine": 0,
         "Unity 3D": 0,
-    }
+    }  # Git is a substring of GitHub
 
     # word frequency of Linux, GitHub
 
     for row in range(len(jobs_df)):
         jobs_details = jobs_df.loc[row, "job_details"]
+        words = re.findall(r'\w+', jobs_details)
 
         # search languages
         for lang in languages:
-            if lang.lower() in jobs_details.lower():
+            if lang.lower() in words.lower():
                 languages[lang] += 1
 
         # search databases
         for db in databases:
-            if db.lower() in jobs_details.lower():
+            if db.lower() in words.lower():
                 databases[db] += 1
 
         # search cloud platforms
         for cp in cloud_platforms:
-            if cp.lower() in jobs_details.lower():
+            if cp.lower() in words.lower():
                 cloud_platforms[cp] += 1
 
         # search web frameworkds
         for wb in web_frameworks:
-            if wb.lower() in jobs_details.lower():
+            if wb.lower() in words.lower():
                 web_frameworks[wb] += 1
 
         # search other
         for lb in libraries:
-            if lb.lower() in jobs_details.lower():
+            if lb.lower() in words.lower():
                 libraries[lb] += 1
 
         for tool in other_tools:
-            if tool.lower() in jobs_details.lower():
+            if tool.lower() in words.lower():
                 other_tools[tool] += 1
 
     HorizontalBarChart(languages, "TEST.pdf")
-    #HorizontalBarChart(databases, "databases.pdf")
 
-    #HorizontalBarChart(cloud_platforms, "cloud.pdf")
-    #HorizontalBarChart(web_frameworks, "web.pdf")
-    #HorizontalBarChart(libraries, "tools.pdf")
-    #HorizontalBarChart(other_tools, "other.pdf")
-
-    #VerticalBarChart(languages, "test2.pdf")
-    # BarChart(languages,"barchartlanguages.pdf")
-    # CircularBarChart(databases,"barchartdatabases.pdf")
+HorizontalBarChart("LanguageCountData.csv", "")
 
 
-AnalyseData()
-# =============================================================================
-# details = {
-#     'c++': 30,
-#     'php': 23,
-#     'kernel': 13,
-#     'tesss': 13,
-#
-# }
-# =============================================================================
-#HorizontalLollipopChart(details, "new.pdf")
-
-# =============================================================================
 # To-Do
 # - Search each language/framework on site to see if spelling matches expected spelling
+# - Create a separate file to store frequencies
 # - Alternate spelling of React.js = ReactJS, React
 # - Black background, change colors of bars
-#
-# =============================================================================
-#
-# =============================================================================
-# =============================================================================
-# =============================================================================
+# - add xlabel, ylabel to parameters
+#    https://towardsdatascience.com/donut-plot-with-matplotlib-python-be3451f22704
+#   create donut plot with percentage
+#   create donut plot with percentage
