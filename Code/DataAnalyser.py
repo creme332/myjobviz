@@ -4,7 +4,7 @@ Created on Wed May 11 10:05:03 2022
 Python Version : 3.9.7
 Panda version : 1.3.3
 Summary : count word frequency from job details found in csv file
-@author: user
+@author: creme332
 """
 import pandas as pd
 import numpy as np
@@ -23,11 +23,6 @@ pd.set_option('display.max_rows', 500)
 
 
 def AnalyseLanguages(destination_filename):
-    # =============================================================================
-    #     header = "C++,Java,Python,Javascript,\
-    #     PHP,HTML,CSS,Node.js,Clojure,C#,Bash/Shell,\
-    #     PowerShell,Kotlin,Rust,Typescript,SQL,Ruby,Dart"
-    # =============================================================================
 
     language_count = {
         "C++": 0, "Java": 0, "Python": 0, "Javascript": 0, "PHP": 0,
@@ -35,7 +30,6 @@ def AnalyseLanguages(destination_filename):
         "C#": 0, "Bash": 0, "Shell": 0, "PowerShell": 0, "Kotlin": 0,
         "Rust": 0, "Typescript": 0, "SQL": 0, "Ruby": 0, "Dart": 0
     }
-    # Note : SQL is a subtstring of mySQL, NoSQL
 
     # languages that contain special characters.
     special_languages = ["C++", "Node.js", "C#"]
@@ -46,9 +40,11 @@ def AnalyseLanguages(destination_filename):
                           "PHP", "HTML", "CSS", "Clojure",
                           "PowerShell", "Kotlin", "Rust", "Typescript",
                           "SQL", "Ruby", "Dart", "Bash", "Shell"]
-    # Note Java is  a substring of Javascript
-    # so substring method cannot be used here.
+    # Java is  a substring of Javascript
+    # SQL is a subtstring of mySQL, NoSQL
     # Ruby is a substring of "Ruby on Rails"
+    # so substring method cannot be used here.
+
     # languages in language_count, special_languages, standard language must match exactly
 
     for row in range(len(jobs_df)):  # for each collected job details
@@ -56,6 +52,7 @@ def AnalyseLanguages(destination_filename):
 
         # 1st search : search for languages using token method
         # any symbol is used as string delimiter
+
         # list of words in job details
         words = re.findall(r'\w+', jobs_details)
 
@@ -119,43 +116,51 @@ def AnalyseDatabases(destination_filename):
                           'Database', 'Frequency'])
     tester.to_csv(lang_filename, sep='\t', encoding='utf-8-sig', index=False)
 
-    display(tester)
+    # display(tester)
 
 
-def AnalyseWebFrameworks():
-    web_frameworks = {"Svelte": 0,
-                      "ASP.NET Core": 0,
-                      "FastAPI": 0,
-                      "React.js": 0,
-                      "Vue.js": 0,
-                      "Express": 0,
-                      "Spring": 0,
-                      "Ruby on Rails": 0,
-                      "Angular": 0,
-                      "Django": 0,
-                      "Laravel": 0,
-                      "Flask": 0,
-                      "Gatsby": 0,
-                      "Symfony": 0,
-                      "ASP.NET": 0,
-                      "jQuery": 0,
-                      "Drupal": 0,
-                      "Angular.js": 0
-                      }
-    special_web_frameworks = ["ASP.NET Core", "React.js"]
+def AnalyseWebFrameworks(destination_filename):
+    web_frameworks_count = {"Svelte": 0,
+                            "ASP.NET Core": 0,
+                            "FastAPI": 0,
+                            "React.js": 0,
+                            "Vue.js": 0,
+                            "Express": 0,
+                            "Spring": 0,
+                            "Ruby on Rails": 0,
+                            "Angular": 0,
+                            "Django": 0,
+                            "Laravel": 0,
+                            "Flask": 0,
+                            "Gatsby": 0,
+                            "Symfony": 0,
+                            "ASP.NET": 0,
+                            "jQuery": 0,
+                            "Drupal": 0,
+                            "Angular.js": 0
+                            }
+    # asp.net vs asp.net core confusion
+    special_web_frameworks = ["ASP.NET Core", "React.js", "Vue.js",
+                              "Ruby on Rails", "Angular.js", "ASP.NET"]
 
     for row in range(len(jobs_df)):
-        jobs_details = jobs_df.loc[row, "job_details"]
+        jobs_details = jobs_df.loc[row, "job_details"].lower()  # lower case
 
-        for db in databases_count:
-            if db.lower() in jobs_details.lower():
-                databases_count[db] += 1
+        for wb in special_web_frameworks:
+            if wb.lower() in jobs_details:
+                web_frameworks_count[wb] += 1
 
-    # save databases_count to a csv file
-    lang_filename = "DatabaseCountData.csv"
-    tester = pd.DataFrame(databases_count.items(), columns=['lang', 'freq'])
-    tester.to_csv(lang_filename, sep='\t', encoding='utf-8-sig', index=False)
+        # use token method for single-word databases
+        words = re.findall(r'\w+', jobs_details)
 
+        for wb in web_frameworks_count:
+            if wb.lower() in words:
+                web_frameworks_count[wb] += 1
+
+    tester = pd.DataFrame(web_frameworks_count.items(), columns=[
+                          'WebFrameworks', 'Frequency'])
+    tester.to_csv(destination_filename, sep='\t',
+                  encoding='utf-8-sig', index=False)
     display(tester)
 
 
@@ -170,26 +175,6 @@ def AnalyseOtherTools():
                        "Watson": 0,
                        "Oracle Cloud Infrastructure": 0
                        }
-
-    web_frameworks = {"Svelte": 0,
-                      "ASP.NET Core": 0,
-                      "FastAPI": 0,
-                      "React.js": 0,
-                      "Vue.js": 0,
-                      "Express": 0,
-                      "Spring": 0,
-                      "Ruby on Rails": 0,
-                      "Angular": 0,
-                      "Django": 0,
-                      "Laravel": 0,
-                      "Flask": 0,
-                      "Gatsby": 0,
-                      "Symfony": 0,
-                      "ASP.NET": 0,
-                      "jQuery": 0,
-                      "Drupal": 0,
-                      "Angular.js": 0
-                      }
 
     libraries = {".NET Framework": 0,
                  "NumPy": 0,
@@ -219,6 +204,12 @@ def AnalyseOtherTools():
         "Unity 3D": 0,
         "GitHub": 0,
     }  # Git is a substring of GitHub
+    
+    operating_system_count = {
+        "Windows" : 0,
+        "Mac OS" : 0,
+        "Linux" : 0,
+        }
 
     # word frequency of Linux, GitHub
 
@@ -231,11 +222,6 @@ def AnalyseOtherTools():
             if cp.lower() in words:
                 cloud_platforms[cp] += 1
 
-        # search web frameworkds
-        for wb in web_frameworks:
-            if wb.lower() in words:
-                web_frameworks[wb] += 1
-
         # search other
         for lb in libraries:
             if lb.lower() in words:
@@ -246,7 +232,8 @@ def AnalyseOtherTools():
                 other_tools[tool] += 1
 
 
-AnalyseLanguages("LanguageCountData.csv")
+AnalyseWebFrameworks("WebData.csv")
+# AnalyseLanguages("LanguageCountData.csv")
 # AnalyseDatabases("DatabasesCountData.csv")
 # AnalyseDatabases("DatabasesCountData.csv")
 # AnalyseDatabases("DatabasesCountData.csv")
