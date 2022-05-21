@@ -1,12 +1,13 @@
 # To- Do #
 - [ ] Search each language/framework on site to see if spelling matches expected spelling
-- [ ] Fix Git-GitHub SQL- NOSQL confusion
-- [ ] Remove node.js from programming languages
-- [ ] Separate BASH/SHELL
-
-
-- [ ] Create a separate file to store frequencies
 - [ ] Alternate spelling of React.js = ReactJS, React
+- [x] Fix Git-GitHub SQL- NOSQL confusion
+- [ ] Remove node.js from programming languages
+- [ ] Fix asp.net and asp.net core confusion
+- [x] Separate BASH/SHELL
+
+
+- [x] Create a separate file to store frequencies
 - [ ] https://towardsdatascience.com/donut-plot-with-matplotlib-python-be3451f22704 create donut plot with percentage
 
 - [ ] Use percentages instead of frequency in barcharts
