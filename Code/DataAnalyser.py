@@ -204,36 +204,72 @@ def AnalyseOtherTools():
         "Unity 3D": 0,
         "GitHub": 0,
     }  # Git is a substring of GitHub
-    
+
     operating_system_count = {
-        "Windows" : 0,
-        "Mac OS" : 0,
-        "Linux" : 0,
-        }
+        "Windows": 0,
+        "Mac": 0,
+        "Linux": 0,
+    }
 
     # word frequency of Linux, GitHub
 
     for row in range(len(jobs_df)):
-        jobs_details = jobs_df.loc[row, "job_details"]
-        words = jobs_details.text.lower()
+        jobs_details = jobs_df.loc[row, "job_details"].lower()
 
         # search cloud platforms
         for cp in cloud_platforms:
-            if cp.lower() in words:
+            if cp.lower() in jobs_details:
                 cloud_platforms[cp] += 1
 
-        # search other
+        # search libraries
         for lb in libraries:
-            if lb.lower() in words:
+            if lb.lower() in jobs_details:
                 libraries[lb] += 1
 
         for tool in other_tools:
-            if tool.lower() in words:  # must distinguish between git and github
+            if tool.lower() in jobs_details and tool != "Git":  # must distinguish between git and github
                 other_tools[tool] += 1
+        words = re.findall(r'\w+', jobs_details)
+        if "git" in words:
+            other_tools["Git"] += 1
+
+        for os in operating_system_count:
+            if os.lower() in jobs_details:  # must distinguish between git and github
+                operating_system_count[os] += 1
+
+    # save cloud platforms
+    cloud_df = pd.DataFrame(cloud_platforms.items(), columns=[
+        'CloudPlatforms', 'Frequency'])
+    cloud_df.to_csv("CloudData.csv", sep='\t',
+                    encoding='utf-8-sig', index=False)
+    display(cloud_df)
+
+    # save libraries
+    libraries_df = pd.DataFrame(libraries.items(), columns=[
+        'Libraries', 'Frequency'])
+    libraries_df.to_csv("LibrariesData.csv", sep='\t',
+                        encoding='utf-8-sig', index=False)
+    display(libraries_df)
+
+    # save tools
+    tools_df = pd.DataFrame(other_tools.items(), columns=[
+        'Tools', 'Frequency'])
+    tools_df.to_csv("ToolsData.csv", sep='\t',
+                    encoding='utf-8-sig', index=False)
+    display(tools_df)
+
+    # save OS
+    os_df = pd.DataFrame(operating_system_count.items(), columns=[
+        'OS', 'Frequency'])
+    os_df.to_csv("OSData.csv", sep='\t',
+                 encoding='utf-8-sig', index=False)
+    display(os_df)
 
 
-AnalyseWebFrameworks("WebData.csv")
+AnalyseOtherTools()
+# AnalyseWebFrameworks("WebData.csv")
 # AnalyseLanguages("LanguageCountData.csv")
+# AnalyseDatabases("DatabasesCountData.csv")
 # AnalyseDatabases("DatabasesCountData.csv")
 # AnalyseDatabases("DatabasesCountData.csv")
 # AnalyseDatabases("DatabasesCountData.csv")
