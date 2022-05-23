@@ -3,7 +3,7 @@
 Created on Fri May 6 2022
 Python Version : 3.9.7
 Panda version : 1.3.3
-Summary : Create charts to visualise job data from data.csv.
+Summary : Create charts to visualise filtered job data from data.csv.
 @author: me
 """
 
@@ -95,15 +95,22 @@ def VerticalBarChart(dictionary, filename):
     plt.close()
 
 
-def PieChart(languages):
-    # filter out languages which have not been used at all
-    for lang in list(languages):
-        if languages[lang] == 0:
-            languages.pop(lang, None)
+def PieChart(source_filename, destination_filename):
+    # =============================================================================
+    #     # filter out languages which have not been used at all
+    #     for lang in list(languages):
+    #         if languages[lang] == 0:
+    #             languages.pop(lang, None)
+    #
+    #     languages = sorted(languages.items(), key=lambda x: x[1], reverse=True)
+    #     x, y = zip(*languages)  # unpack a list of pairs into two tuples
+    # =============================================================================
 
-    languages = sorted(languages.items(), key=lambda x: x[1], reverse=True)
-    x, y = zip(*languages)  # unpack a list of pairs into two tuples
+    df = pd.read_csv(source_filename, sep='\t')
+    column_headings = df.columns
 
+    my_labels = df[column_headings[0]].tolist()
+    my_data = df[column_headings[1]].tolist()
     # create a figure and set different background
     fig = plt.figure()
     fig.patch.set_facecolor('black')
@@ -115,22 +122,49 @@ def PieChart(languages):
     my_circle = plt.Circle((0, 0), 0.7, color='black')
 
     # Pieplot + circle on it
-    plt.pie(y, labels=x, shadow=True, autopct='%1.1f%%')
+    plt.pie(my_data, labels=my_labels, shadow=True, autopct='%1.1f%%')
     p = plt.gcf()
     p.gca().add_artist(my_circle)
-    plt.savefig('filename.pdf')
+    plt.legend()
+    plt.show()
+    # plt.savefig(destination_filename)
     plt.close()
 
 
-HorizontalBarChart("LanguageCountData.csv", "")
+def donutPlot(source_filename):
+    data = pd.read_csv(source_filename)
+
+    # create donut plots
+    startingRadius = 0.7 + (0.3 * (len(data)-1))
+    for index, row in data.iterrows():
+        scenario = row["OS"]
+        percentage = row["Frequency"]
+        textLabel = scenario + ' ' + percentage
+        print(startingRadius)
+        percentage = int(re.search(r'\d+', percentage).group())
+        remainingPie = 100 - percentage
+
+        donut_sizes = [remainingPie, percentage]
+
+        plt.text(0.01, startingRadius + 0.07, textLabel,
+                 horizontalalignment='center', verticalalignment='center')
+        plt.pie(donut_sizes, radius=startingRadius, startangle=90, colors=['#d5f6da', '#5cdb6f'],
+                wedgeprops={"edgecolor": "white", 'linewidth': 1})
+
+        startingRadius -= 0.3
+
+    # equal ensures pie chart is drawn as a circle (equal aspect ratio)
+    plt.axis('equal')
+
+    # create circle and place onto pie chart
+    circle = plt.Circle(xy=(0, 0), radius=0.35, facecolor='white')
+    plt.gca().add_artist(circle)
+    # plt.savefig('donutPlot.jpg')
+    plt.show()
 
 
-# To-Do
-# - Search each language/framework on site to see if spelling matches expected spelling
-# - Create a separate file to store frequencies
-# - Alternate spelling of React.js = ReactJS, React
-# - Black background, change colors of bars
-# - add xlabel, ylabel to parameters
-#    https://towardsdatascience.com/donut-plot-with-matplotlib-python-be3451f22704
-#   create donut plot with percentage
-#   create donut plot with percentage
+# HorizontalBarChart("OSData.csv", "")
+# PieChart("OSData.csv", "")
+# HorizontalBarChart("OSData.csv", "")
+donutPlot("OSData.csv")
+# PieChart("OSData.csv", "")
