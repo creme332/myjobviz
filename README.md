@@ -5,6 +5,7 @@
 - [ ] Remove node.js from programming languages
 - [ ] Fix asp.net and asp.net core confusion
 - [x] Separate BASH/SHELL
+- [ ] Convert opening and closing date in csv file to US date format then sort.
 
 
 - [x] Create a separate file to store frequencies
