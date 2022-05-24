@@ -1,9 +1,9 @@
-# To- Do #
+# To-Do #
 - [ ] Search each language/framework on site to see if spelling matches expected spelling
-- [ ] Alternate spelling of React.js = ReactJS, React
+- [x] Alternate spelling of React.js = ReactJS, React
 - [x] Fix Git-GitHub SQL- NOSQL confusion
 - [ ] Remove node.js from programming languages
-- [ ] Fix asp.net and asp.net core confusion
+- [x] Fix asp.net and asp.net core confusion
 - [x] Separate BASH/SHELL
 - [ ] Convert opening and closing date in csv file to US date format then sort.
 
@@ -36,23 +36,17 @@
 7. [Future work](#future) 
 
 # 🇲🇺 Job-Portal-Web-Scraper 2022  <a name="intro"></a> #
-A web scraper for MyJobs.mu that checks the requirements of a particular job. For example, 
-  - Look at all the ‘software developer’ jobs present in a job portal
-  -  Analyze the job requirements 
-  -  Plot a graph of frequency for each requirement using `graph` in python. 
-  - Create a Top 10 skills in demand in Mauritius.
-  - Create a pandas dataframe out of scraped data + maybe  use Jupyter Notebook
 
 Inspired by the Stack Overflow Developer Survey, the goal of this Mauritian Developer Survey is to analyse the trends in technologies, in particular the technologies  in demand, in Mauritius.
 
 #  ⚒️ Methodology  <a name="Methodology"></a> #
 
 ## 📝Data collection  <a name="collection"></a> ##
-In the span of x months, k unique IT job listings were scraped from [myjob.mu](https://www.myjob.mu/) using the BeautifulSoup library. These job listings were then saved in `data.csv` file. The job URL of each job was used as a primary key.
+In the span of $x$ months, $k$ unique IT job listings were scraped from [myjob.mu](https://www.myjob.mu/) using the BeautifulSoup library. These job listings were then saved in `data.csv` file. The job URL of each job was used as a primary key to uniquely identify each job.
 ![image](https://user-images.githubusercontent.com/65414576/167564657-213f37f0-bf25-4dbc-9ea0-21e39062e2bb.png)
-> ⚠️URLS may no longer work as a job post is removed after a certain time. 
+> ⚠️The URLs in the csv file may no longer work as a job post is removed after a certain time. 
 
-Explain contents of files
+
 ## 🔎 Data analysis <a name="analysis"></a> ##
 Relevant data (salary, languages, databases, ...) from each job description was extracted and saved to new files.
 MatlPlotLib was then used to visualise the data from the filtered files.
