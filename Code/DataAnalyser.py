@@ -3,7 +3,7 @@
 Created on Wed May 11 10:05:03 2022
 Python Version : 3.9.7
 Panda version : 1.3.3
-Summary : count word frequency from job details found in csv file
+Summary : count frequency of specific languages from job details
 @author: creme332
 """
 import pandas as pd
@@ -116,14 +116,12 @@ def AnalyseDatabases(destination_filename):
                           'Database', 'Frequency'])
     tester.to_csv(lang_filename, sep='\t', encoding='utf-8-sig', index=False)
 
-    # display(tester)
-
 
 def AnalyseWebFrameworks(destination_filename):
     web_frameworks_count = {"Svelte": 0,
-                            "ASP.NET Core": 0,
+                            "ASP.NET": 0,
                             "FastAPI": 0,
-                            "React.js": 0,
+                            "React": 0,
                             "Vue.js": 0,
                             "Express": 0,
                             "Spring": 0,
@@ -134,14 +132,13 @@ def AnalyseWebFrameworks(destination_filename):
                             "Flask": 0,
                             "Gatsby": 0,
                             "Symfony": 0,
-                            "ASP.NET": 0,
                             "jQuery": 0,
                             "Drupal": 0,
-                            "Angular.js": 0
+                            "Angular.js": 0,
+                            "Angular": 0
                             }
-    # asp.net vs asp.net core confusion
-    special_web_frameworks = ["ASP.NET Core", "React.js", "Vue.js",
-                              "Ruby on Rails", "Angular.js", "ASP.NET"]
+    special_web_frameworks = ["Vue.js",
+                              "Ruby on Rails", "ASP.NET"]
 
     for row in range(len(jobs_df)):
         jobs_details = jobs_df.loc[row, "job_details"].lower()  # lower case
@@ -151,11 +148,25 @@ def AnalyseWebFrameworks(destination_filename):
                 web_frameworks_count[wb] += 1
 
         # use token method for single-word databases
-        words = re.findall(r'\w+', jobs_details)
+        words = re.findall(r'\w+', jobs_details)  # words are lower case
 
-        for wb in web_frameworks_count:
-            if wb.lower() in words:
-                web_frameworks_count[wb] += 1
+        for i in range(0, len(words)):  # for each word in job details
+            for lang in web_frameworks_count:  # search for standard languages
+
+                if lang.lower() == words[i]:
+
+                    # distinguish between angular and angular js
+                    if(words[i] == "angular"):
+                        if(i < len(words)-1):
+                            if(words[i+1] == "js"):
+                                web_frameworks_count["Angular.js"] += 1
+                            else:
+                                web_frameworks_count["Angular"] += 1
+                        else:
+                            web_frameworks_count["Angular"] += 1
+
+                    else:
+                        web_frameworks_count[lang] += 1
 
     tester = pd.DataFrame(web_frameworks_count.items(), columns=[
                           'WebFrameworks', 'Frequency'])
@@ -266,8 +277,8 @@ def AnalyseOtherTools():
     display(os_df)
 
 
-AnalyseOtherTools()
-# AnalyseWebFrameworks("WebData.csv")
+# AnalyseOtherTools()
+AnalyseWebFrameworks("WebData.csv")
 # AnalyseLanguages("LanguageCountData.csv")
 # AnalyseDatabases("DatabasesCountData.csv")
 # AnalyseDatabases("DatabasesCountData.csv")
