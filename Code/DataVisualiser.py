@@ -131,40 +131,33 @@ def PieChart(source_filename, destination_filename):
     plt.close()
 
 
-def donutPlot(source_filename):
-    data = pd.read_csv(source_filename)
+def donutChart(source_filename):
+    # https://medium.com/@krishnakummar/donut-chart-with-python-matplotlib-d411033c960b
+    df = pd.read_csv(source_filename, sep='\t')
+    column_headings = df.columns
+    my_labels = df[column_headings[0]].tolist()
+    my_data = df[column_headings[1]].tolist()
 
-    # create donut plots
-    startingRadius = 0.7 + (0.3 * (len(data)-1))
-    for index, row in data.iterrows():
-        scenario = row["OS"]
-        percentage = row["Frequency"]
-        textLabel = scenario + ' ' + percentage
-        print(startingRadius)
-        percentage = int(re.search(r'\d+', percentage).group())
-        remainingPie = 100 - percentage
+    colors = ['yellowgreen', 'gold', 'lightskyblue', 'lightcoral']
+    #explode = (1, 0, 0)  # explode a slice if required.
+    # len(explode) = number of rows in df. Then add explode = explode below
 
-        donut_sizes = [remainingPie, percentage]
+    plt.pie(my_data,labels=my_labels, colors=colors,
+            autopct='%1.1f%%', shadow=True)
 
-        plt.text(0.01, startingRadius + 0.07, textLabel,
-                 horizontalalignment='center', verticalalignment='center')
-        plt.pie(donut_sizes, radius=startingRadius, startangle=90, colors=['#d5f6da', '#5cdb6f'],
-                wedgeprops={"edgecolor": "white", 'linewidth': 1})
+    # draw a circle at the center of pie to make it look like a donut
+    centre_circle = plt.Circle(
+        (0, 0), 0.75, color='black', fc='white', linewidth=1.25)
+    fig = plt.gcf()
+    fig.gca().add_artist(centre_circle)
 
-        startingRadius -= 0.3
-
-    # equal ensures pie chart is drawn as a circle (equal aspect ratio)
+    # Set aspect ratio to be equal so that pie is drawn as a circle.
     plt.axis('equal')
-
-    # create circle and place onto pie chart
-    circle = plt.Circle(xy=(0, 0), radius=0.35, facecolor='white')
-    plt.gca().add_artist(circle)
-    # plt.savefig('donutPlot.jpg')
     plt.show()
 
 
 # HorizontalBarChart("OSData.csv", "")
 # PieChart("OSData.csv", "")
 # HorizontalBarChart("OSData.csv", "")
-donutPlot("OSData.csv")
+donutChart("OSData.csv")
 # PieChart("OSData.csv", "")
