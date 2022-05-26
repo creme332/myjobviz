@@ -46,7 +46,15 @@ Inspired by the Stack Overflow Developer Survey, the goal of this Mauritian Deve
 In the span of $x$ months, $k$ unique IT job listings were scraped from [myjob.mu](https://www.myjob.mu/) using the BeautifulSoup library. These job listings were then saved in `data.csv` file. The job URL of each job was used as a primary key to uniquely identify each job.
 ![image](https://user-images.githubusercontent.com/65414576/167564657-213f37f0-bf25-4dbc-9ea0-21e39062e2bb.png)
 > ⚠️The URLs in the csv file may no longer work as a job post is removed after a certain time. 
-
+### Format used for data storage ###
+To save :
+```python
+df.read_csv()
+```
+To read :
+```python
+df.read_csv()
+```
 
 ## 🔎 Data analysis <a name="analysis"></a> ##
 Relevant data (salary, languages, databases, ...) from each job description was extracted and saved to new files.
@@ -87,7 +95,8 @@ MatlPlotLib was then used to visualise the data from the filtered files.
 
 # 🎊 Conclusion <a name="conclusion"></a> # 
 Some technologies (SQL, Git, ...) are without any doubt highly in demand while other technologies (AWS, Clojure, Cloud technologies ...) are yet to take off in Mauritius. 
-# 🌠Resouces used  <a name="resources"></a> #
+# 🌠Resources used  <a name="resources"></a> #
+
 To create map of salary : https://towardsdatascience.com/a-complete-guide-to-an-interactive-geographical-map-using-python-f4c5197e23e0
 
 To create lollipop chart :
