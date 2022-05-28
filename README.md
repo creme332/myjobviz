@@ -1,7 +1,7 @@
 # To-Do #
 - [ ] Search each language/framework on site to see if spelling matches expected spelling
 - [x] Alternate spelling of React.js = ReactJS, React
-- [ ] Alternate spelling of Angular.js = AngularJS
+- [x] Alternate spelling of Angular.js = AngularJS
 - [x] Fix Git-GitHub SQL- NOSQL confusion
 - [ ] Remove node.js from programming languages
 - [x] Fix asp.net and asp.net core confusion
