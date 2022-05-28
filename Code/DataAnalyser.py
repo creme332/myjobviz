@@ -26,13 +26,13 @@ def AnalyseLanguages(destination_filename):
 
     language_count = {
         "C++": 0, "Java": 0, "Python": 0, "Javascript": 0, "PHP": 0,
-        "HTML": 0, "CSS": 0, "Node.js": 0, "Clojure": 0,
+        "HTML": 0, "CSS": 0, "Clojure": 0,
         "C#": 0, "Bash": 0, "Shell": 0, "PowerShell": 0, "Kotlin": 0,
         "Rust": 0, "Typescript": 0, "SQL": 0, "Ruby": 0, "Dart": 0
     }
 
     # languages that contain special characters.
-    special_languages = ["C++", "Node.js", "C#"]
+    special_languages = ["C++","C#"]
     # These languages are never substrings of other another language.
 
     # token testing : java, python, javascript, php, html, ...
@@ -126,7 +126,6 @@ def AnalyseWebFrameworks(destination_filename):
                             "Express": 0,
                             "Spring": 0,
                             "Ruby on Rails": 0,
-                            "Angular": 0,
                             "Django": 0,
                             "Laravel": 0,
                             "Flask": 0,
@@ -155,6 +154,8 @@ def AnalyseWebFrameworks(destination_filename):
 
                 if lang.lower() == words[i]:
 
+                    if(words[i] == "angularjs"):  # AngularJS spelling
+                        web_frameworks_count["Angular.js"] += 1
                     # distinguish between angular and angular js
                     if(words[i] == "angular"):
                         if(i < len(words)-1):
@@ -208,6 +209,7 @@ def AnalyseOtherTools():
         "Git": 0,
         "Terraform": 0,
         "Kubernetes": 0,
+        "Node.js": 0,
         "Docker": 0,
         "Ansible": 0,
         "Yarn": 0,
@@ -221,8 +223,6 @@ def AnalyseOtherTools():
         "Mac": 0,
         "Linux": 0,
     }
-
-    # word frequency of Linux, GitHub
 
     for row in range(len(jobs_df)):
         jobs_details = jobs_df.loc[row, "job_details"].lower()
@@ -238,8 +238,11 @@ def AnalyseOtherTools():
                 libraries[lb] += 1
 
         for tool in other_tools:
-            if tool.lower() in jobs_details and tool != "Git":  # must distinguish between git and github
-                other_tools[tool] += 1
+            if tool != "Node.js":
+                if tool.lower() in jobs_details and tool != "Git":  # must distinguish between git and github
+                    other_tools[tool] += 1
+        if "nodejs" in jobs_details or "node.js" in jobs_details  :
+                other_tools["Node.js"] += 1
         words = re.findall(r'\w+', jobs_details)
         if "git" in words:
             other_tools["Git"] += 1
@@ -277,9 +280,15 @@ def AnalyseOtherTools():
     display(os_df)
 
 
+def AnalyseSalary():
+    return 0
+
+
 # AnalyseOtherTools()
 AnalyseWebFrameworks("WebData.csv")
 # AnalyseLanguages("LanguageCountData.csv")
+# AnalyseDatabases("DatabasesCountData.csv")
+# AnalyseDatabases("DatabasesCountData.csv")
 # AnalyseDatabases("DatabasesCountData.csv")
 # AnalyseDatabases("DatabasesCountData.csv")
 # AnalyseDatabases("DatabasesCountData.csv")
