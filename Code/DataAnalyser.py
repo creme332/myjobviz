@@ -32,7 +32,7 @@ def AnalyseLanguages(destination_filename):
     }
 
     # languages that contain special characters.
-    special_languages = ["C++","C#"]
+    special_languages = ["C++", "C#"]
     # These languages are never substrings of other another language.
 
     # token testing : java, python, javascript, php, html, ...
@@ -81,8 +81,6 @@ def AnalyseLanguages(destination_filename):
                           'Language', 'Frequency'])
     tester.to_csv(destination_filename, sep='\t',
                   encoding='utf-8-sig', index=False)
-
-    display(tester)
 
 
 def AnalyseDatabases(destination_filename):
@@ -241,14 +239,14 @@ def AnalyseOtherTools():
             if tool != "Node.js":
                 if tool.lower() in jobs_details and tool != "Git":  # must distinguish between git and github
                     other_tools[tool] += 1
-        if "nodejs" in jobs_details or "node.js" in jobs_details  :
-                other_tools["Node.js"] += 1
+        if "nodejs" in jobs_details or "node.js" in jobs_details:
+            other_tools["Node.js"] += 1
         words = re.findall(r'\w+', jobs_details)
         if "git" in words:
             other_tools["Git"] += 1
 
         for os in operating_system_count:
-            if os.lower() in jobs_details:  # must distinguish between git and github
+            if os.lower() in jobs_details:
                 operating_system_count[os] += 1
 
     # save cloud platforms
@@ -256,40 +254,30 @@ def AnalyseOtherTools():
         'CloudPlatforms', 'Frequency'])
     cloud_df.to_csv("CloudData.csv", sep='\t',
                     encoding='utf-8-sig', index=False)
-    display(cloud_df)
 
     # save libraries
     libraries_df = pd.DataFrame(libraries.items(), columns=[
         'Libraries', 'Frequency'])
     libraries_df.to_csv("LibrariesData.csv", sep='\t',
                         encoding='utf-8-sig', index=False)
-    display(libraries_df)
 
     # save tools
     tools_df = pd.DataFrame(other_tools.items(), columns=[
         'Tools', 'Frequency'])
     tools_df.to_csv("ToolsData.csv", sep='\t',
                     encoding='utf-8-sig', index=False)
-    display(tools_df)
 
     # save OS
     os_df = pd.DataFrame(operating_system_count.items(), columns=[
         'OS', 'Frequency'])
     os_df.to_csv("OSData.csv", sep='\t',
                  encoding='utf-8-sig', index=False)
-    display(os_df)
 
 
-def AnalyseSalary():
-    return 0
+def AnalyseSalary(): 
+
+    print(jobs_df.groupby('salary').size())
 
 
-# AnalyseOtherTools()
-AnalyseWebFrameworks("WebData.csv")
-# AnalyseLanguages("LanguageCountData.csv")
-# AnalyseDatabases("DatabasesCountData.csv")
-# AnalyseDatabases("DatabasesCountData.csv")
-# AnalyseDatabases("DatabasesCountData.csv")
-# AnalyseDatabases("DatabasesCountData.csv")
-# AnalyseDatabases("DatabasesCountData.csv")
-# AnalyseDatabases("DatabasesCountData.csv")
+def AnalyseLocation():
+    print(jobs_df.groupby('location').size())
