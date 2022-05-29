@@ -6,6 +6,7 @@
 - [ ] Remove node.js from programming languages
 - [x] Fix asp.net and asp.net core confusion
 - [ ] Data analysis : Is degree required ?
+- [ ] Create a chloropleth map of mauritius
 - [x] Separate BASH/SHELL
 - [ ] Convert opening and closing date in csv file to US date format then sort.
 
