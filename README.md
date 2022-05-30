@@ -3,7 +3,7 @@
 - [x] Alternate spelling of React.js = ReactJS, React
 - [x] Alternate spelling of Angular.js = AngularJS
 - [x] Fix Git-GitHub SQL- NOSQL confusion
-- [ ] Remove node.js from programming languages
+- [x] Remove node.js from programming languages
 - [x] Fix asp.net and asp.net core confusion
 - [ ] Data analysis : Is degree required ?
 - [ ] Create a chloropleth map of mauritius
@@ -47,20 +47,29 @@ Inspired by the Stack Overflow Developer Survey, the goal of this Mauritian Deve
 ## 📝Data collection  <a name="collection"></a> ##
 In the span of $x$ months, $k$ unique IT job listings were scraped from [myjob.mu](https://www.myjob.mu/) using the BeautifulSoup library. These job listings were then saved in `data.csv` file. The job URL of each job was used as a primary key to uniquely identify each job.
 ![image](https://user-images.githubusercontent.com/65414576/167564657-213f37f0-bf25-4dbc-9ea0-21e39062e2bb.png)
-> ⚠️The URLs in the csv file may no longer work as a job post is removed after a certain time. 
+> ⚠️The URLs in the csv file may no longer work as myjob.mu takes down a job post after a certain time. 
+
+### Dependencies ###
+```
+Python : 3.9.7
+Panda : 1.3.3
+BeautifulSoup : 4.10.0
+MatPlotLib : 3.4.3
+```
 ### Format used for data storage ###
 To save :
 ```python
-df.read_csv()
+df.to_csv("file.csv", sep = '\t', encoding = 'utf-8-sig', index = False)
 ```
+
 To read :
 ```python
-df.read_csv()
+df = pd.read_csv("file.csv", sep = '\t')
 ```
 
 ## 🔎 Data analysis <a name="analysis"></a> ##
 Relevant data (salary, languages, databases, ...) from each job description was extracted and saved to new files.
-MatlPlotLib was then used to visualise the data from the filtered files.
+`MatlPlotLib` was then used to visualise the data from the filtered files.
 
 # 📊 Results <a name="results"></a> #
 > ⚠️ **Interpret the following charts at your own discretion, keeping in mind the sample size and methodology used.**
@@ -98,6 +107,8 @@ MatlPlotLib was then used to visualise the data from the filtered files.
 # 🎊 Conclusion <a name="conclusion"></a> # 
 Some technologies (SQL, Git, ...) are without any doubt highly in demand while other technologies (AWS, Clojure, Cloud technologies ...) are yet to take off in Mauritius. 
 # 🌠Resources used  <a name="resources"></a> #
+
+Web scraping to CSV file : https://www.youtube.com/watch?v=RvCBzhhydNk&ab_channel=Pythonology
 
 To create map of salary : https://towardsdatascience.com/a-complete-guide-to-an-interactive-geographical-map-using-python-f4c5197e23e0
 
