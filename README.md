@@ -110,9 +110,11 @@ Some technologies (SQL, Git, ...) are without any doubt highly in demand while o
 
 Web scraping to CSV file : https://www.youtube.com/watch?v=RvCBzhhydNk&ab_channel=Pythonology
 
-To create map of salary : https://towardsdatascience.com/a-complete-guide-to-an-interactive-geographical-map-using-python-f4c5197e23e0
+map of salary : https://towardsdatascience.com/a-complete-guide-to-an-interactive-geographical-map-using-python-f4c5197e23e0
 
-To create lollipop chart :
+lollipop chart :
+
+Chloropeth map : https://www.youtube.com/watch?v=aJmaw3QKMvk&ab_channel=IndianPythonista
 
 # 🔮 Future work <a name="future"></a> # 
 - Collect data from more job websites
