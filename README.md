@@ -108,13 +108,15 @@ Relevant data (salary, languages, databases, ...) from each job description was 
 Some technologies (SQL, Git, ...) are without any doubt highly in demand while other technologies (AWS, Clojure, Cloud technologies ...) are yet to take off in Mauritius. 
 # 🌠Resources used  <a name="resources"></a> #
 
-Web scraping to CSV file : https://www.youtube.com/watch?v=RvCBzhhydNk&ab_channel=Pythonology
+Tutorital on web scraping to CSV file : https://www.youtube.com/watch?v=RvCBzhhydNk&ab_channel=Pythonology
 
 map of salary : https://towardsdatascience.com/a-complete-guide-to-an-interactive-geographical-map-using-python-f4c5197e23e0
 
 lollipop chart :
 
-Chloropeth map : https://www.youtube.com/watch?v=aJmaw3QKMvk&ab_channel=IndianPythonista
+Source of geojson file for Mauritius districts : https://data.govmu.org/dkan/?q=dataset/mauritius-districts
+
+Tutorial on how to create chloropeth map : https://www.youtube.com/watch?v=aJmaw3QKMvk&ab_channel=IndianPythonista
 
 # 🔮 Future work <a name="future"></a> # 
 - Collect data from more job websites
