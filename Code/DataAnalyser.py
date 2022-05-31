@@ -274,10 +274,25 @@ def AnalyseOtherTools():
                  encoding='utf-8-sig', index=False)
 
 
-def AnalyseSalary(): 
+def AnalyseSalary():
 
     print(jobs_df.groupby('salary').size())
 
 
 def AnalyseLocation():
-    print(jobs_df.groupby('location').size())
+    All_Locations = {}
+    for row in range(len(jobs_df)):
+        location = jobs_df.loc[row, "location"].replace('\r\n', '',).strip()
+        # print(location)
+        if location not in All_Locations.keys():
+            All_Locations[location] = 1
+        else:
+            All_Locations[location] += 1
+
+    df = pd.DataFrame(list(All_Locations.items()),
+                      columns=['Location', 'JobCount'])
+    df.to_csv("LocationJobCount.csv", sep='\t',
+              encoding='utf-8-sig', index=False)
+
+
+AnalyseLocation()
