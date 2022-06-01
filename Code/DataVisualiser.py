@@ -3,6 +3,8 @@
 Created on Fri May 6 2022
 Python Version : 3.9.7
 Panda version : 1.3.3
+MatPlotLib : 3.4.3
+plotly Version: 5.8.0
 Summary : Create charts to visualise filtered job data from data.csv.
 @author: me
 """
@@ -10,7 +12,10 @@ Summary : Create charts to visualise filtered job data from data.csv.
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-import re
+import json
+import plotly.express as px
+import plotly.io as pio
+pio.renderers.default = 'browser'  # to show geojson map in web browser
 
 data_source_filename = 'TESTING.csv'
 jobs_df = pd.read_csv(data_source_filename)
@@ -66,7 +71,7 @@ def HorizontalBarChart(source_filename, destination_filename):
 #     my_data = list(dictionary.values())
 # =============================================================================
 
-    #colours = ['red', 'yellow', 'green', 'blue', 'orange', 'black']
+    # colours = ['red', 'yellow', 'green', 'blue', 'orange', 'black']
     cmap = plt.cm.tab10
     colors = cmap(np.arange(len(my_labels)) % cmap.N)
     # plt.style.use('ggplot')
@@ -139,10 +144,10 @@ def donutChart(source_filename):
     my_data = df[column_headings[1]].tolist()
 
     colors = ['yellowgreen', 'gold', 'lightskyblue', 'lightcoral']
-    #explode = (1, 0, 0)  # explode a slice if required.
+    # explode = (1, 0, 0)  # explode a slice if required.
     # len(explode) = number of rows in df. Then add explode = explode below
 
-    plt.pie(my_data,labels=my_labels, colors=colors,
+    plt.pie(my_data, labels=my_labels, colors=colors,
             autopct='%1.1f%%', shadow=True)
 
     # draw a circle at the center of pie to make it look like a donut
@@ -156,8 +161,35 @@ def donutChart(source_filename):
     plt.show()
 
 
+def CreateMap():
+    # Errors in geoJson : Rodriguez, Rivi\u00e8re du Rempart
+    districts = json.load(open("map.geojson", 'r'))
+    df = pd.read_csv("LocationJobCount.csv", sep='\t')
+    district_id_map = {}
+
+    for feature in districts['features']:
+        district_id_map[feature['properties']
+                        ['NAME_1']] = feature['properties']['ID_1']
+        #print(feature['properties']['NAME_1'], feature['properties']['ID_1'])
+
+    df['id'] = df['Location'].apply(lambda x: district_id_map[x])
+    print(df)
+    fig = px.choropleth(df, locations='id',
+                        geojson=districts, color='JobCount')
+    #fig.update_geos(fitbounds="locations", visible=False)
+    fig.update_layout(geo_scope="world", geo_resolution=50)
+
+    fig.show()
+    return 0
+
+
+CreateMap()
 # HorizontalBarChart("OSData.csv", "")
 # PieChart("OSData.csv", "")
 # HorizontalBarChart("OSData.csv", "")
-donutChart("OSData.csv")
+# donutChart("WebData.csv")
+# PieChart("OSData.csv", "")
+# donutChart("WebData.csv")
+# PieChart("OSData.csv", "")
+# PieChart("OSData.csv", "")
 # PieChart("OSData.csv", "")
