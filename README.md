@@ -1,5 +1,6 @@
 # To-Do #
 - [ ] Search each language/framework on site to see if spelling matches expected spelling
+- [ ] Errors in geoJson : Rodriguez, Rivi\u00e8re du Rempart
 - [x] Alternate spelling of React.js = ReactJS, React
 - [x] Alternate spelling of Angular.js = AngularJS
 - [x] Fix Git-GitHub SQL- NOSQL confusion
@@ -40,14 +41,16 @@
 
 # 🇲🇺 Job-Portal-Web-Scraper 2022  <a name="intro"></a> #
 
-Inspired by the Stack Overflow Developer Survey, the goal of this Mauritian Developer Survey is to analyse the trends in technologies, in particular the technologies  in demand, in Mauritius.
+Inspired by the Stack Overflow Developer Survey, the goal of this survey is to analyse the trends in technologies in Mauritius.
 
 #  ⚒️ Methodology  <a name="Methodology"></a> #
 
 ## 📝Data collection  <a name="collection"></a> ##
-In the span of $x$ months, $k$ unique IT job listings were scraped from [myjob.mu](https://www.myjob.mu/) using the BeautifulSoup library. These job listings were then saved in `data.csv` file. The job URL of each job was used as a primary key to uniquely identify each job.
+In the span of $x$ months (1 May 2022 - 1 July 2022), $k$ unique IT job listings were scraped from [myjob.mu](https://www.myjob.mu/) using the BeautifulSoup library. These job listings were then saved in `data.csv` file. 
 ![image](https://user-images.githubusercontent.com/65414576/167564657-213f37f0-bf25-4dbc-9ea0-21e39062e2bb.png)
 > ⚠️The URLs in the csv file may no longer work as myjob.mu takes down a job post after a certain time. 
+
+> ⚠️The job URL was used as a primary key.
 
 ### Dependencies ###
 ```
@@ -55,6 +58,7 @@ Python : 3.9.7
 Panda : 1.3.3
 BeautifulSoup : 4.10.0
 MatPlotLib : 3.4.3
+Plotly : 5.8.0
 ```
 ### Format used for data storage ###
 To save :
@@ -69,7 +73,7 @@ df = pd.read_csv("file.csv", sep = '\t')
 
 ## 🔎 Data analysis <a name="analysis"></a> ##
 Relevant data (salary, languages, databases, ...) from each job description was extracted and saved to new files.
-`MatlPlotLib` was then used to visualise the data from the filtered files.
+`MatlPlotLib` and `Plotly` were then used to visualise the filtered data.
 
 # 📊 Results <a name="results"></a> #
 > ⚠️ **Interpret the following charts at your own discretion, keeping in mind the sample size and methodology used.**
@@ -108,7 +112,7 @@ Relevant data (salary, languages, databases, ...) from each job description was 
 Some technologies (SQL, Git, ...) are without any doubt highly in demand while other technologies (AWS, Clojure, Cloud technologies ...) are yet to take off in Mauritius. 
 # 🌠Resources used  <a name="resources"></a> #
 
-Tutorital on web scraping to CSV file : https://www.youtube.com/watch?v=RvCBzhhydNk&ab_channel=Pythonology
+Tutorial on web scraping to CSV file : https://www.youtube.com/watch?v=RvCBzhhydNk&ab_channel=Pythonology
 
 map of salary : https://towardsdatascience.com/a-complete-guide-to-an-interactive-geographical-map-using-python-f4c5197e23e0
 
