@@ -7,9 +7,7 @@ Summary : count frequency of specific languages from job details
 @author: creme332
 """
 import pandas as pd
-import numpy as np
 import re
-from csv import writer
 
 data_source_filename = 'TESTING.csv'
 jobs_df = pd.read_csv(data_source_filename)
@@ -45,7 +43,8 @@ def AnalyseLanguages(destination_filename):
     # Ruby is a substring of "Ruby on Rails"
     # so substring method cannot be used here.
 
-    # languages in language_count, special_languages, standard language must match exactly
+    # languages in language_count, special_languages,
+    # standard language must match exactly
 
     for row in range(len(jobs_df)):  # for each collected job details
         jobs_details = jobs_df.loc[row, "job_details"].lower()
@@ -60,12 +59,14 @@ def AnalyseLanguages(destination_filename):
             for lang in standard_languages:  # search for standard languages
 
                 if lang.lower() == words[i]:
-                    if(lang.lower() == "ruby"):  # distinguish between ruby and ruby on rails
+                    # distinguish between ruby and ruby on rails
+                    if(lang.lower() == "ruby"):
                         if(i > len(words)-3):
                             # language is definitely ruby
                             language_count[lang] += 1
                         else:
-                            if(words[i+1].lower() != "on" and words[i+2].lower() != "rails"):
+                            if(words[i+1].lower() != "on" and
+                               words[i+2].lower() != "rails"):
                                 # current word is not part of ruby on rails
                                 language_count[lang] += 1
                     else:
@@ -171,12 +172,10 @@ def AnalyseWebFrameworks(destination_filename):
                           'WebFrameworks', 'Frequency'])
     tester.to_csv(destination_filename, sep='\t',
                   encoding='utf-8-sig', index=False)
-    display(tester)
 
 
 def AnalyseOtherTools():
 
-    # for the following tools/platforms/libraries, substring method only is required
     cloud_platforms = {"AWS": 0,
                        "Google Cloud Platform": 0,
                        "Microsoft Azure": 0,
@@ -237,7 +236,8 @@ def AnalyseOtherTools():
 
         for tool in other_tools:
             if tool != "Node.js":
-                if tool.lower() in jobs_details and tool != "Git":  # must distinguish between git and github
+                # must distinguish between git and github
+                if tool.lower() in jobs_details and tool != "Git":
                     other_tools[tool] += 1
         if "nodejs" in jobs_details or "node.js" in jobs_details:
             other_tools["Node.js"] += 1
@@ -280,16 +280,21 @@ def AnalyseSalary():
 
 
 def AnalyseLocation():
-    All_Locations = {}
+    JobsPerDistrict = {}
     for row in range(len(jobs_df)):
         location = jobs_df.loc[row, "location"].replace('\r\n', '',).strip()
         # print(location)
-        if location not in All_Locations.keys():
-            All_Locations[location] = 1
+        if location not in JobsPerDistrict.keys():
+            JobsPerDistrict[location] = 1
         else:
-            All_Locations[location] += 1
+            JobsPerDistrict[location] += 1
 
-    df = pd.DataFrame(list(All_Locations.items()),
+    # drop Mauritius and Rodrigues
+    JobsPerDistrict.pop('Mauritius', None)
+    JobsPerDistrict.pop('Rodrigues', None)
+    # Rename Plaine Wilhems to Plaines Wilhems
+
+    df = pd.DataFrame(list(JobsPerDistrict.items()),
                       columns=['Location', 'JobCount'])
     df.to_csv("LocationJobCount.csv", sep='\t',
               encoding='utf-8-sig', index=False)
