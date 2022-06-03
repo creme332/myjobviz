@@ -1,5 +1,6 @@
 # To-Do #
 - [ ] Search each language/framework on site to see if spelling matches expected spelling
+- [ ] Clean  data in geojson file and csv file then ask question on stack overflow
 - [ ] Errors in geoJson : Rodriguez, Rivi\u00e8re du Rempart
 - [x] Alternate spelling of React.js = ReactJS, React
 - [x] Alternate spelling of Angular.js = AngularJS
