@@ -162,25 +162,20 @@ def donutChart(source_filename):
 
 
 def CreateMap():
-    # Errors in geoJson : Rodriguez, Rivi\u00e8re du Rempart
-    districts = json.load(open("map.geojson", 'r'))
+
+    districts = json.load(open("stanford-ph377fn8728-geojson.json", 'r'))
     df = pd.read_csv("LocationJobCount.csv", sep='\t')
-    district_id_map = {}
 
-    for feature in districts['features']:
-        district_id_map[feature['properties']
-                        ['NAME_1']] = feature['properties']['ID_1']
-        #print(feature['properties']['NAME_1'], feature['properties']['ID_1'])
-
-    df['id'] = df['Location'].apply(lambda x: district_id_map[x])
-    print(df)
-    fig = px.choropleth(df, locations='id',
-                        geojson=districts, color='JobCount')
-    #fig.update_geos(fitbounds="locations", visible=False)
-    fig.update_layout(geo_scope="world", geo_resolution=50)
-
+    fig = px.choropleth(df, geojson=districts,
+                        featureidkey='properties.name_1',
+                        locations='Location',  # column in dataframe which contains districts names
+                        color='JobCount',  # data from this column in dataframe is plotted
+                        color_continuous_scale="algae",
+                        range_color=[0, max(df['JobCount'])],
+                        labels={"Value": "Count"}
+                        )
+    fig.update_geos(fitbounds="locations")
     fig.show()
-    return 0
 
 
 CreateMap()
@@ -188,8 +183,5 @@ CreateMap()
 # PieChart("OSData.csv", "")
 # HorizontalBarChart("OSData.csv", "")
 # donutChart("WebData.csv")
-# PieChart("OSData.csv", "")
 # donutChart("WebData.csv")
-# PieChart("OSData.csv", "")
-# PieChart("OSData.csv", "")
 # PieChart("OSData.csv", "")
