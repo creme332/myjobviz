@@ -280,22 +280,22 @@ def AnalyseSalary():
 
 
 def AnalyseLocation():
-    JobsPerDistrict = {}
+    JobsPerDistrict = {'Black River': 0, 'Flacq': 0,
+                       'Grand Port': 0, 'Moka': 0, 'Pamplemousses': 0,
+                       'Plaine Wilhems': 0, 'Port Louis': 0,
+                       'Riviere du Rempart': 0, 'Savanne': 0}
     for row in range(len(jobs_df)):
         location = jobs_df.loc[row, "location"].replace('\r\n', '',).strip()
-        # print(location)
-        if location not in JobsPerDistrict.keys():
-            JobsPerDistrict[location] = 1
-        else:
+        if location != "Mauritius" and location != "Rodrigues":
             JobsPerDistrict[location] += 1
 
-    # drop Mauritius and Rodrigues
-    JobsPerDistrict.pop('Mauritius', None)
-    JobsPerDistrict.pop('Rodrigues', None)
-    # Rename Plaine Wilhems to Plaines Wilhems
+    # Rename Plaine Wilhems to Plaines Wilhems (myjob.my incorrectly
+    # wrote "Plaine Wilhems")
+    JobsPerDistrict['Plaines Wilhems'] = JobsPerDistrict.pop('Plaine Wilhems')
 
     df = pd.DataFrame(list(JobsPerDistrict.items()),
                       columns=['Location', 'JobCount'])
+
     df.to_csv("LocationJobCount.csv", sep='\t',
               encoding='utf-8-sig', index=False)
 
