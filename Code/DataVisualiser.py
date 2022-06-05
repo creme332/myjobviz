@@ -166,15 +166,22 @@ def CreateMap():
     districts = json.load(open("stanford-ph377fn8728-geojson.json", 'r'))
     df = pd.read_csv("LocationJobCount.csv", sep='\t')
 
+    # create a log scale to deal with outliers in JobCount
+    # get rid of 0s in column (log 0 invalid)
+    df["JobCount"].replace(0, 1, inplace=True)
+    df['JobCountScale'] = np.log10(df['JobCount'])
+
     fig = px.choropleth(df, geojson=districts,
                         featureidkey='properties.name_1',
                         locations='Location',  # column in dataframe which contains districts names
-                        color='JobCount',  # data from this column in dataframe is plotted
-                        color_continuous_scale="algae",
-                        range_color=[0, max(df['JobCount'])],
+                        color='JobCountScale',  # data from this column in dataframe is plotted
+                        color_continuous_scale="turbo",  # turbo or blackbody
+                        range_color=[0, max(df['JobCountScale'])],
                         labels={"Value": "Count"}
                         )
     fig.update_geos(fitbounds="locations")
+    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+
     fig.show()
 
 
@@ -184,4 +191,6 @@ CreateMap()
 # HorizontalBarChart("OSData.csv", "")
 # donutChart("WebData.csv")
 # donutChart("WebData.csv")
+# PieChart("OSData.csv", "")
+# PieChart("OSData.csv", "")
 # PieChart("OSData.csv", "")
