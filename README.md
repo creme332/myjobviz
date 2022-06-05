@@ -1,28 +1,13 @@
 # To-Do #
-- [ ] Search each language/framework on site to see if spelling matches expected spelling
-- [ ] Clean  data in geojson file and csv file then ask question on stack overflow
-- [ ] Errors in geoJson : Rodriguez, Rivi\u00e8re du Rempart
-- [x] Alternate spelling of React.js = ReactJS, React
-- [x] Alternate spelling of Angular.js = AngularJS
-- [x] Fix Git-GitHub SQL- NOSQL confusion
-- [x] Remove node.js from programming languages
-- [x] Fix asp.net and asp.net core confusion
-- [ ] Data analysis : Is degree required ?
-- [ ] Create a chloropleth map of mauritius
-- [x] Separate BASH/SHELL
-- [ ] Convert opening and closing date in csv file to US date format then sort.
-
-
-- [x] Create a separate file to store frequencies
 - [ ] https://towardsdatascience.com/donut-plot-with-matplotlib-python-be3451f22704 create donut plot with percentage
-
 - [ ] Use percentages instead of frequency in barcharts
 - [ ] Barchart for each category is a unique colour. (orange for programming lang, blue for database,...)
 - [ ] Add pie chart for job types
 - [ ] Add word cloud
-
-
 - [ ] Publish results on GitHub pages
+- [ ] Search each language/framework on site to see if spelling matches expected spelling
+- [ ] Data analysis : Is degree required ?
+- [ ] Convert opening and closing date in csv file to US date format then sort.
 
 # Table of contents #
 1. [Introduction](#intro)
