@@ -38,25 +38,6 @@ In the span of $x$ months (1 May 2022 - 1 July 2022), $k$ unique IT job listings
 
 > ⚠️The job URL was used as a primary key.
 
-### Dependencies ###
-```
-Python : 3.9.7
-Panda : 1.3.3
-BeautifulSoup : 4.10.0
-MatPlotLib : 3.4.3
-Plotly : 5.8.0
-```
-### Format used for data storage ###
-To save :
-```python
-df.to_csv("file.csv", sep = '\t', encoding = 'utf-8-sig', index = False)
-```
-
-To read :
-```python
-df = pd.read_csv("file.csv", sep = '\t')
-```
-
 ## 🔎 Data analysis <a name="analysis"></a> ##
 Relevant data (salary, languages, databases, ...) from each job description was extracted and saved to new files.
 `MatlPlotLib` and `Plotly` were then used to visualise the filtered data.
