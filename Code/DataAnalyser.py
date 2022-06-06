@@ -9,15 +9,16 @@ Summary : count frequency of specific languages from job details
 import pandas as pd
 import re
 
-data_source_filename = 'TESTING.csv'
-jobs_df = pd.read_csv(data_source_filename)
+data_source_filename = 'TESTING.csv'  # raw data
+jobs_df = pd.read_csv(data_source_filename, header=0,
+                      parse_dates=['date_posted', 'closing date'],
+                      dayfirst=True)
 jobs_df.drop_duplicates(
     subset=None, keep='first', inplace=False)  # drop duplicates
+jobs_df = jobs_df.sort_values('date_posted')
 
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', 500)
-
-# construct a separate csv file for word count
 
 
 def AnalyseLanguages(destination_filename):
@@ -300,4 +301,7 @@ def AnalyseLocation():
               encoding='utf-8-sig', index=False)
 
 
-AnalyseLocation()
+# AnalyseSalary()
+# AnalyseLocation()
+# AnalyseOtherTools()
+
