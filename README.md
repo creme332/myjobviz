@@ -1,12 +1,10 @@
 # To-Do #
-- [ ] https://towardsdatascience.com/donut-plot-with-matplotlib-python-be3451f22704 create donut plot with percentage
 - [ ] Use percentages instead of frequency in barcharts
 - [ ] Barchart for each category is a unique colour. (orange for programming lang, blue for database,...)
 - [ ] Add pie chart for job types
 - [ ] Add word cloud
 - [ ] Publish results on GitHub pages
 - [ ] Search each language/framework on site to see if spelling matches expected spelling
-- [ ] Data analysis : Is degree required ?
 - [ ] Convert opening and closing date in csv file to US date format then sort.
 
 # Table of contents #
