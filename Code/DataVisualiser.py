@@ -5,7 +5,7 @@ Python Version : 3.9.7
 Panda version : 1.3.3
 MatPlotLib : 3.4.3
 plotly Version: 5.8.0
-Summary : Create charts to visualise filtered job data from data.csv.
+Summary : Visualise data from FilteredData and save results to Charts folder.
 @author: me
 """
 
@@ -17,7 +17,7 @@ import plotly.express as px
 import plotly.io as pio
 pio.renderers.default = 'browser'  # to show geojson map in web browser
 
-data_source_filename = 'TESTING.csv'
+data_source_filename = 'RawScrapedData.csv'
 jobs_df = pd.read_csv(data_source_filename)
 jobs_df.drop_duplicates(
     subset=None, keep='first', inplace=False)  # drop duplicates
@@ -53,13 +53,15 @@ def HorizontalLollipopChart(source_filename, destination_filename):
     plt.close()
 
 
-def HorizontalBarChart(source_filename, destination_filename):
+def HorizontalBarChart(source_filename, destination_filename, my_color):
     # =============================================================================
     #     for key in list(dictionary):
     #         if dictionary[key] == 0:
     #             dictionary.pop(key, None)
     # =============================================================================
     df = pd.read_csv(source_filename, sep='\t')
+    df = df.sort_values(by=['Frequency'])
+
     column_headings = df.columns
 
     my_labels = df[column_headings[0]].tolist()
@@ -71,15 +73,15 @@ def HorizontalBarChart(source_filename, destination_filename):
 #     my_data = list(dictionary.values())
 # =============================================================================
 
-    # colours = ['red', 'yellow', 'green', 'blue', 'orange', 'black']
+    # colors = ['red', 'yellow', 'green', 'blue', 'orange', 'black']
     cmap = plt.cm.tab10
-    colors = cmap(np.arange(len(my_labels)) % cmap.N)
-    # plt.style.use('ggplot')
+    # colors = cmap(np.arange(len(my_labels)) % cmap.N)
+    plt.style.use('ggplot')
 
-    plt.barh(my_labels, my_data, color=colors)
+    plt.barh(my_labels, my_data, color=my_color)
     # plt.title('Programming languages')
-    plt.ylabel('Language')  # VARIABLE
-    plt.xlabel('Frequency')
+    plt.ylabel(column_headings[0])  # VARIABLE
+    plt.xlabel(column_headings[1])
 
     plt.show()
     # plt.savefig(destination_filename, bbox_inches='tight')
@@ -100,7 +102,7 @@ def VerticalBarChart(dictionary, filename):
     plt.close()
 
 
-def PieChart(source_filename, destination_filename):
+def PieChart(source_filename, destination_filename, my_color):
     # =============================================================================
     #     # filter out languages which have not been used at all
     #     for lang in list(languages):
@@ -118,13 +120,13 @@ def PieChart(source_filename, destination_filename):
     my_data = df[column_headings[1]].tolist()
     # create a figure and set different background
     fig = plt.figure()
-    fig.patch.set_facecolor('black')
+    # fig.patch.set_facecolor('black')
 
     # Change color of text
-    plt.rcParams['text.color'] = 'white'
+    plt.rcParams['text.color'] = 'black'
 
     # Create a circle at the center of the plot
-    my_circle = plt.Circle((0, 0), 0.7, color='black')
+    my_circle = plt.Circle((0, 0), 0.7, color='grey')
 
     # Pieplot + circle on it
     plt.pie(my_data, labels=my_labels, shadow=True, autopct='%1.1f%%')
@@ -136,7 +138,7 @@ def PieChart(source_filename, destination_filename):
     plt.close()
 
 
-def donutChart(source_filename):
+def donutChart(source_filename, destination_path):
     # https://medium.com/@krishnakummar/donut-chart-with-python-matplotlib-d411033c960b
     df = pd.read_csv(source_filename, sep='\t')
     column_headings = df.columns
@@ -161,10 +163,10 @@ def donutChart(source_filename):
     plt.show()
 
 
-def CreateMap():
+def CreateMap(source_path, destination_path):
 
-    districts = json.load(open("stanford-ph377fn8728-geojson.json", 'r'))
-    df = pd.read_csv("LocationJobCount.csv", sep='\t')
+    districts = json.load(open("mauritius-districts-geojson.json", 'r'))
+    df = pd.read_csv(source_path, sep='\t')
 
     # create a log scale to deal with outliers in JobCount
     # get rid of 0s in column (log 0 invalid)
@@ -181,16 +183,41 @@ def CreateMap():
                         )
     fig.update_geos(fitbounds="locations")
     fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+    fig.write_image(destination_path + ".svg")  # .svg or .pdf
 
-    fig.show()
+    # fig.show()
 
 
-CreateMap()
-# HorizontalBarChart("OSData.csv", "")
-# PieChart("OSData.csv", "")
-# HorizontalBarChart("OSData.csv", "")
-# donutChart("WebData.csv")
-# donutChart("WebData.csv")
-# PieChart("OSData.csv", "")
-# PieChart("OSData.csv", "")
-# PieChart("OSData.csv", "")
+def main():
+    source_path = 'FilteredData/'  # folder containing filtered data
+    destination_path = 'Charts/'  # folder to store charts
+
+    # CreateMap(source_path + "LocationData.csv", destination_path + "JobCountMap")
+
+    HorizontalBarChart(source_path + "CloudData.csv",
+                       destination_path + "CloudChart", 'blue')
+    HorizontalBarChart(source_path + "DatabaseData.csv",
+                       destination_path + "DatabaseChart", 'green')
+    HorizontalBarChart(source_path + "LanguageData.csv",
+                       destination_path + "LanguageChart", 'orange')
+    HorizontalBarChart(source_path + "LibrariesData.csv",
+                       destination_path + "LibrariesChart", 'black')
+    HorizontalBarChart(source_path + "OSData.csv",
+                       destination_path + "OSChart", 'red')
+    HorizontalBarChart(source_path + "ToolsData.csv",
+                       destination_path + "ToolsChart", 'purple')
+    HorizontalBarChart(source_path + "WebData.csv",
+                       destination_path + "WebChart", 'skyblue')
+
+    # add explanation for percentage in donut chart
+    # donutChart(source_path + "OSData.csv", destination_path + "OSChart")
+
+    # HorizontalBarChart(source_path + "", destination_path + "OSData.csv", "")
+
+    # PieChart(source_path + "OSData.csv", destination_path + "")
+    # donutChart(source_path + "WebData.csv", destination_path + "")
+    # PieChart(source_path + "OSData.csv", destination_path + "")
+
+
+# main()
+# PieChart('FilteredData/OSData.csv', '', 'red')
