@@ -9,7 +9,7 @@ Summary : count frequency of specific languages from job details
 import pandas as pd
 import re
 
-data_source_filename = 'TESTING.csv'  # raw data
+data_source_filename = 'RawScrapedData.csv'  # raw data
 jobs_df = pd.read_csv(data_source_filename, header=0,
                       parse_dates=['date_posted', 'closing date'],
                       dayfirst=True)
@@ -175,7 +175,7 @@ def AnalyseWebFrameworks(destination_filename):
                   encoding='utf-8-sig', index=False)
 
 
-def AnalyseOtherTools():
+def AnalyseOtherTools(file_path):
 
     cloud_platforms = {"AWS": 0,
                        "Google Cloud Platform": 0,
@@ -253,25 +253,25 @@ def AnalyseOtherTools():
     # save cloud platforms
     cloud_df = pd.DataFrame(cloud_platforms.items(), columns=[
         'CloudPlatforms', 'Frequency'])
-    cloud_df.to_csv("CloudData.csv", sep='\t',
+    cloud_df.to_csv(file_path + "CloudData.csv", sep='\t',
                     encoding='utf-8-sig', index=False)
 
     # save libraries
     libraries_df = pd.DataFrame(libraries.items(), columns=[
         'Libraries', 'Frequency'])
-    libraries_df.to_csv("LibrariesData.csv", sep='\t',
+    libraries_df.to_csv(file_path + "LibrariesData.csv", sep='\t',
                         encoding='utf-8-sig', index=False)
 
     # save tools
     tools_df = pd.DataFrame(other_tools.items(), columns=[
         'Tools', 'Frequency'])
-    tools_df.to_csv("ToolsData.csv", sep='\t',
+    tools_df.to_csv(file_path + "ToolsData.csv", sep='\t',
                     encoding='utf-8-sig', index=False)
 
     # save OS
     os_df = pd.DataFrame(operating_system_count.items(), columns=[
         'OS', 'Frequency'])
-    os_df.to_csv("OSData.csv", sep='\t',
+    os_df.to_csv(file_path + "OSData.csv", sep='\t',
                  encoding='utf-8-sig', index=False)
 
 
@@ -280,7 +280,7 @@ def AnalyseSalary():
     print(jobs_df.groupby('salary').size())
 
 
-def AnalyseLocation():
+def AnalyseLocation(destination_filename):
     JobsPerDistrict = {'Black River': 0, 'Flacq': 0,
                        'Grand Port': 0, 'Moka': 0, 'Pamplemousses': 0,
                        'Plaine Wilhems': 0, 'Port Louis': 0,
@@ -290,18 +290,24 @@ def AnalyseLocation():
         if location != "Mauritius" and location != "Rodrigues":
             JobsPerDistrict[location] += 1
 
-    # Rename Plaine Wilhems to Plaines Wilhems (myjob.my incorrectly
-    # wrote "Plaine Wilhems")
+    # Rename Plaine Wilhems to Plaines Wilhems
+    # (myjob.my incorrectly wrote "Plaine Wilhems")
     JobsPerDistrict['Plaines Wilhems'] = JobsPerDistrict.pop('Plaine Wilhems')
 
     df = pd.DataFrame(list(JobsPerDistrict.items()),
                       columns=['Location', 'JobCount'])
 
-    df.to_csv("LocationJobCount.csv", sep='\t',
+    df.to_csv(destination_filename, sep='\t',
               encoding='utf-8-sig', index=False)
 
 
-# AnalyseSalary()
-# AnalyseLocation()
-# AnalyseOtherTools()
+def main():
+    path = 'FilteredData/'  # folder name
+    AnalyseLanguages(path + 'LanguageData.csv')
+    AnalyseDatabases(path + 'DatabaseData.csv')
+    AnalyseWebFrameworks(path + 'WebData.csv')
+    AnalyseOtherTools(path)  # will save multiple files
+    AnalyseLocation(path + 'LocationData.csv')
 
+
+main()
