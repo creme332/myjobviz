@@ -1,3 +1,6 @@
+![some description](/Charts/test.pdf "some discription")
+![rip](/Charts/test.pdf)
+
 # To-Do #
 - [ ] Use percentages instead of frequency in barcharts
 - [ ] Barchart for each category is a unique colour. (orange for programming lang, blue for database,...)
@@ -45,7 +48,7 @@ Relevant data (salary, languages, databases, ...) from each job description was 
 > 
 
 ## Programming languages <a name="prog"></a> ## 
-![image](https://user-images.githubusercontent.com/65414576/167571045-bccf3082-e958-4043-ac14-c3d4c5166c5f.png)
+<img src="https://user-images.githubusercontent.com/65414576/167571045-bccf3082-e958-4043-ac14-c3d4c5166c5f.png" width="600" height ="400">
 
 ![image](https://user-images.githubusercontent.com/65414576/167336656-88849cb5-5529-494f-b495-a66a19e49bda.png)
 
