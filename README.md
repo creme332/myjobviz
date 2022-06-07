@@ -2,13 +2,17 @@
 ![rip](/Charts/test.pdf)
 
 # To-Do #
-- [ ] Use percentages instead of frequency in barcharts
-- [ ] Barchart for each category is a unique colour. (orange for programming lang, blue for database,...)
+- [ ] - Make images the same size on README
+- [ ] For all barcharts, keep distance between bars constant
 - [ ] Add pie chart for job types
 - [ ] Add word cloud
 - [ ] Publish results on GitHub pages
 - [ ] Search each language/framework on site to see if spelling matches expected spelling
-- [ ] Convert opening and closing date in csv file to US date format then sort.
+- [x] Convert opening and closing date in csv file to US date format then sort.
+- [x] Barchart for each category is a unique colour. (orange for programming lang, blue for database,...)
+
+
+
 
 # Table of contents #
 1. [Introduction](#intro)
@@ -92,7 +96,3 @@ Tutorial on how to create chloropeth map : https://www.youtube.com/watch?v=aJmaw
 
 # 🔮 Future work <a name="future"></a> # 
 - Collect data from more job websites
-- Create a folder to store all media files.
-- Make images the same size on README
-- Contrast the Stack Overflow Developer Survey with my survey
-- Create a website to display data and add user interaction 
