@@ -26,13 +26,13 @@ pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', 500)
 
 
-def HorizontalLollipopChart(source_filename, destination_filename):
+def HorizontalLollipopChart(source_filename, destination_filename, title):
     # using data from csv file
     df = pd.read_csv(source_filename, sep='\t')
     column_headings = df.columns
 
     # my_labels = df[column_headings[0]].tolist()
-    # my_data = df[column_headings[1]].tolist()
+    my_data = df[column_headings[1]].tolist()
 
     # when using data from dictionary
     # df = pd.DataFrame(list(dictionary.items()), columns=['Name', 'Value'])
@@ -40,20 +40,21 @@ def HorizontalLollipopChart(source_filename, destination_filename):
     # Reorder it based on the values:
     ordered_df = df.sort_values(by=column_headings[1])  # VARIABLE
     my_range = range(1, len(df.index)+1)
-    plt.style.use('default')
+    plt.style.use('ggplot')
 
-    # Horizontal version
     plt.hlines(y=my_range, xmin=0,
                xmax=ordered_df[column_headings[1]], color='skyblue')
-    plt.plot(ordered_df[column_headings[1]], my_range, "D")
+    plt.plot(ordered_df[column_headings[1]], my_range, "o")
+
     plt.yticks(my_range, ordered_df[column_headings[0]])
+    plt.title(title)
 
     # plt.savefig(destination_filename, bbox_inches='tight')
     plt.show()
     plt.close()
 
 
-def HorizontalBarChart(source_filename, destination_filename, my_color):
+def HorizontalBarChart(source_filename, destination_filename, my_color, title):
     # =============================================================================
     #     for key in list(dictionary):
     #         if dictionary[key] == 0:
@@ -79,30 +80,16 @@ def HorizontalBarChart(source_filename, destination_filename, my_color):
     plt.style.use('ggplot')
 
     plt.barh(my_labels, my_data, color=my_color)
-    # plt.title('Programming languages')
-    plt.ylabel(column_headings[0])  # VARIABLE
+    plt.title(title)
+    # plt.ylabel(column_headings[0])  # VARIABLE
     plt.xlabel(column_headings[1])
+    # plt.savefig(destination_filename, bbox_inches='tight')
 
     plt.show()
-    # plt.savefig(destination_filename, bbox_inches='tight')
     plt.close()
 
 
-def VerticalBarChart(dictionary, filename):
-    # filter out data which have a count of 0
-    for key in list(dictionary):
-        if dictionary[key] == 0:
-            dictionary.pop(key, None)
-
-    plt.bar(range(len(dictionary)), dictionary.values(),
-            align='center', width=0.3)
-    plt.xticks(range(len(dictionary)), dictionary.keys())
-
-    plt.savefig(filename, bbox_inches='tight')
-    plt.close()
-
-
-def PieChart(source_filename, destination_filename, my_color):
+def PieChart(source_filename, destination_filename):
     # =============================================================================
     #     # filter out languages which have not been used at all
     #     for lang in list(languages):
@@ -126,15 +113,16 @@ def PieChart(source_filename, destination_filename, my_color):
     plt.rcParams['text.color'] = 'black'
 
     # Create a circle at the center of the plot
-    my_circle = plt.Circle((0, 0), 0.7, color='grey')
+    my_circle = plt.Circle((0, 0), 0.7, color='white')
 
     # Pieplot + circle on it
     plt.pie(my_data, labels=my_labels, shadow=True, autopct='%1.1f%%')
     p = plt.gcf()
     p.gca().add_artist(my_circle)
+    plt.savefig(destination_filename)
+
     plt.legend()
     plt.show()
-    # plt.savefig(destination_filename)
     plt.close()
 
 
@@ -151,7 +139,7 @@ def donutChart(source_filename, destination_path):
 
     plt.pie(my_data, labels=my_labels, colors=colors,
             autopct='%1.1f%%', shadow=True)
-
+    plt.title("Operating systems")
     # draw a circle at the center of pie to make it look like a donut
     centre_circle = plt.Circle(
         (0, 0), 0.75, color='black', fc='white', linewidth=1.25)
@@ -195,22 +183,25 @@ def main():
     # CreateMap(source_path + "LocationData.csv", destination_path + "JobCountMap")
 
     HorizontalBarChart(source_path + "CloudData.csv",
-                       destination_path + "CloudChart", 'blue')
+                       destination_path + "CloudChart", 'blue', "Cloud platforms")
     HorizontalBarChart(source_path + "DatabaseData.csv",
-                       destination_path + "DatabaseChart", 'green')
+                       destination_path + "DatabaseChart", 'green', "Databases")
     HorizontalBarChart(source_path + "LanguageData.csv",
-                       destination_path + "LanguageChart", 'orange')
+                       destination_path + "LanguageChart", 'orange', "Programming languages")
     HorizontalBarChart(source_path + "LibrariesData.csv",
-                       destination_path + "LibrariesChart", 'black')
+                       destination_path + "LibrariesChart", 'black', "Libraries")
     HorizontalBarChart(source_path + "OSData.csv",
-                       destination_path + "OSChart", 'red')
+                       destination_path + "OSChart", 'red', "Operating systems")
     HorizontalBarChart(source_path + "ToolsData.csv",
-                       destination_path + "ToolsChart", 'purple')
+                       destination_path + "ToolsChart", 'purple', "Tools")
     HorizontalBarChart(source_path + "WebData.csv",
-                       destination_path + "WebChart", 'skyblue')
+                       destination_path + "WebChart", 'skyblue', "Web frameworks")
+
+    HorizontalLollipopChart(source_path + "WebData.csv",
+                            destination_path + "WebLollipopChart", "Web frameworks")
 
     # add explanation for percentage in donut chart
-    # donutChart(source_path + "OSData.csv", destination_path + "OSChart")
+    donutChart(source_path + "OSData.csv", destination_path + "OSChart")
 
     # HorizontalBarChart(source_path + "", destination_path + "OSData.csv", "")
 
@@ -219,5 +210,9 @@ def main():
     # PieChart(source_path + "OSData.csv", destination_path + "")
 
 
-# main()
-# PieChart('FilteredData/OSData.csv', '', 'red')
+main()
+source_path = 'FilteredData/'  # folder containing filtered data
+destination_path = 'Charts/'  # folder to store charts
+
+
+# PieChart('FilteredData/OSData.csv', 'Charts/test.pdf')
