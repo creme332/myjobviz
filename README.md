@@ -88,10 +88,6 @@ Tutorial on web scraping to CSV file : https://www.youtube.com/watch?v=RvCBzhhyd
 
 map of salary : https://towardsdatascience.com/a-complete-guide-to-an-interactive-geographical-map-using-python-f4c5197e23e0
 
-lollipop chart :
-
-Source of geojson file for Mauritius districts : https://data.govmu.org/dkan/?q=dataset/mauritius-districts
-
 Tutorial on how to create chloropeth map : https://www.youtube.com/watch?v=aJmaw3QKMvk&ab_channel=IndianPythonista
 
 # 🔮 Future work <a name="future"></a> # 
