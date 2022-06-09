@@ -31,12 +31,16 @@ Inspired by the Stack Overflow Developer Survey, the goal of this survey is to a
 #  ⚒️ Methodology  <a name="Methodology"></a> #
 
 ## 📝Data collection  <a name="collection"></a> ##
-In the span of $x$ months (1 May 2022 - 1 July 2022), $k$ unique IT job listings were scraped from [myjob.mu](https://www.myjob.mu/) using the BeautifulSoup library. 
-![image](https://user-images.githubusercontent.com/65414576/167564657-213f37f0-bf25-4dbc-9ea0-21e39062e2bb.png)
+In the span of $2$ months (1 May 2022 - 1 July 2022), $600$ unique IT job listings were scraped from [myjob.mu](https://www.myjob.mu/) using the BeautifulSoup library. 
 
 ## 🔎 Data analysis <a name="analysis"></a> ##
-Relevant data (salary, languages, databases, ...) from each job description was extracted and saved to new files.
-`MatlPlotLib` and `Plotly` were then used to visualise the filtered data.
+Specific data (programming languages, databases, ...) from each job description was extracted.
+
+## 📈 Data visualisation ##
+`MatlPlotLib` was used to visualise the filtered data.
+
+`Plotly` was used to create the map.
+
 
 # 📊 Results <a name="results"></a> #
 > ⚠️ **Interpret the following charts at your own discretion, keeping in mind the sample size and methodology used.**
@@ -57,13 +61,12 @@ Relevant data (salary, languages, databases, ...) from each job description was 
 ## Other tools <a name="tools"></a> ##
 ![image](https://user-images.githubusercontent.com/65414576/167336555-67b0ccff-e8e6-4e6c-af54-5f43b6916167.png)
 
-## Salary vs Location <a name="salary"></a> ##
-> ⚠️ **Only m% of job listings disclosed the salary**
+## Job count  ##
 
 ![image](https://user-images.githubusercontent.com/65414576/168541351-38da4b28-205c-4297-abab-eae8191e1513.png)
 
-![image](https://user-images.githubusercontent.com/65414576/168006478-99248f68-6692-4533-8991-f8f6730899bc.png)
-
+## Salary <a name="salary"></a> ##
+> ⚠️ **Only m% of job listings disclosed the salary**
 
 # 🎊 Conclusion <a name="conclusion"></a> # 
 Some technologies (SQL, Git, ...) are without any doubt highly in demand while other technologies (AWS, Clojure, Cloud technologies ...) are yet to take off in Mauritius. 
