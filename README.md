@@ -1,17 +1,11 @@
-![some description](/Charts/test.pdf "some discription")
-![rip](/Charts/test.pdf)
-
 # To-Do #
 - [ ] - Make images the same size on README
+- [ ] Idea : Manually merge several charts in 1 image. Keep pdf version in folder.
 - [ ] For all barcharts, keep distance between bars constant
 - [ ] Add pie chart for job types
 - [ ] Add word cloud
 - [ ] Publish results on GitHub pages
 - [ ] Search each language/framework on site to see if spelling matches expected spelling
-- [x] Convert opening and closing date in csv file to US date format then sort.
-- [x] Barchart for each category is a unique colour. (orange for programming lang, blue for database,...)
-
-
 
 
 # Table of contents #
@@ -37,11 +31,8 @@ Inspired by the Stack Overflow Developer Survey, the goal of this survey is to a
 #  ⚒️ Methodology  <a name="Methodology"></a> #
 
 ## 📝Data collection  <a name="collection"></a> ##
-In the span of $x$ months (1 May 2022 - 1 July 2022), $k$ unique IT job listings were scraped from [myjob.mu](https://www.myjob.mu/) using the BeautifulSoup library. These job listings were then saved in `data.csv` file. 
+In the span of $x$ months (1 May 2022 - 1 July 2022), $k$ unique IT job listings were scraped from [myjob.mu](https://www.myjob.mu/) using the BeautifulSoup library. 
 ![image](https://user-images.githubusercontent.com/65414576/167564657-213f37f0-bf25-4dbc-9ea0-21e39062e2bb.png)
-> ⚠️The URLs in the csv file may no longer work as myjob.mu takes down a job post after a certain time. 
-
-> ⚠️The job URL was used as a primary key.
 
 ## 🔎 Data analysis <a name="analysis"></a> ##
 Relevant data (salary, languages, databases, ...) from each job description was extracted and saved to new files.
@@ -53,10 +44,6 @@ Relevant data (salary, languages, databases, ...) from each job description was 
 
 ## Programming languages <a name="prog"></a> ## 
 <img src="https://user-images.githubusercontent.com/65414576/167571045-bccf3082-e958-4043-ac14-c3d4c5166c5f.png" width="600" height ="400">
-
-![image](https://user-images.githubusercontent.com/65414576/167336656-88849cb5-5529-494f-b495-a66a19e49bda.png)
-
-![image](https://user-images.githubusercontent.com/65414576/167250513-31366d46-050b-40a8-ad3f-eadee5b45796.png)
 
 ## Web frameworks <a name="web"></a> ## 
 ![image](https://user-images.githubusercontent.com/65414576/167336522-59ef6c94-a46e-4dad-b8d9-e64e27f72d8c.png)
@@ -75,8 +62,6 @@ Relevant data (salary, languages, databases, ...) from each job description was 
 
 ![image](https://user-images.githubusercontent.com/65414576/168541351-38da4b28-205c-4297-abab-eae8191e1513.png)
 
-
-![image](https://user-images.githubusercontent.com/65414576/168006545-46c48e67-9e05-4945-8299-bb6b8e2f1e59.png)
 ![image](https://user-images.githubusercontent.com/65414576/168006478-99248f68-6692-4533-8991-f8f6730899bc.png)
 
 
@@ -92,3 +77,4 @@ Tutorial on how to create chloropeth map : https://www.youtube.com/watch?v=aJmaw
 
 # 🔮 Future work <a name="future"></a> # 
 - Collect data from more job websites
+- Analyse how data varies with time
