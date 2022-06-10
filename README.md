@@ -20,7 +20,7 @@ Inspired by the Stack Overflow Developer Survey, the goal of this scraper is to 
 #  ⚒️ Methodology  <a name="Methodology"></a> #
 
 ## 📝Data collection  <a name="collection"></a> ##
-In the span of $2$ months (1 May 2022 - 1 July 2022), $600$ unique IT job listings were scraped from [myjob.mu](https://www.myjob.mu/) using the BeautifulSoup library. 
+In the span of $2$ months (1 May 2022 - 1 July 2022), $600$ unique IT job listings were scraped from [myjob.mu](https://www.myjob.mu/) using Python and BeautifulSoup library. 
 The result was saved to a CSV file.
 
 More info here : 
@@ -58,22 +58,23 @@ More info here :
 ![]()
 ## Operating systems <a name=""></a> ##
 ![](Charts/OSChart.png)
+> ⚠️ **The percentage represents the percentage of jobs mentioning any operating system $\ne$ percentage of all jobs**
 
 ## Cloud platforms <a name=""></a> ##
 ![](Charts/CloudChart.png)
+> ⚠️ **The percentage represents the percentage of jobs mentioning any cloud platform $\ne$ percentage of all jobs**
 
 ## Salary <a name="salary"></a> ##
-> ⚠️ **Only m% of job listings disclosed the salary**
-
 ![](Charts/SalaryChart.png)
+> ⚠️ **Only around 100 job listings disclosed the salary**
 
 # 🌠Resources used  <a name="resources"></a> #
 
-Tutorial on web scraping to CSV file : https://www.youtube.com/watch?v=RvCBzhhydNk&ab_channel=Pythonology
+[Tutorial on web scraping to CSV file](https://www.youtube.com/watch?v=RvCBzhhydNk&ab_channel=Pythonology)
 
-map of salary : https://towardsdatascience.com/a-complete-guide-to-an-interactive-geographical-map-using-python-f4c5197e23e0
+[Interactive map](https://towardsdatascience.com/a-complete-guide-to-an-interactive-geographical-map-using-python-f4c5197e23e0) 
 
-Tutorial on how to create chloropeth map : https://www.youtube.com/watch?v=aJmaw3QKMvk&ab_channel=IndianPythonista
+[Tutorial on how to create chloropeth map](https://www.youtube.com/watch?v=aJmaw3QKMvk&ab_channel=IndianPythonista)
 
 # 🔮 Future work <a name="future"></a> # 
 - Collect data from more job websites
