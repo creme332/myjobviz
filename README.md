@@ -34,7 +34,7 @@ Online interactive version : https://creme332.github.io/InteractiveMap/
 
 [Interactive map](https://towardsdatascience.com/a-complete-guide-to-an-interactive-geographical-map-using-python-f4c5197e23e0) 
 
-[Tutorial on how to create chloropeth map](https://www.youtube.com/watch?v=aJmaw3QKMvk&ab_channel=IndianPythonista)
+[Tutorial on how to create choropleth map](https://www.youtube.com/watch?v=aJmaw3QKMvk&ab_channel=IndianPythonista)
 
 # 🔮 Future work <a name="future"></a> # 
 - Collect data from more job websites
