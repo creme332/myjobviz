@@ -13,13 +13,14 @@ In the span of $2$ months (1 May 2022 - 1 July 2022), $600$ unique **IT** job li
 
 ![](Charts/DatabaseChart.png)
 ![](Charts/LibrariesChart.png)
+![](Charts/ToolsChart.png)
 
 ![](Charts/OSChart.png)
 ![](Charts/CloudChart.png)
-
-![](Charts/ToolsChart.png)
-![](Charts/SalaryChart.png)
 > ⚠️ **The percentage represents the percentage of jobs mentioning a particular criteria as opposed to the percentage of all jobs**
+
+
+![](Charts/SalaryChart.png)
 
 > ⚠️ **Only around 100 job listings disclosed the salary**
 
