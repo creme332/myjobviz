@@ -53,29 +53,31 @@ More info here :
 > 
 
 ## Programming languages <a name="prog"></a> ## 
-<img src="https://user-images.githubusercontent.com/65414576/167571045-bccf3082-e958-4043-ac14-c3d4c5166c5f.png" width="600" height ="400">
+![](Charts/LanguageChart.png)
 
 ## Web frameworks <a name="web"></a> ## 
-![image](https://user-images.githubusercontent.com/65414576/167336522-59ef6c94-a46e-4dad-b8d9-e64e27f72d8c.png)
+![](Charts/WebChart.png)
 
 ## Databases <a name="databases"></a> ##
-![image](https://user-images.githubusercontent.com/65414576/167336593-e78bcf0d-8cb0-4745-8ca9-88069add29ba.png)
+![](Charts/DatabaseChart.png)
 
 ## Other libraries <a name="libraries"></a> ##
-![image](https://user-images.githubusercontent.com/65414576/167336578-879767b2-c77f-4df4-8589-db4cf9cafb96.png)
-
+![](Charts/LibrariesChart.png)
 ## Other tools <a name="tools"></a> ##
-![image](https://user-images.githubusercontent.com/65414576/167336555-67b0ccff-e8e6-4e6c-af54-5f43b6916167.png)
-
+![](Charts/ToolsChart.png)
 ## Job count  ##
+![]()
+## Operating systems <a name=""></a> ##
+![](Charts/OSChart.png)
 
-![image](https://user-images.githubusercontent.com/65414576/168541351-38da4b28-205c-4297-abab-eae8191e1513.png)
+## Cloud platforms <a name=""></a> ##
+![](Charts/CloudChart.png)
 
 ## Salary <a name="salary"></a> ##
 > ⚠️ **Only m% of job listings disclosed the salary**
 
-# 🎊 Conclusion <a name="conclusion"></a> # 
-Some technologies (SQL, Git, ...) are without any doubt highly in demand while other technologies (AWS, Clojure, Cloud technologies ...) are yet to take off in Mauritius. 
+![](Charts/SalaryChart.png)
+
 # 🌠Resources used  <a name="resources"></a> #
 
 Tutorial on web scraping to CSV file : https://www.youtube.com/watch?v=RvCBzhhydNk&ab_channel=Pythonology
