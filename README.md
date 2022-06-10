@@ -24,17 +24,23 @@
 6. [Conclusion](#conclusion)
 7. [Future work](#future) 
 
-# 🇲🇺 Job-Portal-Web-Scraper 2022  <a name="intro"></a> #
+# 🇲🇺 Job Portal Web Scraper + Visualiser  <a name="intro"></a> #
 
-Inspired by the Stack Overflow Developer Survey, the goal of this survey is to analyse the trends in technologies in Mauritius.
+Inspired by the Stack Overflow Developer Survey, the goal of this scraper is to analyse the trends in technologies in Mauritius.
 
 #  ⚒️ Methodology  <a name="Methodology"></a> #
 
 ## 📝Data collection  <a name="collection"></a> ##
 In the span of $2$ months (1 May 2022 - 1 July 2022), $600$ unique IT job listings were scraped from [myjob.mu](https://www.myjob.mu/) using the BeautifulSoup library. 
+The result was saved to a CSV file.
+
+More info here : 
 
 ## 🔎 Data analysis <a name="analysis"></a> ##
-Specific data (programming languages, databases, ...) from each job description was extracted.
+Specific data (programming languages, databases, ...) from each job description were extracted.
+
+More info here : 
+
 
 ## 📈 Data visualisation ##
 `MatlPlotLib` was used to visualise the filtered data.
