@@ -15,3 +15,11 @@ Plotly : 5.8.0
 
 > ⚠️For the time being (May 2022), myjob.mu does not have any policy against web scraping. This may change in the future so use `DataMiner.py` at your own risk.
 
+### Improving quality of saved images ###
+
+In `DataAnalyser.py`, when saving charts, change the file extension to .pdf to save higher quality images.
+
+```python
+    HorizontalBarChart(source_path + "DatabaseData.csv",
+                       destination_path + "DatabaseChart", '#5FE916', "Databases.pdf") # pdf file extension
+```
