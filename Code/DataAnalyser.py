@@ -10,6 +10,8 @@ import pandas as pd
 import re
 
 data_source_filename = 'RawScrapedData.csv'  # raw data
+
+# change date format to allow sorting of dates
 jobs_df = pd.read_csv(data_source_filename, header=0,
                       parse_dates=['date_posted', 'closing date'],
                       dayfirst=True)
@@ -275,9 +277,15 @@ def AnalyseOtherTools(file_path):
                  encoding='utf-8-sig', index=False)
 
 
-def AnalyseSalary():
+def AnalyseSalary(destination_filename):
+    df = jobs_df.groupby(["salary"], as_index=False).size()
 
-    print(jobs_df.groupby('salary').size())
+    df = df[df['salary'] != 'Not disclosed']
+    df = df[df['salary'] != 'Negotiable']
+    df = df[df['salary'] != 'See description']
+
+    df.to_csv(destination_filename, sep='\t',
+              encoding='utf-8-sig', index=False)
 
 
 def AnalyseLocation(destination_filename):
@@ -308,6 +316,7 @@ def main():
     AnalyseWebFrameworks(path + 'WebData.csv')
     AnalyseOtherTools(path)  # will save multiple files
     AnalyseLocation(path + 'LocationData.csv')
+    AnalyseSalary(path + 'SalaryData.csv')
 
 
 main()
