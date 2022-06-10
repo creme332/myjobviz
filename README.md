@@ -62,7 +62,9 @@ Specific data (programming languages, databases, ...) from each job description 
 > ⚠️ **Only around 100 job listings disclosed the salary**
 
 ## Job count  ##
-![](Charts/choropleth map.png)
+![](Charts/choroplethmap.png)
+
+Online interactive version : (coming soon)
 
 # 🌠Resources used  <a name="resources"></a> #
 
