@@ -48,8 +48,7 @@ Specific data (programming languages, databases, ...) from each job description 
 ![](Charts/LibrariesChart.png)
 ## Other tools <a name="tools"></a> ##
 ![](Charts/ToolsChart.png)
-## Job count  ##
-![]()
+
 ## Operating systems <a name=""></a> ##
 ![](Charts/OSChart.png)
 > ⚠️ **The percentage represents the percentage of jobs mentioning any operating system $\ne$ percentage of all jobs**
@@ -61,6 +60,9 @@ Specific data (programming languages, databases, ...) from each job description 
 ## Salary <a name="salary"></a> ##
 ![](Charts/SalaryChart.png)
 > ⚠️ **Only around 100 job listings disclosed the salary**
+
+## Job count  ##
+![](Charts/choropleth map.png)
 
 # 🌠Resources used  <a name="resources"></a> #
 
