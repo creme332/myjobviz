@@ -35,12 +35,6 @@ def HorizontalLollipopChart(source_filename, destination_filename, title):
 
     column_headings = df.columns
 
-    # my_labels = df[column_headings[0]].tolist()
-    my_data = df[column_headings[1]].tolist()
-
-    # when using data from dictionary
-    # df = pd.DataFrame(list(dictionary.items()), columns=['Name', 'Value'])
-
     # Reorder it based on the values:
     ordered_df = df.sort_values(by=column_headings[1])  # VARIABLE
     my_range = range(1, len(df.index)+1)
@@ -53,17 +47,12 @@ def HorizontalLollipopChart(source_filename, destination_filename, title):
     plt.yticks(my_range, ordered_df[column_headings[0]])
     plt.title(title, weight='bold')
 
-    # plt.savefig(destination_filename, bbox_inches='tight')
+    plt.savefig(destination_filename, bbox_inches='tight')
     plt.show()
     plt.close()
 
 
 def HorizontalBarChart(source_filename, destination_filename, my_color, title):
-    # =============================================================================
-    #     for key in list(dictionary):
-    #         if dictionary[key] == 0:
-    #             dictionary.pop(key, None)
-    # =============================================================================
     df = pd.read_csv(source_filename, sep='\t')
     df = df.sort_values(by=['Frequency'])
 
@@ -75,76 +64,66 @@ def HorizontalBarChart(source_filename, destination_filename, my_color, title):
     my_labels = df[column_headings[0]].tolist()
     my_data = df[column_headings[1]].tolist()
 
-# =============================================================================
-#     # when reading from dictionary
-#     my_labels = list(dictionary.keys())
-#     my_data = list(dictionary.values())
-# =============================================================================
-
-    # colors = ['red', 'yellow', 'green', 'blue', 'orange', 'black']
-    cmap = plt.cm.tab10
-    # colors = cmap(np.arange(len(my_labels)) % cmap.N)
     plt.style.use('ggplot')
 
     plt.barh(my_labels, my_data, color=my_color)
     plt.title(title, weight='bold')
     # plt.ylabel(column_headings[0])  # VARIABLE
     plt.xlabel(column_headings[1])
-    # plt.savefig(destination_filename, bbox_inches='tight')
+
+    plt.savefig(destination_filename, bbox_inches='tight')
 
     plt.show()
     plt.close()
 
 
-def PieChart(source_filename, destination_filename):
-    # =============================================================================
-    #     # filter out languages which have not been used at all
-    #     for lang in list(languages):
-    #         if languages[lang] == 0:
-    #             languages.pop(lang, None)
-    #
-    #     languages = sorted(languages.items(), key=lambda x: x[1], reverse=True)
-    #     x, y = zip(*languages)  # unpack a list of pairs into two tuples
-    # =============================================================================
+def PieChart(source_filename, destination_filename, title):
 
     df = pd.read_csv(source_filename, sep='\t')
     column_headings = df.columns
 
     my_labels = df[column_headings[0]].tolist()
     my_data = df[column_headings[1]].tolist()
-    # create a figure and set different background
     fig = plt.figure()
-    # fig.patch.set_facecolor('black')
 
     # Change color of text
     plt.rcParams['text.color'] = 'black'
 
-    # Create a circle at the center of the plot
-    my_circle = plt.Circle((0, 0), 0.7, color='white')
+    # colors = ['#FFC1CF', '#E8FFB7', '#E2A0FF', '#C4F5FC', '#B7FFD8', '#36a2eb']
+    colors = ['#B243B6', '#F363B1', '#FDBF3B', '#F7F570', '#93EE81', '#47D4C4']
 
-    # Pieplot + circle on it
-    plt.pie(my_data, labels=my_labels, shadow=True, autopct='%1.1f%%')
-    p = plt.gcf()
-    p.gca().add_artist(my_circle)
-    plt.savefig(destination_filename)
+    explode = (0.1, 0.1, 0.1, 0.1, 0.1, 0.1)  # explode a slice if required.
+    # len(explode) = number of rows in df. Then add explode = explode below
 
-    plt.legend()
+    plt.pie(my_data, shadow=True,
+            autopct='%1.1f%%',
+            explode=explode,
+            wedgeprops={"edgecolor": "black",
+                        'linewidth': 1,
+                        'antialiased': True},
+            colors=colors
+
+            )
+
+    plt.title(title, weight='bold')
+
+    plt.legend(my_labels, loc='upper left',
+               fontsize=8, bbox_to_anchor=(1.04, 1), title="Rupees")
+    plt.savefig(destination_filename, bbox_inches='tight')
+
     plt.show()
     plt.close()
 
 
 def donutChart(source_filename, destination_path, title):
-    # https://medium.com/@krishnakummar/donut-chart-with-python-matplotlib-d411033c960b
     df = pd.read_csv(source_filename, sep='\t')
 
-# =============================================================================
-#     # shorten long names for CLoud
-#     df.loc[df.CloudPlatforms == 'Google Cloud Platform',
-#            'CloudPlatforms'] = 'Google Cloud'
-#     print(df)
-# =============================================================================
     # get rid of data with 0 frequency
     df = df[df['Frequency'] != 0]
+
+    # shorten long names for cloud platforms
+    # df.loc[df.CloudPlatforms == 'Google Cloud Platform',
+    #       'CloudPlatforms'] = 'Google Cloud'
 
     column_headings = df.columns
     my_labels = df[column_headings[0]].tolist()
@@ -163,6 +142,7 @@ def donutChart(source_filename, destination_path, title):
                         'antialiased': True}
             )
     plt.title(title, weight='bold')
+
     # draw a circle at the center of pie to make it look like a donut
     centre_circle = plt.Circle(
         (0, 0), 0.65, color='black', fc='white', linewidth=1.0)
@@ -174,14 +154,12 @@ def donutChart(source_filename, destination_path, title):
     plt.legend(my_labels, loc="upper right", fontsize=10,
                bbox_transform=plt.gcf().transFigure)
     plt.subplots_adjust(left=0.0, bottom=0.1, right=0.95)
+    plt.savefig(destination_path, bbox_inches='tight')
 
     plt.show()
 
 
 def CreateMap(source_path, destination_path):
-
-    # PROBLEM WITH LOCATION RIVIEERE DU REMPART - showing SMALL ISLANDS
-    # ADD animations then deploy on github
 
     districts = json.load(open("mauritius-districts-geojson.json", 'r'))
     df = pd.read_csv(source_path, sep='\t')
@@ -225,7 +203,7 @@ def CreateMap(source_path, destination_path):
         "choropleth-map-plotly-python.html")
     # fig.write_image(destination_path + ".pdf")  # .svg or .pdf
 
-    fig.show()
+    # fig.show()
 
 
 def main():
@@ -256,8 +234,10 @@ def main():
     donutChart(source_path + "CloudData.csv",
                destination_path + "CloudChart", "Cloud platforms")
 
+    PieChart(source_path + "SalaryData.csv",
+             destination_path + "SalaryChart", "Salary")
+
 
 main()
 source_path = 'FilteredData/'  # folder containing filtered data
 destination_path = 'Charts/'  # folder to store charts
-# CreateMap(source_path + "LocationData.csv", destination_path + "JobCountMap")
