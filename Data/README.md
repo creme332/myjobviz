@@ -1,8 +1,9 @@
-## Scraped data ##
-![image](https://user-images.githubusercontent.com/65414576/172871961-5749afd3-bfa2-48bf-99ca-3519074bc59b.png)
+## Structure of scraped data ##
 ```
 Columns = ['job_title', 'date_posted', 'closing date', 'URL', 'location', 'employment_type', 'company', 'salary', 'job_details']
 ```
+![image](https://user-images.githubusercontent.com/65414576/172871961-5749afd3-bfa2-48bf-99ca-3519074bc59b.png)
+
 
 #### Date format : `DD/MM/YY` ####
 #### File format : `csv` ####
