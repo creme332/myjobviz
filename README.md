@@ -26,7 +26,7 @@ In the span of $2$ months (1 May 2022 - 1 July 2022), $600$ unique **IT** job li
 
 ![](Charts/choroplethmap.png)
 
-Online interactive version : (coming soon)
+Online interactive version : https://creme332.github.io/InteractiveMap/
 
 # 🌠Resources used  <a name="resources"></a> #
 
