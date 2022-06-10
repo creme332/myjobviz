@@ -124,7 +124,7 @@ def AnalyseWebFrameworks(destination_filename):
                             "ASP.NET": 0,
                             "FastAPI": 0,
                             "React": 0,
-                            "Vue.js": 0,
+                            "Vue.js": 0,  # or Vue if  english job description
                             "Express": 0,
                             "Spring": 0,
                             "Ruby on Rails": 0,
@@ -138,13 +138,17 @@ def AnalyseWebFrameworks(destination_filename):
                             "Angular.js": 0,
                             "Angular": 0
                             }
-    special_web_frameworks = ["Vue.js",
-                              "Ruby on Rails", "ASP.NET"]
+    special_web_frameworks = ["Ruby on Rails", "ASP.NET"]
 
     for row in range(len(jobs_df)):
-        jobs_details = jobs_df.loc[row, "job_details"].lower()  # lower case
+        jobs_details = jobs_df.loc[row, "job_details"]
 
-        for wb in special_web_frameworks:
+        if "Vue" in jobs_details:
+            web_frameworks_count["Vue.js"] += 1
+
+        jobs_details = jobs_details.lower()
+
+        for wb in special_web_frameworks:  # substring method
             if wb.lower() in jobs_details:
                 web_frameworks_count[wb] += 1
 
@@ -319,4 +323,4 @@ def main():
     AnalyseSalary(path + 'SalaryData.csv')
 
 
-main()
+# main()
