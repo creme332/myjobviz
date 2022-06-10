@@ -1,6 +1,6 @@
-# 🇲🇺 Job Portal Web Scraper & Visualiser  <a name="intro"></a> #
+# 🇲🇺 Job Portal Web Scraper & Visualiser 📊 <a name="intro"></a> #
 
-Inspired by the Stack Overflow Developer Survey, the goal of this scraper is to analyse the trend in technologies in Mauritius.
+Purpose : Analyse the trend in technologies in Mauritius.
 
 In the span of $2$ months (1 May 2022 - 1 July 2022), $600$ unique **IT** job listings were scraped from [myjob.mu](https://www.myjob.mu/) using Python and BeautifulSoup library. The result was saved to a CSV file. Specific data (programming languages, databases, ...) from each job description were extracted. `MatlPlotLib` and `Plotly` were used to visualise the filtered data.
 
