@@ -1,13 +1,3 @@
-# To-Do #
-- [ ] - Make images the same size on README
-- [ ] Idea : Manually merge several charts in 1 image. Keep pdf version in folder.
-- [ ] For all barcharts, keep distance between bars constant
-- [ ] Add pie chart for job types
-- [ ] Add word cloud
-- [ ] Publish results on GitHub pages
-- [ ] Search each language/framework on site to see if spelling matches expected spelling
-
-
 # Table of contents #
 1. [Introduction](#intro)
 2. [Methodology](#Methodology)
@@ -21,8 +11,7 @@
    5. [Other tools](#tools)
    6. [Salary](#salary)
 5. [Resources used](#resources)
-6. [Conclusion](#conclusion)
-7. [Future work](#future) 
+6. [Future work](#future) 
 
 # 🇲🇺 Job Portal Web Scraper + Visualiser  <a name="intro"></a> #
 
@@ -89,3 +78,5 @@ Tutorial on how to create chloropeth map : https://www.youtube.com/watch?v=aJmaw
 # 🔮 Future work <a name="future"></a> # 
 - Collect data from more job websites
 - Analyse how data varies with time
+- Deploy interactive map on GitHub Pages
+- 
