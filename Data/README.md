@@ -16,43 +16,12 @@ Columns = ['job_title', 'date_posted', 'closing date', 'URL', 'location', 'emplo
 
 > ⚠️ `job_title` and `job_details` can be in French or English. 
 
-## Filtered data ##
+## Structure of GeoJson file ##
+Sample :
+```
+{'id_0': 143, 'iso': 'MUS', 'name_0': 'Mauritius', 'id_1': 1, 'name_1': 'Agalega', 'hasc_1': 'MU.AG', 'ccn_1': 0, 'cca_1': None, 'type_1': 'Region', 'engtype_1': 'Region', 'nl_name_1': None, 'varname_1': None}
+```
 
-<details>
-  <summary>Programming languages</summary>
-  
-  ```
-C++	
-Java	
-Python	
-Javascript	
-PHP	
-HTML	
-CSS	
-Clojure	
-C#	
-Bash	
-Shell	
-PowerShell	
-Kotlin	
-Rust	
-Typescript	
-SQL	
-Ruby	
-Dart	
-  ```
-</details>
-
-<details>
-  <summary> Databases</summary>
-  
-  ```
-dsg
-  ```
-</details>
-
-
-## GeoJson file ##
 Source of geojson file for Mauritius districts : https://data.govmu.org/dkan/?q=dataset/mauritius-districts
 
 The original geojson file contains some spelling mistakes (Rodrigues was mispelled for example) which were corrected in my version of the geojson file.
