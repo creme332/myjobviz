@@ -37,6 +37,6 @@ Online interactive version : https://creme332.github.io/InteractiveMap/
 [Tutorial on how to create choropleth map](https://www.youtube.com/watch?v=aJmaw3QKMvk&ab_channel=IndianPythonista)
 
 # 🔮 Future work <a name="future"></a> # 
+- Collect data over a longer period
 - Collect data from more job websites
 - Analyse how data varies with time
-- Deploy interactive map on GitHub Pages
