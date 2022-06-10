@@ -14,13 +14,43 @@ Columns = ['job_title', 'date_posted', 'closing date', 'URL', 'location', 'emplo
 
 > ⚠️The job URL was used as a primary key during scraping to avoid duplicate entries.
 
+> ⚠️ `job_title` and `job_details` can be in French or English. 
+
 ## Filtered data ##
 
-Add toggle list here :
+<details>
+  <summary>Programming languages</summary>
+  
+  ```
+C++	
+Java	
+Python	
+Javascript	
+PHP	
+HTML	
+CSS	
+Clojure	
+C#	
+Bash	
+Shell	
+PowerShell	
+Kotlin	
+Rust	
+Typescript	
+SQL	
+Ruby	
+Dart	
+  ```
+</details>
 
-Programming languages 
+<details>
+  <summary> Databases</summary>
+  
+  ```
+dsg
+  ```
+</details>
 
-Databases
 
 ## GeoJson file ##
 Source of geojson file for Mauritius districts : https://data.govmu.org/dkan/?q=dataset/mauritius-districts
