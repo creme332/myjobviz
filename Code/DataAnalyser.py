@@ -184,8 +184,8 @@ def AnalyseWebFrameworks(destination_filename):
 def AnalyseOtherTools(file_path):
 
     cloud_platforms = {"AWS": 0,
-                       "Google Cloud Platform": 0,
-                       "Microsoft Azure": 0,
+                       "Google Cloud": 0,
+                       "Azure": 0,
                        "Heroku": 0,
                        "DigitalOcean": 0,
                        "Watson": 0,
@@ -324,3 +324,6 @@ def main():
 
 
 # main()
+path = 'FilteredData/'  # folder name
+
+AnalyseOtherTools(path)  # will save multiple files
