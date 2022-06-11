@@ -24,6 +24,9 @@ In the span of $1$ months (1 May 2022 - 10 June 2022), $600$ unique **IT** job l
 
 > ⚠️ **Only around 100 job listings disclosed the salary**
 
+![](Charts/WebLollipopChart.png)
+
+
 ![](Charts/choroplethmap.png)
 
 Online interactive version : https://creme332.github.io/InteractiveMap/
