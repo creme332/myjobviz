@@ -6,7 +6,7 @@ Panda version : 1.3.3
 MatPlotLib : 3.4.3
 plotly Version: 5.8.0
 Summary : Visualise data from FilteredData and save results to Charts folder.
-@author: me
+@author: creme332
 """
 
 import matplotlib.pyplot as plt
@@ -36,16 +36,15 @@ def HorizontalLollipopChart(source_filename, destination_filename, title):
     column_headings = df.columns
 
     # Reorder it based on the values:
-    ordered_df = df.sort_values(by=column_headings[1])  # VARIABLE
+    ordered_df = df.sort_values(by=column_headings[1])
     my_range = range(1, len(df.index)+1)
-    plt.style.use('fivethirtyeight')
+    plt.title(title, weight='bold')
 
     plt.hlines(y=my_range, xmin=0,
-               xmax=ordered_df[column_headings[1]])  # , color='skyblue'
-    plt.plot(ordered_df[column_headings[1]], my_range, "o")
+               xmax=ordered_df[column_headings[1]], color='#00FF2A')  # , color='skyblue'
+    plt.plot(ordered_df[column_headings[1]], my_range, "o", color='#FF00D5')
 
     plt.yticks(my_range, ordered_df[column_headings[0]])
-    plt.title(title, weight='bold')
 
     plt.savefig(destination_filename, bbox_inches='tight')
     plt.show()
@@ -120,10 +119,6 @@ def donutChart(source_filename, destination_path, title):
 
     # get rid of data with 0 frequency
     df = df[df['Frequency'] != 0]
-
-    # shorten long names for cloud platforms
-    # df.loc[df.CloudPlatforms == 'Google Cloud Platform',
-    #       'CloudPlatforms'] = 'Google Cloud'
 
     column_headings = df.columns
     my_labels = df[column_headings[0]].tolist()
@@ -225,10 +220,9 @@ def main():
     HorizontalBarChart(source_path + "WebData.csv",
                        destination_path + "WebChart", '#F00F5C', "Web frameworks")
 
-    # HorizontalLollipopChart(source_path + "WebData.csv",
-    # destination_path + "WebLollipopChart", "Web frameworks")
+    HorizontalLollipopChart(source_path + "WebData.csv",
+                            destination_path + "WebLollipopChart", "Web frameworks")
 
-    # add explanation for percentage in donut chart
     donutChart(source_path + "OSData.csv", destination_path +
                "OSChart", "Operating systems")
     donutChart(source_path + "CloudData.csv",
@@ -236,8 +230,4 @@ def main():
 
     PieChart(source_path + "SalaryData.csv",
              destination_path + "SalaryChart", "Salary")
-
-
 main()
-source_path = 'FilteredData/'  # folder containing filtered data
-destination_path = 'Charts/'  # folder to store charts
