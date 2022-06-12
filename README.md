@@ -1,9 +1,5 @@
 # Mauritius Job Survey 📊 <a name="intro"></a> #
-<img src="https://img.shields.io/badge/Python-3.9.7-orange">
-<img src = "https://img.shields.io/badge/Panda-1.3.3-blue">
-<img src = "https://img.shields.io/badge/BeautifulSoup-4.10.0-brightgreen">
-<img src = "https://img.shields.io/badge/MatPlotLib-3.4.3-yellowgreen">
-<img src = "https://img.shields.io/badge/Plotly-5.8.0-lightgrey">
+<img src="https://img.shields.io/badge/Python-3.9.7-orange"> <img src = "https://img.shields.io/badge/Panda-1.3.3-blue"> <img src = "https://img.shields.io/badge/BeautifulSoup-4.10.0-brightgreen"> <img src = "https://img.shields.io/badge/MatPlotLib-3.4.3-yellowgreen"> <img src = "https://img.shields.io/badge/Plotly-5.8.0-lightgrey">
 
 Purpose : Analyse statistics of IT jobs in Mauritius.
 
