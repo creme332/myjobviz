@@ -6,7 +6,7 @@ Purpose : Analyse statistics of IT jobs in Mauritius.
 #  Methodology #
 In the span of $1$ months (1 May 2022 - 10 June 2022), $600$ unique **IT** job listings were scraped from [myjob.mu](https://www.myjob.mu/) using Python and BeautifulSoup library. The result was saved to a CSV file. Specific data (programming languages, databases, ...) from each job description were extracted. `MatlPlotLib` and `Plotly` were used to visualise the filtered data.
 
-
+# Results #
 > ⚠️ **Interpret the following result at your own discretion, keeping in mind the sample size and methodology used.**
 
 ## Job count per district ##

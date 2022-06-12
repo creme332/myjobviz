@@ -324,6 +324,3 @@ def main():
 
 
 # main()
-path = 'FilteredData/'  # folder name
-
-AnalyseOtherTools(path)  # will save multiple files
