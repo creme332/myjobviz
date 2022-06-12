@@ -15,14 +15,15 @@ Plotly : 5.8.0
 
 > ⚠️For the time being (May 2022), myjob.mu does not have any policy against web scraping. This may change in the future so use `DataMiner.py` at your own risk.
 
-## Data visualiser ##
+> ⚠️`DataMiner.py` may not work if myjob.mu changes the format its website.
+## DataVisualiser.py ##
 
-Current data visualisation techniques :
+Available data visualisation techniques :
 - Horizontal barchart
 - Pie chart
 - Donut chart
 - Choropleth map
-- Lollipop chart (not used yet)
+- Lollipop chart 
 ### Improving quality of saved images ###
 
 In `DataAnalyser.py`, when saving charts, change the file extension to .pdf to save higher quality images.
