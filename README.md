@@ -43,7 +43,9 @@ In the span of $1$ months (1 May 2022 - 10 June 2022), $600$ unique **IT** job l
 [Tutorial on how to create choropleth map](https://www.youtube.com/watch?v=aJmaw3QKMvk&ab_channel=IndianPythonista)
 
 # 🔮 Future work <a name="future"></a> # 
-- Collect data over a longer period
-- Create a GitHub workflow to automate data collection process
-- Collect data from more job websites
-- Analyse how data varies with time
+- [ ]  Collect data over a longer period
+- [ ] Add ratelimit for API calls
+- [ ] Automate data collection process
+- [ ] Collect data from more job websites
+- [ ] Add timeseries data viz
+- [ ] Display results on website
