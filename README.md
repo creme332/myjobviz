@@ -11,7 +11,7 @@ In the span of $1$ months (1 May 2022 - 10 June 2022), $600$ unique **IT** job l
 
 ## Job count per district ##
 ![](Charts/choroplethmap.png)
-*[View interactive map](https://creme332.github.io/InteractiveMap/)* 
+*[View interactive map](https://creme332.github.io/interactive/mauritius/)* 
 
 ## Technologies ##
 ![](Charts/LanguageChart.png)
