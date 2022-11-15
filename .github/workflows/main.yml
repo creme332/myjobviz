@@ -1,0 +1,45 @@
+name: check for new jobs
+
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */12 * * *' # Every 12 hours
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: checkout repo content
+        uses: actions/checkout@v3
+
+      # https://github.com/actions/setup-python#caching-packages-dependencies
+      - name: setup python with pip cache
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9' 
+          cache: 'pip' # caching pip dependencies
+
+      - name : install any new dependencies
+        run: pip install -r requirements.txt
+          
+      - name: execute py script 
+        env:
+          EMAIL_PASSCODE: ${{ secrets.EMAIL_PASSCODE }}
+          SENDER_EMAIL_ADDRESS: ${{ secrets.SENDER_EMAIL_ADDRESS }}
+        run: python src/main.py # execute main.py from src folder
+          
+      - name: commit files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          timestamp=$(date -u)
+          git diff-index --quiet HEAD || (git commit -a -m "Last update : ${timestamp}" --allow-empty)
+          
+      - name: push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main 
