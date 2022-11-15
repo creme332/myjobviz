@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+#!venv/bin/python3
+
 """
 Created on Fri May 2022
 BeautifulSoup version : 4.10.0
