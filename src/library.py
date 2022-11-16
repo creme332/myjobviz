@@ -34,6 +34,9 @@ def getAsDataframe():
     jobs = job_collection.stream()
     jobs_dict = list(map(lambda x: x.to_dict(), jobs))
     df = pd.DataFrame(jobs_dict)
+    return df
+
+
+def sortDataFrameByDate(df):
     df['date_posted'] = pd.to_datetime(df['date_posted'], dayfirst=True)
     df.sort_values('date_posted', ascending=False, inplace=True)
-    return df
