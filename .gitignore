@@ -1,2 +1,4 @@
 venv
 .vscode
+serviceAccount.json
+__pycache__ 
