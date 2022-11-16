@@ -8,7 +8,7 @@ import pandas as pd
 
 # header of csv file
 header = ['job_title', 'date_posted',
-          'closing date', 'URL',
+          'closing_date', 'URL',
           'location', 'employment_type',
           'company', 'salary', 'job_details'
           ]
@@ -106,5 +106,6 @@ def WebScraping():
     print("Seen modules = ", total_job_modules_seen)
 
 
-WebScraping()
+# WebScraping()
 new_jobs_df = pd.read_csv(filename)  # read updated csv file
+print(new_jobs_df.head().to_json())

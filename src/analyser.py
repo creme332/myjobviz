@@ -13,7 +13,7 @@ data_source_filename = 'RawScrapedData.csv'  # raw data
 
 # change date format to allow sorting of dates
 jobs_df = pd.read_csv(data_source_filename, header=0,
-                      parse_dates=['date_posted', 'closing date'],
+                      parse_dates=['date_posted', 'closing_date'],
                       dayfirst=True)
 jobs_df.drop_duplicates(
     subset=None, keep='first', inplace=False)  # drop duplicates
