@@ -1,111 +1,108 @@
 #!venv/bin/python3
+"""This module is responsible for scraping the latest IT jobs
+from myjob.mu website.
+"""
 
-# -*- coding: utf-8 -*-
 from bs4 import BeautifulSoup
-import requests
-from csv import writer
-import pandas as pd
+from requests_html import HTMLSession
+import library
+from jobClass import Job
 
-# header of csv file
-header = ['job_title', 'date_posted',
-          'closing_date', 'URL',
-          'location', 'employment_type',
-          'company', 'salary', 'job_details'
-          ]
-filename = 'data/RawScrapedData.csv'  # initially empty
 
-jobs_df = pd.read_csv(filename)  # create a dataframe from current csv file
-#jobs_df['date_posted'] = pd.to_datetime(jobs_df['date_posted'], dayfirst=True)
-#jobs_df = jobs_df.sort_values('date_posted', ascending=False, inplace=True)
+def scrapeJobModules(html_text, scraped_urls, session):
 
-pd.set_option('display.max_columns', None)
-pd.set_option('display.max_rows', None)
+    # get all job modules on current page
+    soup = BeautifulSoup(html_text, 'lxml')
+    job_modules = soup.find_all('div', class_='module job-result')
+    print(len(job_modules))
+    jobs_added_count = 0
 
-def saveScrapedData(info):
-    """Appends a new job to `RawScrapedData.csv`
+    for job_module in job_modules:
+        jobObj = Job()
 
-    Args:
-        info (List): `[job_title, date_posted, closing_date,
-        show_more_url, location, employment_type,
-        company_name, salary, job_detail_text]`
-    """
-    with open(filename, 'a', encoding='utf-8-sig', newline='') as f:
-        thewriter = writer(f)
-        thewriter.writerow(info) 
+        # get url of job page
+        jobObj.url = "http://myjob.mu" + \
+            job_module.find('a', href=True, class_='show-more')['href']
 
-def WebScraping():
+        # ignore already scraped jobs
+        if jobObj.url in scraped_urls:
+            continue
+
+        # else new job found
+        jobs_added_count += 1
+
+        jobObj.job_title = job_module.find(
+            'h2', itemprop='title').text.lower()
+
+        # extract company name
+        if (job_module.find('a', itemprop='hiringOrganization')  # may evaluate to None
+                is not None):
+            jobObj.company = job_module.find(
+                'a', itemprop='hiringOrganization').text
+
+        # extract date posted and closing date
+        jobObj.date_posted = job_module.find(
+            'li', itemprop='datePosted').text.replace('Added ', '')
+        jobObj.closing_date = job_module.find(
+            'li', class_='closed-time').text.replace('Closing ', '')
+
+        # extract job location
+        jobObj.location = job_module.find(
+            'li', itemprop='jobLocation').text
+
+        # extract salary
+        jobObj.salary = job_module.find('li', itemprop='baseSalary').text
+
+        # Extract job description from Show More option
+        r = session.get(jobObj.url)
+        show_more = BeautifulSoup(r.html.html, 'lxml')
+        jobObj.job_details = show_more.find(
+            'div', class_='job-details').text
+
+        # extract employment type
+        if (show_more.find('li', class_='employment-type') is not None):
+            jobObj.employment_type = show_more.find(
+                'li', class_='employment-type').text
+
+        # save job in database
+        print(jobObj.__dict__)
+        library.uploadJob(jobObj.__dict__)
+        return
+
+    return jobs_added_count
+
+
+def scrapeWebsite():
+    # get already scraped urls from library
+    scraped_urls = library.getAsDataframe()['url'].values
+    
     # default url for IT jobs sorted by most recent
     default_page_url = ('https://www.myjob.mu/ShowResults.aspx?'
-                    'Keywords=&Location=&Category=39&Recruiter=Company&'
-                    'SortBy=MostRecent&Page=')
+                        'Keywords=&Location=&Category=39&Recruiter=Company&'
+                        'SortBy=MostRecent&Page=')
+    # start a session
+    session = HTMLSession()
+    r = session.get(default_page_url+'1')
 
-    # look for jobs not currently in csv file and append them to csv file
-    jobs_added_count = 0
-    last_page = 7  # upperbound for last page. invalid last page will not cause any error
-    total_job_modules_seen = 0
-    
-    for page_number in range(1, last_page + 1):
-        current_url = default_page_url + str(page_number)
-        html_text = requests.get(current_url, timeout=(3.05, 6)).text
-        soup = BeautifulSoup(html_text, 'lxml')
+    # sleep for some time to wait for loading page to disappear
+    r.html.render(sleep=7)
 
-        # find all job modules on current page
-        job_modules = soup.find_all('div', class_='module job-result')
-        for job_module in job_modules:
-            total_job_modules_seen += 1
-            if(jobs_added_count > 2):
-                break
-            show_more_url = "http://myjob.mu" + \
-                job_module.find('a', href=True, class_='show-more')['href']
+    # get number of pages that must be scraped
+    soup = BeautifulSoup(r.html.html, 'lxml')
+    last_page = int(soup.find('ul', id="pagination").find_all(
+        'li')[-2].text)
 
-            if show_more_url not in jobs_df.values:  # new job found
-                jobs_added_count += 1
+    total_jobs = 0
+    # scrape pages
+    for pageNumber in range(1, last_page+1):
+        r = session.get(default_page_url+str(pageNumber))
+        r.html.render(sleep=2)
+        jobs_added_count = scrapeJobModules(r.html.html, scraped_urls, session)
+        break
+        if (jobs_added_count == 0):
+            break
+        total_jobs += jobs_added_count
 
-                job_title = job_module.find(
-                    'h2', itemprop='title').text.lower()
+    print("New jobs added = ", total_jobs)
 
-                # extract company name
-                company_name = "None"
-                if(job_module.find('a', itemprop='hiringOrganization')  # may evaluate to None
-                    is not None):
-                    company_name = job_module.find(
-                        'a', itemprop='hiringOrganization').text
-
-                # extract date posted and closing date
-                date_posted = job_module.find(
-                    'li', itemprop='datePosted').text.replace('Added ', '')
-                closing_date = job_module.find(
-                    'li', class_='closed-time').text.replace('Closing ', '')
-
-                # extract job location
-                location = job_module.find(
-                    'li', itemprop='jobLocation').text
-
-                # extract salary
-                salary = job_module.find('li', itemprop='baseSalary').text
-
-                # Extract all job details from Show More option
-                show_more_page_text = requests.get(show_more_url, timeout=(3.05, 6)).text
-                show_more = BeautifulSoup(show_more_page_text, 'lxml')
-                job_detail_text = show_more.find(
-                    'div', class_='job-details').text
-
-                # extract employment type
-                employment_type = "None"
-                if(show_more.find('li', class_='employment-type') is not None):
-                    employment_type = show_more.find(
-                        'li', class_='employment-type').text
-
-                info = [job_title,
-                        date_posted, closing_date, show_more_url, location,
-                        employment_type,
-                        company_name, salary, job_detail_text]
-                saveScrapedData(info)
-
-    print("New jobs added = ", jobs_added_count)
-    print("Seen modules = ", total_job_modules_seen)
-
-
-# WebScraping()
-new_jobs_df = pd.read_csv(filename)  # read updated csv file
-print(new_jobs_df.head().to_json())
+scrapeWebsite()
