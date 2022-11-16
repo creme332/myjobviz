@@ -2,14 +2,21 @@
 """This module is responsible for scraping the latest IT jobs
 from myjob.mu website.
 """
-
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+import time
 from bs4 import BeautifulSoup
-from requests_html import HTMLSession
 import library
 from jobClass import Job
 
+# setup scraper
+chrome_options = Options()
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
+chrome_options.add_argument('--headless')
+driver = webdriver.Chrome(options=chrome_options)
 
-def scrapeJobModules(html_text, scraped_urls, session):
+def scrapeJobModules(html_text, scraped_urls):
 
     # get all job modules on current page
     soup = BeautifulSoup(html_text, 'lxml')
@@ -54,8 +61,9 @@ def scrapeJobModules(html_text, scraped_urls, session):
         jobObj.salary = job_module.find('li', itemprop='baseSalary').text
 
         # Extract job description from Show More option
-        r = session.get(jobObj.url)
-        show_more = BeautifulSoup(r.html.html, 'lxml')
+        driver.get(jobObj.url)
+        # time.sleep(1) 
+        show_more = BeautifulSoup(driver.page_source, 'lxml')
         jobObj.job_details = show_more.find(
             'div', class_='job-details').text
 
@@ -66,8 +74,8 @@ def scrapeJobModules(html_text, scraped_urls, session):
 
         # save job in database
         print(jobObj.__dict__)
-        library.uploadJob(jobObj.__dict__)
-        return
+        # library.uploadJob(jobObj.__dict__)
+        # return
 
     return jobs_added_count
 
@@ -81,28 +89,26 @@ def scrapeWebsite():
                         'Keywords=&Location=&Category=39&Recruiter=Company&'
                         'SortBy=MostRecent&Page=')
     # start a session
-    session = HTMLSession()
-    r = session.get(default_page_url+'1')
-
-    # sleep for some time to wait for loading page to disappear
-    r.html.render(sleep=7)
+    driver.get(default_page_url+'1')
+    time.sleep(5) # any number > 3 should work fine
 
     # get number of pages that must be scraped
-    soup = BeautifulSoup(r.html.html, 'lxml')
+    soup = BeautifulSoup(driver.page_source, 'lxml')
     last_page = int(soup.find('ul', id="pagination").find_all(
         'li')[-2].text)
 
     total_jobs = 0
     # scrape pages
     for pageNumber in range(1, last_page+1):
-        r = session.get(default_page_url+str(pageNumber))
-        r.html.render(sleep=2)
-        jobs_added_count = scrapeJobModules(r.html.html, scraped_urls, session)
+        driver.get(default_page_url+str(pageNumber))
+        jobs_added_count = scrapeJobModules(driver.page_source, scraped_urls)
         break
         if (jobs_added_count == 0):
             break
         total_jobs += jobs_added_count
 
     print("New jobs added = ", total_jobs)
+    driver.quit()
 
-scrapeWebsite()
+if __name__ == "__main__":
+    scrapeWebsite()
