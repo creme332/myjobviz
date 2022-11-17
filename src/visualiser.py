@@ -17,15 +17,6 @@ import plotly.express as px
 import plotly.io as pio
 pio.renderers.default = 'browser'  # to show geojson map in web browser
 
-data_source_filename = 'RawScrapedData.csv'
-jobs_df = pd.read_csv(data_source_filename)
-jobs_df.drop_duplicates(
-    subset=None, keep='first', inplace=False)  # drop duplicates
-
-pd.set_option('display.max_columns', None)
-pd.set_option('display.max_rows', 500)
-
-
 def HorizontalLollipopChart(source_filename, destination_filename, title):
     # using data from csv file
     df = pd.read_csv(source_filename, sep='\t')
