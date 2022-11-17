@@ -1,12 +1,8 @@
-# -*- coding: utf-8 -*-
+#!venv/bin/python3
+
 """
-Created on Fri May 6 2022
-Python Version : 3.9.7
-Panda version : 1.3.3
-MatPlotLib : 3.4.3
-plotly Version: 5.8.0
-Summary : Visualise data from FilteredData and save results to Charts folder.
-@author: creme332
+This module visualises data from `data/filtered` folder and save the results
+to `charts` folder.
 """
 
 import matplotlib.pyplot as plt
@@ -16,6 +12,7 @@ import json
 import plotly.express as px
 import plotly.io as pio
 pio.renderers.default = 'browser'  # to show geojson map in web browser
+
 
 def HorizontalLollipopChart(source_filename, destination_filename, title):
     # using data from csv file
@@ -32,7 +29,8 @@ def HorizontalLollipopChart(source_filename, destination_filename, title):
     plt.title(title, weight='bold')
 
     plt.hlines(y=my_range, xmin=0,
-               xmax=ordered_df[column_headings[1]], color='#00FF2A')  # , color='skyblue'
+               xmax=ordered_df[column_headings[1]], color='#00FF2A')
+    # color='skyblue'
     plt.plot(ordered_df[column_headings[1]], my_range, "o", color='#FF00D5')
 
     plt.yticks(my_range, ordered_df[column_headings[0]])
@@ -74,12 +72,12 @@ def PieChart(source_filename, destination_filename, title):
 
     my_labels = df[column_headings[0]].tolist()
     my_data = df[column_headings[1]].tolist()
-    fig = plt.figure()
 
     # Change color of text
     plt.rcParams['text.color'] = 'black'
 
-    # colors = ['#FFC1CF', '#E8FFB7', '#E2A0FF', '#C4F5FC', '#B7FFD8', '#36a2eb']
+    # colors = ['#FFC1CF', '#E8FFB7', '#E2A0FF', '#C4F5FC', '#B7FFD8',
+    # '#36a2eb']
     colors = ['#B243B6', '#F363B1', '#FDBF3B', '#F7F570', '#93EE81', '#47D4C4']
 
     explode = (0.1, 0.1, 0.1, 0.1, 0.1, 0.1)  # explode a slice if required.
@@ -145,9 +143,9 @@ def donutChart(source_filename, destination_path, title):
     plt.show()
 
 
-def CreateMap(source_path, destination_path):
+def CreateMap(source_path, geojson_path, destination_path):
 
-    districts = json.load(open("mauritius-districts-geojson.json", 'r'))
+    districts = json.load(open(geojson_path, 'r'))
     df = pd.read_csv(source_path, sep='\t')
 
     # create a log scale to deal with outliers in JobCount
@@ -157,7 +155,8 @@ def CreateMap(source_path, destination_path):
 
     fig = px.choropleth(df, geojson=districts,
                         featureidkey='properties.name_1',
-                        locations='Location',  # column in dataframe which contains districts names
+                        locations='Location',  # column in dataframe which
+                        # containing districts names
                         # data from this column in dataframe is plotted
                         color='log(JobCount)',
                         color_continuous_scale="turbo",  # turbo or blackbody
@@ -193,26 +192,31 @@ def CreateMap(source_path, destination_path):
 
 
 def main():
-    source_path = 'FilteredData/'  # folder containing filtered data
-    destination_path = 'Charts/'  # folder to store charts
+    source_path = 'data/filtered/'  # folder containing filtered data
+    destination_path = 'charts/'  # folder to store charts
 
     CreateMap(source_path + "LocationData.csv",
+              "data/mauritius-districts-geojson.json",
               destination_path + "JobCountMap")
 
     HorizontalBarChart(source_path + "DatabaseData.csv",
-                       destination_path + "DatabaseChart", '#5FE916', "Databases")
+                       destination_path + "DatabaseChart", '#5FE916',
+                       "Databases")
     HorizontalBarChart(source_path + "LanguageData.csv",
                        destination_path + "LanguageChart", 'orange',
                        "Programming languages")
     HorizontalBarChart(source_path + "LibrariesData.csv",
-                       destination_path + "LibrariesChart", '#0FF0A3', "Libraries")
+                       destination_path + "LibrariesChart", '#0FF0A3',
+                       "Libraries")
     HorizontalBarChart(source_path + "ToolsData.csv",
                        destination_path + "ToolsChart", '#a016e9', "Tools")
     HorizontalBarChart(source_path + "WebData.csv",
-                       destination_path + "WebChart", '#F00F5C', "Web frameworks")
+                       destination_path + "WebChart", '#F00F5C',
+                       "Web frameworks")
 
     HorizontalLollipopChart(source_path + "WebData.csv",
-                            destination_path + "WebLollipopChart", "Web frameworks")
+                            destination_path + "WebLollipopChart",
+                            "Web frameworks")
 
     donutChart(source_path + "OSData.csv", destination_path +
                "OSChart", "Operating systems")
@@ -221,4 +225,6 @@ def main():
 
     PieChart(source_path + "SalaryData.csv",
              destination_path + "SalaryChart", "Salary")
+
+
 main()
