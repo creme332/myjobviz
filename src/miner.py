@@ -19,11 +19,20 @@ driver = webdriver.Chrome(options=chrome_options)
 
 
 def scrapeJobModules(html_text, scraped_urls):
+    """Extracts all job data on a page and save this data to library.
+
+    Args:
+        html_text (html): html of page
+        scraped_urls (array): list of urls already scraped
+
+    Returns:
+        jobs_added_count: number of new jobs found on webpage
+    """
 
     # get all job modules on current page
     soup = BeautifulSoup(html_text, 'lxml')
     job_modules = soup.find_all('div', class_='module job-result')
-    print(len(job_modules))
+    # print(len(job_modules))
     jobs_added_count = 0
 
     for job_module in job_modules:
@@ -83,6 +92,9 @@ def scrapeJobModules(html_text, scraped_urls):
 
 
 def scrapeWebsite():
+    """Sets up Selenium scraper and scrapes all pages containing IT jobs on website by 
+    calling `scrapeJobModules()`. 
+    """
     # get already scraped urls from library
     scraped_urls = library.getAsDataframe()['url'].values
 

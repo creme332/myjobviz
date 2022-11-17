@@ -11,7 +11,12 @@ jobs_df = library.getAsDataframe()
 
 
 def AnalyseLanguages(destination_filename):
+    """Analyses popularity of programming langugages from job descriptions. This is done 
+    by creating a table of language vs frequency.
 
+    Args:
+        destination_filename (str): path where statistics will be saved
+    """
     language_count = {
         "C++": 0, "Java": 0, "Python": 0, "Javascript": 0, "PHP": 0,
         "HTML": 0, "CSS": 0, "Clojure": 0,
@@ -75,6 +80,12 @@ def AnalyseLanguages(destination_filename):
 
 
 def AnalyseDatabases(destination_filename):
+    """Analyses popularity of databases from job descriptions. This is done 
+    by creating a table of database vs frequency.
+
+    Args:
+        destination_filename (str): path where statistics will be saved
+    """
     databases_count = {
         "MySQL": 0, "PostgreSQL": 0, "SQLite": 0, "MongoDB": 0,
         "Microsoft SQL Server": 0, "Redis": 0, "MariaDB": 0, "Firebase": 0,
@@ -107,6 +118,12 @@ def AnalyseDatabases(destination_filename):
 
 
 def AnalyseWebFrameworks(destination_filename):
+    """Analyses popularity of web frameworks from job descriptions. This is done 
+    by creating a table of web frameworks vs frequency.
+
+    Args:
+        destination_filename (str): path where statistics will be saved
+    """
     web_frameworks_count = {"Svelte": 0,
                             "ASP.NET": 0,
                             "FastAPI": 0,
@@ -169,7 +186,11 @@ def AnalyseWebFrameworks(destination_filename):
 
 
 def AnalyseOtherTools(file_path):
+    """Analyses popularity of tools from job descriptions. 
 
+    Args:
+        destination_filename (str): path where statistics will be saved
+    """
     cloud_platforms = {"AWS": 0,
                        "Google Cloud": 0,
                        "Azure": 0,
@@ -269,6 +290,11 @@ def AnalyseOtherTools(file_path):
 
 
 def AnalyseSalary(destination_filename):
+    """Identifies the most common salary ranges.
+
+    Args:
+        destination_filename (str): path where statistics will be saved.
+    """
     df = jobs_df.groupby(["salary"], as_index=False).size()
 
     df = df[df['salary'] != 'Not disclosed']
@@ -280,6 +306,11 @@ def AnalyseSalary(destination_filename):
 
 
 def AnalyseLocation(destination_filename):
+    """Identifies the most common location for IT jobs.
+
+    Args:
+        destination_filename (str): path where statistics will be saved.
+    """
     JobsPerDistrict = {'Black River': 0, 'Flacq': 0,
                        'Grand Port': 0, 'Moka': 0, 'Pamplemousses': 0,
                        'Plaine Wilhems': 0, 'Port Louis': 0,
