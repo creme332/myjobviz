@@ -1,3 +1,4 @@
+#!venv/bin/python3
 """This module is responsible for managing the Firestore database which
 contains all scraped jobs' data.
 """
@@ -17,8 +18,8 @@ def uploadJob(jobDictionary):
     it to my Firestore database.
 
     Args:
-        jobDictionary (dictionary): A dictionary with the following keys : `job_title`,
-        `date_posted`, `closing_date`, `url`, `location`,
+        jobDictionary (dictionary): A dictionary with the following keys :
+        `job_title`, `date_posted`, `closing_date`, `url`, `location`,
         `employment_type`, `company`, `salary`, `job_details`
     """
     update_time, city_ref = job_collection.add(jobDictionary)
@@ -31,12 +32,24 @@ def getAsDataframe():
     Returns:
         dataframe: A 2D panda dataframe
     """
+
+    # data_source_filename = 'data/RawScrapedData.csv'  # raw data
+    # df = pd.read_csv(data_source_filename, header=0)
+    # print(len(df))
+
     jobs = job_collection.stream()
     jobs_dict = list(map(lambda x: x.to_dict(), jobs))
     df = pd.DataFrame(jobs_dict)
+
+    if (len(df) > 0):
+        # drop duplicates if any
+        df.drop_duplicates(subset=None, keep='first', inplace=False)
+
+        # parse dates and sort df
+        df['date_posted'] = pd.to_datetime(
+            df['date_posted'], format="%d/%m/%Y")
+        df['closing_date'] = pd.to_datetime(
+            df['closing_date'], format="%d/%m/%Y")
+        df.sort_values('date_posted', ascending=False, inplace=True)
+
     return df
-
-
-def sortDataFrameByDate(df):
-    df['date_posted'] = pd.to_datetime(df['date_posted'], dayfirst=True)
-    df.sort_values('date_posted', ascending=False, inplace=True)
