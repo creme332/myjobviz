@@ -8,6 +8,7 @@ import time
 from bs4 import BeautifulSoup
 import library
 from jobClass import Job
+from tqdm import tqdm
 
 # setup scraper
 chrome_options = Options()
@@ -74,7 +75,7 @@ def scrapeJobModules(html_text, scraped_urls):
                 'li', class_='employment-type').text
 
         # save job in database
-        print(jobObj.__dict__)
+        # print(jobObj.job_title)
         library.uploadJob(jobObj.__dict__)
         # return
 
@@ -100,7 +101,7 @@ def scrapeWebsite():
 
     total_jobs = 0
     # scrape pages
-    for pageNumber in range(1, last_page+1):
+    for pageNumber in tqdm(range(1, last_page+1)):
         driver.get(default_page_url+str(pageNumber))
         jobs_added_count = scrapeJobModules(driver.page_source, scraped_urls)
         total_jobs += jobs_added_count
