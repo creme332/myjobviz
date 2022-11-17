@@ -22,8 +22,8 @@ def uploadJob(jobDictionary):
         `job_title`, `date_posted`, `closing_date`, `url`, `location`,
         `employment_type`, `company`, `salary`, `job_details`
     """
-    update_time, city_ref = job_collection.add(jobDictionary)
-    print(f'Added document with id {city_ref.id} at: {update_time}')
+    update_time, job_ref = job_collection.add(jobDictionary)
+    # print(f'Added document with id {job_ref.id} at: {update_time}')
 
 
 def getAsDataframe():
