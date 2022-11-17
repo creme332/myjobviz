@@ -191,7 +191,7 @@ def CreateMap(source_path, geojson_path, destination_path):
     # fig.show()
 
 
-def main():
+def createVisualisations():
     source_folder = 'data/filtered/'  # folder containing filtered data
     destination_folder = 'charts/'  # folder to store charts
 
@@ -228,4 +228,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    createVisualisations()

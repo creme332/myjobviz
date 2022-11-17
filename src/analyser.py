@@ -331,7 +331,7 @@ def AnalyseLocation(destination_filename):
               encoding='utf-8-sig', index=False)
 
 
-def main():
+def filterData():
     folder = 'data/filtered/'  # folder name
     AnalyseLanguages(folder + 'LanguageData.csv')
     AnalyseDatabases(folder + 'DatabaseData.csv')
@@ -342,4 +342,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    filterData()
