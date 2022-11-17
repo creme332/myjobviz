@@ -1,10 +1,10 @@
-name: check for new jobs
+name: scraper
 
 on:
   push:
   workflow_dispatch:
   schedule:
-    - cron: '0 */12 * * *' # Every 12 hours
+    - cron: '0 1 * * *' #  every day at 1am
 
 jobs:
   build:
@@ -14,7 +14,6 @@ jobs:
       - name: checkout repo content
         uses: actions/checkout@v3
 
-      # https://github.com/actions/setup-python#caching-packages-dependencies
       - name: setup python with pip cache
         uses: actions/setup-python@v4
         with:
@@ -26,9 +25,17 @@ jobs:
           
       - name: execute py script 
         env:
-          EMAIL_PASSCODE: ${{ secrets.EMAIL_PASSCODE }}
-          SENDER_EMAIL_ADDRESS: ${{ secrets.SENDER_EMAIL_ADDRESS }}
-        run: python src/main.py # execute main.py from src folder
+          TYPE: ${{ secrets.TYPE }}
+          PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          PRIVATE_KEY_ID: ${{ secrets.PRIVATE_KEY_ID }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          CLIENT_EMAIL: ${{ secrets.CLIENT_EMAIL }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          AUTH_URI: ${{ secrets.AUTH_URI }}
+          TOKEN_URI: ${{ secrets.TOKEN_URI }}
+          AUTH_PROVIDER_X509_CERT_URL: ${{ secrets.AUTH_PROVIDER_X509_CERT_URL }}
+          CLIENT_X509_CERT_URL: ${{ secrets.CLIENT_X509_CERT_URL }}
+        run: python src/main.py 
           
       - name: commit files
         run: |
