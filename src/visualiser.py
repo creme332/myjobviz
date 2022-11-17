@@ -1,7 +1,7 @@
 #!venv/bin/python3
 
 """
-This module visualises data from `data/filtered` folder and save the results
+This module visualises data from `data/filtered` folder and saves the results
 to `charts` folder.
 """
 
@@ -36,7 +36,7 @@ def HorizontalLollipopChart(source_filename, destination_filename, title):
     plt.yticks(my_range, ordered_df[column_headings[0]])
 
     plt.savefig(destination_filename, bbox_inches='tight')
-    plt.show()
+    # plt.show()
     plt.close()
 
 
@@ -61,7 +61,7 @@ def HorizontalBarChart(source_filename, destination_filename, my_color, title):
 
     plt.savefig(destination_filename, bbox_inches='tight')
 
-    plt.show()
+    # plt.show()
     plt.close()
 
 
@@ -99,7 +99,7 @@ def PieChart(source_filename, destination_filename, title):
                fontsize=8, bbox_to_anchor=(1.04, 1), title="Rupees")
     plt.savefig(destination_filename, bbox_inches='tight')
 
-    plt.show()
+    # plt.show()
     plt.close()
 
 
@@ -140,7 +140,9 @@ def donutChart(source_filename, destination_path, title):
     plt.subplots_adjust(left=0.0, bottom=0.1, right=0.95)
     plt.savefig(destination_path, bbox_inches='tight')
 
-    plt.show()
+    # plt.show()
+    plt.close()
+
 
 
 def CreateMap(source_path, geojson_path, destination_path):
@@ -183,48 +185,47 @@ def CreateMap(source_path, geojson_path, destination_path):
         )
     )
 
-    # customise legend as well #
-    fig.write_html(
-        "choropleth-map-plotly-python.html")
-    # fig.write_image(destination_path + ".pdf")  # .svg or .pdf
+    fig.write_html(destination_path)
 
+    # fig.write_image(destination_path + ".pdf")  # .svg or .pdf
     # fig.show()
 
 
 def main():
-    source_path = 'data/filtered/'  # folder containing filtered data
-    destination_path = 'charts/'  # folder to store charts
+    source_folder = 'data/filtered/'  # folder containing filtered data
+    destination_folder = 'charts/'  # folder to store charts
 
-    CreateMap(source_path + "LocationData.csv",
+    CreateMap(source_folder + "LocationData.csv",
               "data/mauritius-districts-geojson.json",
-              destination_path + "JobCountMap")
+              destination_folder + "choropleth-map-plotly.html")
 
-    HorizontalBarChart(source_path + "DatabaseData.csv",
-                       destination_path + "DatabaseChart", '#5FE916',
+    HorizontalBarChart(source_folder + "DatabaseData.csv",
+                       destination_folder + "DatabaseChart", '#5FE916',
                        "Databases")
-    HorizontalBarChart(source_path + "LanguageData.csv",
-                       destination_path + "LanguageChart", 'orange',
+    HorizontalBarChart(source_folder + "LanguageData.csv",
+                       destination_folder + "LanguageChart", 'orange',
                        "Programming languages")
-    HorizontalBarChart(source_path + "LibrariesData.csv",
-                       destination_path + "LibrariesChart", '#0FF0A3',
+    HorizontalBarChart(source_folder + "LibrariesData.csv",
+                       destination_folder + "LibrariesChart", '#0FF0A3',
                        "Libraries")
-    HorizontalBarChart(source_path + "ToolsData.csv",
-                       destination_path + "ToolsChart", '#a016e9', "Tools")
-    HorizontalBarChart(source_path + "WebData.csv",
-                       destination_path + "WebChart", '#F00F5C',
+    HorizontalBarChart(source_folder + "ToolsData.csv",
+                       destination_folder + "ToolsChart", '#a016e9', "Tools")
+    HorizontalBarChart(source_folder + "WebData.csv",
+                       destination_folder + "WebChart", '#F00F5C',
                        "Web frameworks")
 
-    HorizontalLollipopChart(source_path + "WebData.csv",
-                            destination_path + "WebLollipopChart",
+    HorizontalLollipopChart(source_folder + "WebData.csv",
+                            destination_folder + "WebLollipopChart",
                             "Web frameworks")
 
-    donutChart(source_path + "OSData.csv", destination_path +
+    donutChart(source_folder + "OSData.csv", destination_folder +
                "OSChart", "Operating systems")
-    donutChart(source_path + "CloudData.csv",
-               destination_path + "CloudChart", "Cloud platforms")
+    donutChart(source_folder + "CloudData.csv",
+               destination_folder + "CloudChart", "Cloud platforms")
 
-    PieChart(source_path + "SalaryData.csv",
-             destination_path + "SalaryChart", "Salary")
+    PieChart(source_folder + "SalaryData.csv",
+             destination_folder + "SalaryChart", "Salary")
 
 
-main()
+if __name__ == "__main__":
+    main()
