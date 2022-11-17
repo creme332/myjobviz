@@ -16,6 +16,7 @@ chrome_options.add_argument('--disable-dev-shm-usage')
 chrome_options.add_argument('--headless')
 driver = webdriver.Chrome(options=chrome_options)
 
+
 def scrapeJobModules(html_text, scraped_urls):
 
     # get all job modules on current page
@@ -42,7 +43,7 @@ def scrapeJobModules(html_text, scraped_urls):
             'h2', itemprop='title').text.lower()
 
         # extract company name
-        if (job_module.find('a', itemprop='hiringOrganization')  # may evaluate to None
+        if (job_module.find('a', itemprop='hiringOrganization')
                 is not None):
             jobObj.company = job_module.find(
                 'a', itemprop='hiringOrganization').text
@@ -62,7 +63,7 @@ def scrapeJobModules(html_text, scraped_urls):
 
         # Extract job description from Show More option
         driver.get(jobObj.url)
-        # time.sleep(1) 
+        # time.sleep(1)
         show_more = BeautifulSoup(driver.page_source, 'lxml')
         jobObj.job_details = show_more.find(
             'div', class_='job-details').text
@@ -74,7 +75,7 @@ def scrapeJobModules(html_text, scraped_urls):
 
         # save job in database
         print(jobObj.__dict__)
-        # library.uploadJob(jobObj.__dict__)
+        library.uploadJob(jobObj.__dict__)
         # return
 
     return jobs_added_count
@@ -83,14 +84,14 @@ def scrapeJobModules(html_text, scraped_urls):
 def scrapeWebsite():
     # get already scraped urls from library
     scraped_urls = library.getAsDataframe()['url'].values
-    
+
     # default url for IT jobs sorted by most recent
     default_page_url = ('https://www.myjob.mu/ShowResults.aspx?'
                         'Keywords=&Location=&Category=39&Recruiter=Company&'
                         'SortBy=MostRecent&Page=')
     # start a session
     driver.get(default_page_url+'1')
-    time.sleep(5) # any number > 3 should work fine
+    time.sleep(5)  # any number > 3 should work fine
 
     # get number of pages that must be scraped
     soup = BeautifulSoup(driver.page_source, 'lxml')
@@ -102,13 +103,17 @@ def scrapeWebsite():
     for pageNumber in range(1, last_page+1):
         driver.get(default_page_url+str(pageNumber))
         jobs_added_count = scrapeJobModules(driver.page_source, scraped_urls)
-        break
+        total_jobs += jobs_added_count
+
+        # since jobs are sorted by date on website, as soon as
+        # we encounter a page which we have already visited we can stop
+        # scraping. (all pages after current page are also already visited)
         if (jobs_added_count == 0):
             break
-        total_jobs += jobs_added_count
 
     print("New jobs added = ", total_jobs)
     driver.quit()
+
 
 if __name__ == "__main__":
     scrapeWebsite()

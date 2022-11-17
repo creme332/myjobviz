@@ -1,26 +1,13 @@
-# -*- coding: utf-8 -*-
+#!venv/bin/python3
 """
-Created on Wed May 11 10:05:03 2022
-Python Version : 3.9.7
-Panda version : 1.3.3
-Summary : count frequency of specific languages from job details
-@author: creme332
+This module extracts useful statistics from the database which
+will be used later by `visualiser.py`
 """
 import pandas as pd
 import re
+import library
 
-data_source_filename = 'RawScrapedData.csv'  # raw data
-
-# change date format to allow sorting of dates
-jobs_df = pd.read_csv(data_source_filename, header=0,
-                      parse_dates=['date_posted', 'closing_date'],
-                      dayfirst=True)
-jobs_df.drop_duplicates(
-    subset=None, keep='first', inplace=False)  # drop duplicates
-jobs_df = jobs_df.sort_values('date_posted')
-
-pd.set_option('display.max_columns', None)
-pd.set_option('display.max_rows', 500)
+jobs_df = library.getAsDataframe()
 
 
 def AnalyseLanguages(destination_filename):
@@ -63,12 +50,12 @@ def AnalyseLanguages(destination_filename):
 
                 if lang.lower() == words[i]:
                     # distinguish between ruby and ruby on rails
-                    if(lang.lower() == "ruby"):
-                        if(i > len(words)-3):
+                    if (lang.lower() == "ruby"):
+                        if (i > len(words)-3):
                             # language is definitely ruby
                             language_count[lang] += 1
                         else:
-                            if(words[i+1].lower() != "on" and
+                            if (words[i+1].lower() != "on" and
                                words[i+2].lower() != "rails"):
                                 # current word is not part of ruby on rails
                                 language_count[lang] += 1
@@ -99,10 +86,10 @@ def AnalyseDatabases(destination_filename):
         jobs_details = jobs_df.loc[row, "job_details"].lower()  # lower case
 
         # use substring method for database names with more than 1 word
-        if("microsoft sql server" in jobs_details):
+        if ("microsoft sql server" in jobs_details):
             databases_count["Microsoft SQL Server"] += 1
 
-        if("ibm db2" in jobs_details):
+        if ("ibm db2" in jobs_details):
             databases_count["IBM DB2"] += 1
 
         # use token method for single-word databases
@@ -160,12 +147,12 @@ def AnalyseWebFrameworks(destination_filename):
 
                 if lang.lower() == words[i]:
 
-                    if(words[i] == "angularjs"):  # AngularJS spelling
+                    if (words[i] == "angularjs"):  # AngularJS spelling
                         web_frameworks_count["Angular.js"] += 1
                     # distinguish between angular and angular js
-                    if(words[i] == "angular"):
-                        if(i < len(words)-1):
-                            if(words[i+1] == "js"):
+                    if (words[i] == "angular"):
+                        if (i < len(words)-1):
+                            if (words[i+1] == "js"):
                                 web_frameworks_count["Angular.js"] += 1
                             else:
                                 web_frameworks_count["Angular"] += 1
@@ -314,13 +301,14 @@ def AnalyseLocation(destination_filename):
 
 
 def main():
-    path = 'FilteredData/'  # folder name
-    AnalyseLanguages(path + 'LanguageData.csv')
-    AnalyseDatabases(path + 'DatabaseData.csv')
-    AnalyseWebFrameworks(path + 'WebData.csv')
-    AnalyseOtherTools(path)  # will save multiple files
-    AnalyseLocation(path + 'LocationData.csv')
-    AnalyseSalary(path + 'SalaryData.csv')
+    folder = 'data/filtered/'  # folder name
+    AnalyseLanguages(folder + 'LanguageData.csv')
+    AnalyseDatabases(folder + 'DatabaseData.csv')
+    AnalyseWebFrameworks(folder + 'WebData.csv')
+    AnalyseOtherTools(folder)  # will save multiple files
+    AnalyseLocation(folder + 'LocationData.csv')
+    AnalyseSalary(folder + 'SalaryData.csv')
 
 
-# main()
+if __name__ == "__main__":
+    main()
