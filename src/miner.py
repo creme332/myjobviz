@@ -6,16 +6,19 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import time
 from bs4 import BeautifulSoup
-import library
-from jobClass import Job
 from tqdm import tqdm
 from datetime import datetime
+from classes.database import Database
+from classes.job import Job
+
 # setup scraper
 chrome_options = Options()
 chrome_options.add_argument('--no-sandbox')
 chrome_options.add_argument('--disable-dev-shm-usage')
 chrome_options.add_argument('--headless')
 driver = webdriver.Chrome(options=chrome_options)
+
+library = Database()
 
 
 def scrapeJobModules(html_text, scraped_urls, CRAWL_DELAY=3):
@@ -89,7 +92,8 @@ def scrapeJobModules(html_text, scraped_urls, CRAWL_DELAY=3):
                 'li', class_='employment-type').text
 
         # save job in database
-        library.uploadJob(jobObj.__dict__)
+
+        library.add_job(jobObj.__dict__)
 
         time.sleep(CRAWL_DELAY)
 
@@ -101,7 +105,7 @@ def scrapeWebsite():
     on website by calling `scrapeJobModules()`.
     """
     # get already scraped urls from library
-    scraped_urls = library.getAsDataframe()['url'].values
+    scraped_urls = library.get_recent_urls()
 
     # default url for IT jobs sorted by most recent
     default_page_url = ('https://www.myjob.mu/ShowResults.aspx?'

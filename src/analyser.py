@@ -5,14 +5,14 @@ will be used later by `visualiser.py`
 """
 import pandas as pd
 import re
-import library
+from classes.database import Database
 
-jobs_df = library.getAsDataframe()
+jobs_df = Database().get_dataframe()
 
 
 def AnalyseLanguages(destination_filename):
-    """Analyses popularity of programming langugages from job descriptions. This is done 
-    by creating a table of language vs frequency.
+    """Analyses popularity of programming langugages from job descriptions.
+    This is done by creating a table of language vs frequency.
 
     Args:
         destination_filename (str): path where statistics will be saved
@@ -80,7 +80,7 @@ def AnalyseLanguages(destination_filename):
 
 
 def AnalyseDatabases(destination_filename):
-    """Analyses popularity of databases from job descriptions. This is done 
+    """Analyses popularity of databases from job descriptions. This is done
     by creating a table of database vs frequency.
 
     Args:
@@ -118,8 +118,8 @@ def AnalyseDatabases(destination_filename):
 
 
 def AnalyseWebFrameworks(destination_filename):
-    """Analyses popularity of web frameworks from job descriptions. This is done 
-    by creating a table of web frameworks vs frequency.
+    """Analyses popularity of web frameworks from job descriptions.
+    This is done by creating a table of web frameworks vs frequency.
 
     Args:
         destination_filename (str): path where statistics will be saved
@@ -186,7 +186,7 @@ def AnalyseWebFrameworks(destination_filename):
 
 
 def AnalyseOtherTools(file_path):
-    """Analyses popularity of tools from job descriptions. 
+    """Analyses popularity of tools from job descriptions.
 
     Args:
         destination_filename (str): path where statistics will be saved
