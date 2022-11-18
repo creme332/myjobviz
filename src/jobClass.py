@@ -1,12 +1,13 @@
 #!venv/bin/python3
 import library
+from datetime import datetime
 
 
 class Job:
     def __init__(self):
         self.job_title = None  # string
-        self.date_posted = None  # # string : DD/MM/YYYY
-        self.closing_date = None  # # string : DD/MM/YYYY
+        self.date_posted = None  # datetime format: DD/MM/YYYY
+        self.closing_date = None  # datetime format: DD/MM/YYYY
         self.url = None  # string
         self.location = None  # string
         self.employment_type = None  # string
@@ -18,8 +19,8 @@ class Job:
 if __name__ == "__main__":
     x = Job()
     x.job_title = 'software developer'
-    x.date_posted = '12/10/2022'
-    x.closing_date = '22/10/2022'
+    x.date_posted = datetime.strptime('5/10/2022', '%d/%m/%Y')
+    x.closing_date = datetime.strptime('12/10/2022', '%d/%m/%Y')
     x.url = 'a@gmail.com'
     x.location = 'Moka'
     x.employment_type = 'Permanent'

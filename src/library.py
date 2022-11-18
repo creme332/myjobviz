@@ -8,6 +8,7 @@ from firebase_admin import credentials
 import pandas as pd
 import os
 from dotenv import load_dotenv, find_dotenv
+from datetime import datetime
 
 
 def getServiceAccountKey():
@@ -76,4 +77,38 @@ def getAsDataframe():
     return df
 
 
-print(getAsDataframe().head()['job_title'].values)
+def changeDatatype():
+    jobs = job_collection.stream()
+    for job in jobs:
+        job_ref = job_collection.document(job.id)
+        job_doc = job_ref.get()
+
+        # get date field values
+        closingDate = job_doc.to_dict()['closing_date']
+        datePosted = job_doc.to_dict()['date_posted']
+
+        # update
+        job_ref.update(
+            {u'closing_date': datetime.strptime(closingDate, '%d/%m/%Y'),
+             u'date_posted': datetime.strptime(datePosted, '%d/%m/%Y')
+             })
+
+
+# changeDatatype()
+
+# print(getAsDataframe().head()['job_title'].values)
+# data = {
+#     u'name': u'Los Angeles',
+#     u'state': u'CA',
+#     u'country': u'USA',
+#     u'date_posted': datetime.strptime('18/11/2022', '%d/%m/%Y')
+# }
+
+# # Add a new doc in collection 'cities' with ID 'LA'
+# # db.collection(u'cities').add(data)
+y = getAsDataframe()
+print(y['date_posted'].values)
+
+# print(db.collection(u'cities').document(u'LA'))
+# x = db.collection(u'cities').document(u'LA').get().to_dict()['date_posted']
+# print(x)

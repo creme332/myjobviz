@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 import library
 from jobClass import Job
 from tqdm import tqdm
-
+from datetime import datetime
 # setup scraper
 chrome_options = Options()
 chrome_options.add_argument('--no-sandbox')
@@ -64,6 +64,11 @@ def scrapeJobModules(html_text, scraped_urls, CRAWL_DELAY=3):
         jobObj.closing_date = job_module.find(
             'li', class_='closed-time').text.replace('Closing ', '')
 
+        # convert string dates to correct datetime data type
+        jobObj.date_posted = datetime.strptime(jobObj.date_posted, '%d/%m/%Y')
+        jobObj.closing_date = datetime.strptime(
+            jobObj.closing_date, '%d/%m/%Y')
+
         # extract job location
         jobObj.location = job_module.find(
             'li', itemprop='jobLocation').text
@@ -93,7 +98,7 @@ def scrapeJobModules(html_text, scraped_urls, CRAWL_DELAY=3):
 
 def scrapeWebsite():
     """Sets up Selenium scraper and scrapes all pages containing IT jobs
-    on website by calling `scrapeJobModules()`. 
+    on website by calling `scrapeJobModules()`.
     """
     # get already scraped urls from library
     scraped_urls = library.getAsDataframe()['url'].values
