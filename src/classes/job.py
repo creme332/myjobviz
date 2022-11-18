@@ -1,5 +1,4 @@
 #!venv/bin/python3
-import library
 from datetime import datetime
 
 
@@ -28,5 +27,4 @@ if __name__ == "__main__":
     x.salary = '10000-20000'
     x.job_details = 'details'
 
-    library.uploadJob(x.__dict__)
     print(x.__dict__)
