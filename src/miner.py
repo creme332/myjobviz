@@ -18,7 +18,7 @@ chrome_options.add_argument('--headless')
 driver = webdriver.Chrome(options=chrome_options)
 
 
-def scrapeJobModules(html_text, scraped_urls):
+def scrapeJobModules(html_text, scraped_urls, CRAWL_DELAY=3):
     """Extracts all job data on a page and save this data to library.
 
     Args:
@@ -84,16 +84,16 @@ def scrapeJobModules(html_text, scraped_urls):
                 'li', class_='employment-type').text
 
         # save job in database
-        # print(jobObj.job_title)
         library.uploadJob(jobObj.__dict__)
-        # return
+
+        time.sleep(CRAWL_DELAY)
 
     return jobs_added_count
 
 
 def scrapeWebsite():
-    """Sets up Selenium scraper and scrapes all pages containing IT jobs on website by 
-    calling `scrapeJobModules()`. 
+    """Sets up Selenium scraper and scrapes all pages containing IT jobs
+    on website by calling `scrapeJobModules()`. 
     """
     # get already scraped urls from library
     scraped_urls = library.getAsDataframe()['url'].values
@@ -104,7 +104,7 @@ def scrapeWebsite():
                         'SortBy=MostRecent&Page=')
     # start a session
     driver.get(default_page_url+'1')
-    time.sleep(5)  # any number > 3 should work fine
+    time.sleep(5)  # wait for loading page to be over
 
     # get number of pages that must be scraped
     soup = BeautifulSoup(driver.page_source, 'lxml')
