@@ -11,6 +11,7 @@ class Database:
     """This class is responsible for managing the Firestore database which
     contains all scraped jobs' data.
     """
+
     def __init__(self):
         """Initialises firestore client
         """
@@ -35,6 +36,7 @@ class Database:
         firebase_admin.initialize_app(cred)
         db = firestore.client()
         self.job_collection_ref = db.collection(u'jobs')
+        self.stats_collection_ref = db.collection(u'statistics')
 
     def get_dataframe(self):
         """Gets the entire database from firestore and returns it as
@@ -99,6 +101,9 @@ class Database:
         update_time, job_ref = self.job_collection_ref.add(jobDictionary)
         # print(f'Added document with id {job_ref.id} at: {update_time}')
 
+        # increment database size counter
+        self.increment_size_counter()
+
     def update_all_documents(self):
         """This function can be extended to update any fields of all documents.
 
@@ -134,9 +139,32 @@ class Database:
         else:
             print('No duplicate jobs found.')
 
+    def increment_size_counter(self):
+        """Increments the counter which keeps tracks of the
+        number of jobs in database.
+        """
+        size_document_ref = self.stats_collection_ref.document(
+            u'database-size')
+        new_size = int(size_document_ref.get().to_dict()['size']) + 1
+        size_document_ref.update({'size': new_size})
+
+    def initialise_size_counter(self):
+        """Initialises  the counter which keeps tracks of the
+        number of jobs in database to its true value.
+
+        WARNING : Use this function sparingly as it will
+        heavily impact the quota usage for number of reads.
+        """
+        size_document_ref = self.stats_collection_ref.document(
+            u'database-size')
+        new_size = len(self.get_dataframe())
+        size_document_ref.update({'size': new_size})
+
 
 if __name__ == "__main__":
-    my_database = Database().get_dataframe_from_file()
-    print(my_database.head())
+    my_database = Database()
+    # my_database.initialise_size_counter()
+    # my_database.increment_size_counter()
+    # print(my_database.head())
     # x = my_database.get_recent_urls(2)
     # print(x)
