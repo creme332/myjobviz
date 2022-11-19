@@ -33,6 +33,10 @@ def database_check(job_details):
         if (lang in words and lang in job_details):
             is_present[key] = True
 
+    # add alternative spelling for postgreSQL
+    if ('postgres' in words):
+        is_present['PostgreSQL'] = True
+
     # corner cases for database names with more than 1 word
     if ("microsoft sql server" in job_details):
         is_present["Microsoft SQL Server"] = True
@@ -66,6 +70,15 @@ class TestDatabaseCheck(unittest.TestCase):
         string = 'sql'
         self.assertCountEqual(database_check(string),
                               [])
+
+    def test_postgres(self):
+        string = 'postGReSQL'
+        self.assertCountEqual(database_check(string),
+                              ['PostgreSQL'])
+        string = ('Sait utiliser les principales bases de'
+                  ' données relationnelles (MySQL, Postgres)')
+        self.assertCountEqual(database_check(string),
+                              ['PostgreSQL', 'MySQL'])
 
     def test_all_databases(self):
         string = ('MySQL,PostgreSQL,SQLite,MongoDB,Microsoft SQL Server,'
