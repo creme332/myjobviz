@@ -35,6 +35,12 @@ def language_check(job_details):
     if ('c#' in job_details):
         is_present['C#'] = True
 
+    if ('html5' in job_details):
+        is_present['HTML'] = True
+
+    if ('css3' in job_details):
+        is_present['CSS'] = True
+
     for key in is_present:
         lang = key.lower()
         if (lang in words and lang in job_details):
@@ -60,8 +66,8 @@ def language_check(job_details):
 class TestLanguageCheck(unittest.TestCase):
 
     def test_uppercase(self):
-        string = 'JAVA is cool'
-        self.assertEqual(language_check(string), ['Java'])
+        string = 'JAVA is cool... HTML5'
+        self.assertEqual(language_check(string), ['Java', 'HTML'])
 
     def test_substrings(self):
         string = 'Javascript is cool but not powershell'
