@@ -1,0 +1,33 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  width: 100vw;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+}
+
+header{
+  font-size: 40px;
+}
+main{
+  width: 100%;
+  display: grid;
+  resize: both;
+  overflow: auto;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid grey;
+  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(670px, 1fr));
+}
+
+img{
+  outline: 1px solid ;
+}
+
+footer{
+  text-align: center;
+  font-size: 26px;
+}
