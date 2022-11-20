@@ -2,6 +2,23 @@
 import unittest
 import pandas as pd
 import re
+from dictionaryUtils import (toIntegerValues, merge_dicts,
+                             to_true_list, filter_dict)
+
+
+def cp_count(job_details_list) -> dict:
+    count = {"AWS": 0,
+             "Google Cloud": 0,
+             "Azure": 0,
+             "Heroku": 0,
+             "DigitalOcean": 0,
+             "Watson": 0,
+             "Oracle Cloud Infrastructure": 0
+             }
+    for job_detail in job_details_list:
+        res = toIntegerValues(cloud_platforms_check(job_detail))
+        count = merge_dicts(count, res)
+    return count
 
 
 def cloud_platforms_check(job_details):
@@ -38,19 +55,20 @@ def cloud_platforms_check(job_details):
     # corner case for AWS
     is_present['AWS'] = 'aws' in words
 
-    # return matches only
-    return [key for key in is_present if is_present[key]]
+    return is_present
 
 
 class TestCloudPlatormsCheck(unittest.TestCase):
-
     def test_uppercase(self):
         string = 'i love WATSON'
-        self.assertEqual(cloud_platforms_check(string), ['Watson'])
+        x = cloud_platforms_check(string)
+        self.assertEqual(
+            to_true_list(x),
+            ['Watson'])
 
     def test_long_names(self):
         string = 'Google Cloud; Oracle Cloud Infrastructure'
-        self.assertEqual(cloud_platforms_check(string),
+        self.assertEqual(to_true_list(cloud_platforms_check(string)),
                          ['Google Cloud',
                           'Oracle Cloud Infrastructure'])
 
@@ -58,7 +76,8 @@ class TestCloudPlatormsCheck(unittest.TestCase):
         # AWS must not be matched here
         string = ('laws are good')
         expected = []
-        self.assertCountEqual(cloud_platforms_check(string), expected)
+        self.assertCountEqual(to_true_list(
+            cloud_platforms_check(string)), expected)
 
     def test_all(self):
         string = ('AWS,Google Cloud,Azure,Heroku,'
@@ -74,8 +93,14 @@ class TestCloudPlatormsCheck(unittest.TestCase):
         df = pd.read_csv(data_source_filename, header=0)
         string = df['job_details'].tolist()[0]
         # print(string)
-        self.assertCountEqual(cloud_platforms_check(
-            string), [])
+        self.assertCountEqual(to_true_list(cloud_platforms_check(string)), [])
+
+    def test_getCount(self):
+        test_list = ['unbuntu', 'azue azure', 'watson']
+        x = cp_count(test_list)
+        # print(self.filterDict(x))
+        self.assertEqual(filter_dict(x), {'Azure': 1,
+                                          'Watson': 1})
 
 
 if __name__ == '__main__':
