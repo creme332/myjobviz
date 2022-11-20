@@ -2,6 +2,25 @@
 import unittest
 import re
 import pandas as pd
+from dictionaryUtils import (toIntegerValues, merge_dicts,
+                             to_true_list, filter_dict)
+
+
+def lang_count(job_details_list) -> dict:
+    count = {
+        "C++": False, "Java": False, "Python": False,
+        "Javascript": False, "PHP": False,
+        "HTML": False, "CSS": False, "Clojure": False,
+        "C#": False, "Bash": False, "Shell": False,
+        "PowerShell": False, "Kotlin": False,
+        "Rust": False, "Typescript": False, "SQL": False,
+        "Ruby": False, "Dart": False
+    }
+    count = toIntegerValues(count)
+    for job_detail in job_details_list:
+        res = toIntegerValues(language_check(job_detail))
+        count = merge_dicts(count, res)
+    return count
 
 
 def language_check(job_details):
@@ -59,35 +78,36 @@ def language_check(job_details):
             break
     is_present['Ruby'] = foundRuby
 
-    # return matches only
-    return [key for key in is_present if is_present[key]]
+    return is_present
 
 
 class TestLanguageCheck(unittest.TestCase):
 
     def test_uppercase(self):
         string = 'JAVA is cool... HTML5'
-        self.assertEqual(language_check(string), ['Java', 'HTML'])
+        self.assertEqual(to_true_list(
+            language_check(string)), ['Java', 'HTML'])
 
     def test_substrings(self):
         string = 'Javascript is cool but not powershell'
         # notice there's no 'Java' and 'Shell' in expected answer
-        self.assertCountEqual(language_check(string),
+        self.assertCountEqual(to_true_list(language_check(string)),
                               ['Javascript', 'PowerShell'])
 
         string = 'learn SCSS'  # CSS not present here
-        self.assertCountEqual(language_check(string),
+        self.assertCountEqual(to_true_list(language_check(string)),
                               [])
 
     def test_special_characters(self):
         string = '[c++, c#]'
-        self.assertCountEqual(language_check(string), ['C#', 'C++'])
+        self.assertCountEqual(to_true_list(
+            language_check(string)), ['C#', 'C++'])
 
         string = 'html/scss'
-        self.assertCountEqual(language_check(string), ['HTML'])
+        self.assertCountEqual(to_true_list(language_check(string)), ['HTML'])
 
         string = 'bash/php/python'
-        self.assertCountEqual(language_check(string),
+        self.assertCountEqual(to_true_list(language_check(string)),
                               ['Bash', 'PHP', 'Python'])
 
     def test_all_languages(self):
@@ -101,36 +121,43 @@ class TestLanguageCheck(unittest.TestCase):
                     'Shell', 'PowerShell', 'Kotlin',
                     'Rust', 'Typescript', 'SQL',
                     'Ruby', 'Dart']
-        self.assertCountEqual(language_check(string), expected)
+        self.assertCountEqual(to_true_list(language_check(string)), expected)
 
     def test_ruby_corner_case(self):
         string = ('ruby on rail is a framework')
         expected = []
         # here even though ruby is present in string, it is not
         # related to the Ruby programming language
-        self.assertCountEqual(language_check(string), expected)
+        self.assertCountEqual(to_true_list(language_check(string)), expected)
 
         string = ('oh my ruby')
         expected = ['Ruby']
-        self.assertCountEqual(language_check(string), expected)
+        self.assertCountEqual(to_true_list(language_check(string)), expected)
 
         string = ('oh my ruby on fleek')
         expected = []
-        self.assertCountEqual(language_check(string), expected)
+        self.assertCountEqual(to_true_list(language_check(string)), expected)
 
         string = ('oh my ruby on rail')
         expected = []
-        self.assertCountEqual(language_check(string), expected)
+        self.assertCountEqual(to_true_list(language_check(string)), expected)
 
         string = ('oh my ruby on rails')
         expected = []
-        self.assertCountEqual(language_check(string), expected)
+        self.assertCountEqual(to_true_list(language_check(string)), expected)
 
     def test_real_job_details(self):
         data_source_filename = 'data/RawScrapedData.csv'
         df = pd.read_csv(data_source_filename, header=0)
         string = df.head()['job_details'].values[0]
-        self.assertCountEqual(language_check(string), ['Javascript', 'HTML'])
+        self.assertCountEqual(to_true_list(language_check(string)), [
+                              'Javascript', 'HTML'])
+
+    def test_lang_count(self):
+        test_list = ['c# java', 'java c#', 'watson']
+        x = lang_count(test_list)
+        # print(filter_dict(x))
+        self.assertEqual(filter_dict(x), {'Java': 2, 'C#': 2})
 
 
 if __name__ == '__main__':
