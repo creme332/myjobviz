@@ -8,134 +8,140 @@ import time
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 from datetime import datetime
-from classes.database import Database
 from classes.job import Job
 
-# setup scraper
-chrome_options = Options()
-chrome_options.add_argument('--no-sandbox')
-chrome_options.add_argument('--disable-dev-shm-usage')
-chrome_options.add_argument('--headless')
-driver = webdriver.Chrome(options=chrome_options)
 
-library = Database()
+class Scraper:
 
+    def __init__(self, scraped_urls: list) -> None:
+        self.scraped_urls = scraped_urls
 
-def scrapeJobModules(html_text, scraped_urls, CRAWL_DELAY=3):
-    """Extracts all job data on a page and save this data to library.
+        # default url for IT jobs sorted by most recent
+        self.default_url = ('https://www.myjob.mu/ShowResults.aspx?'
+                            'Keywords=&Location='
+                            '&Category=39&Recruiter=Company&'
+                            'SortBy=MostRecent&Page=')
 
-    Args:
-        html_text (html): html of page
-        scraped_urls (array): list of urls already scraped
+        # duration of loading page animation
+        # ! DO NOT DECREASE THIS VALUE
+        self.load_duration = 5
 
-    Returns:
-        jobs_added_count: number of new jobs found on webpage
-    """
+        # number of seconds to wait between requests
+        self.crawl_delay = 5
 
-    # get all job modules on current page
-    soup = BeautifulSoup(html_text, 'lxml')
-    job_modules = soup.find_all('div', class_='module job-result')
-    # print(len(job_modules))
-    jobs_added_count = 0
+        # setup selenium scraper
+        chrome_options = Options()
+        chrome_options.add_argument('--no-sandbox')
+        chrome_options.add_argument('--disable-dev-shm-usage')
+        chrome_options.add_argument('--headless')
+        self.driver = webdriver.Chrome(options=chrome_options)
 
-    for job_module in job_modules:
-        jobObj = Job()
+        # store new job found
+        self.new_jobs = []
 
-        # get url of job page
-        jobObj.url = "http://myjob.mu" + \
-            job_module.find('a', href=True, class_='show-more')['href']
+    def scrapeJobModules(self) -> None:
+        """Extracts all job data on current page and saves this
+        data to `new_jobs`.
+        """
 
-        # ignore already scraped jobs
-        if jobObj.url in scraped_urls:
-            continue
+        # get all job modules on current page
+        soup = BeautifulSoup(self.driver.page_source, 'lxml')
+        job_modules = soup.find_all('div', class_='module job-result')
 
-        # else new job found
-        jobs_added_count += 1
+        # initialise counter for the number of new
+        # jobs found on current page
+        jobs_added_count = 0
 
-        jobObj.job_title = job_module.find(
-            'h2', itemprop='title').text.lower()
+        for job_module in tqdm(job_modules):
+            jobObj = Job()
 
-        # extract company name
-        if (job_module.find('a', itemprop='hiringOrganization')
-                is not None):
-            jobObj.company = job_module.find(
-                'a', itemprop='hiringOrganization').text
+            # get url of current job module
+            jobObj.url = "http://myjob.mu" + \
+                job_module.find('a', href=True, class_='show-more')['href']
 
-        # extract date posted and closing date
-        jobObj.date_posted = job_module.find(
-            'li', itemprop='datePosted').text.replace('Added ', '')
-        jobObj.closing_date = job_module.find(
-            'li', class_='closed-time').text.replace('Closing ', '')
+            # ignore already scraped jobs
+            if jobObj.url in self.scraped_urls:
+                continue
 
-        # convert string dates to correct datetime data type
-        jobObj.date_posted = datetime.strptime(jobObj.date_posted, '%d/%m/%Y')
-        jobObj.closing_date = datetime.strptime(
-            jobObj.closing_date, '%d/%m/%Y')
+            # else new job found
+            jobs_added_count += 1
+            self.scraped_urls.append(jobObj.url)
 
-        # extract job location
-        jobObj.location = job_module.find(
-            'li', itemprop='jobLocation').text
+            jobObj.job_title = job_module.find(
+                'h2', itemprop='title').text.lower()
 
-        # extract salary
-        jobObj.salary = job_module.find('li', itemprop='baseSalary').text
+            # extract company name
+            if (job_module.find('a', itemprop='hiringOrganization')
+                    is not None):
+                jobObj.company = job_module.find(
+                    'a', itemprop='hiringOrganization').text
 
-        # Extract job description from Show More option
-        driver.get(jobObj.url)
-        # time.sleep(1)
-        show_more = BeautifulSoup(driver.page_source, 'lxml')
-        jobObj.job_details = show_more.find(
-            'div', class_='job-details').text
+            # extract date posted and closing date
+            jobObj.date_posted = job_module.find(
+                'li', itemprop='datePosted').text.replace('Added ', '')
+            jobObj.closing_date = job_module.find(
+                'li', class_='closed-time').text.replace('Closing ', '')
 
-        # extract employment type
-        if (show_more.find('li', class_='employment-type') is not None):
-            jobObj.employment_type = show_more.find(
-                'li', class_='employment-type').text
+            # convert string dates to correct datetime data type
+            jobObj.date_posted = datetime.strptime(
+                jobObj.date_posted, '%d/%m/%Y')
+            jobObj.closing_date = datetime.strptime(
+                jobObj.closing_date, '%d/%m/%Y')
 
-        # save job in database
+            # extract job location
+            jobObj.location = job_module.find(
+                'li', itemprop='jobLocation').text
 
-        library.add_job(jobObj.__dict__)
+            # extract salary
+            jobObj.salary = job_module.find('li', itemprop='baseSalary').text
 
-        time.sleep(CRAWL_DELAY)
+            # Extract job description from Show More option
+            self.driver.get(jobObj.url)
+            show_more = BeautifulSoup(self.driver.page_source, 'lxml')
+            jobObj.job_details = show_more.find(
+                'div', class_='job-details').text
 
-    return jobs_added_count
+            # extract employment type
+            if (show_more.find('li', class_='employment-type') is not None):
+                jobObj.employment_type = show_more.find(
+                    'li', class_='employment-type').text
 
+            # save job in database
+            self.new_jobs.append(jobObj.__dict__)
+            time.sleep(self.crawl_delay)
 
-def scrapeWebsite():
-    """Sets up Selenium scraper and scrapes all pages containing IT jobs
-    on website by calling `scrapeJobModules()`.
-    """
-    # get already scraped urls from library
-    scraped_urls = library.get_recent_urls()
+        return jobs_added_count
 
-    # default url for IT jobs sorted by most recent
-    default_page_url = ('https://www.myjob.mu/ShowResults.aspx?'
-                        'Keywords=&Location=&Category=39&Recruiter=Company&'
-                        'SortBy=MostRecent&Page=')
-    # start a session
-    driver.get(default_page_url+'1')
-    time.sleep(5)  # wait for loading page to be over
+    def get_new_jobs(self) -> list:
+        """Returns a list of dictionaries representing the new jobs
+        found.
+        """
+        # start a session
+        self.driver.get(self.default_url+'1')
+        time.sleep(self.load_duration)  # wait for loading page to be over
 
-    # get number of pages that must be scraped
-    soup = BeautifulSoup(driver.page_source, 'lxml')
-    last_page = int(soup.find('ul', id="pagination").find_all(
-        'li')[-2].text)
+        # get total number of pages present
+        soup = BeautifulSoup(self.driver.page_source, 'lxml')
+        last_page = int(soup.find('ul', id="pagination").find_all(
+            'li')[-2].text)
 
-    total_jobs = 0
-    # scrape pages
-    for pageNumber in tqdm(range(1, last_page+1)):
-        driver.get(default_page_url+str(pageNumber))
-        jobs_added_count = scrapeJobModules(driver.page_source, scraped_urls)
-        total_jobs += jobs_added_count
+        # scrape pages
+        for pageNumber in tqdm(range(1, last_page+1)):
+            self.driver.get(self.default_url+str(pageNumber))
+            jobs_added_count = self.scrapeJobModules()
 
-        # since jobs are sorted by date on website, as soon as
-        # we encounter a page which we have already visited we can stop
-        # scraping. (all pages after current page are also already visited)
-        if (jobs_added_count == 0):
-            break
+            # since jobs are sorted by recent, as soon as
+            # we encounter a page which has already been visited we can stop
+            # scraping. (all pages after current page are also already visited)
+            if (jobs_added_count == 0):
+                break
 
-    print("New jobs added = ", total_jobs)
-    driver.quit()
+        self.driver.quit()
+        return self.new_jobs
 
 
 if __name__ == "__main__":
-    scrapeWebsite()
+    x = Scraper([])
+    jobs = x.get_new_jobs()
+    print(len(jobs))
+    print(jobs[0])
