@@ -38,6 +38,20 @@ class Database:
         self.job_collection_ref = db.collection(u'jobs')
         self.stats_collection_ref = db.collection(u'statistics')
 
+        # initialise references to documents in stats_collection
+        self.db_size_ref = self.stats_collection_ref.document(
+            u'database-size')
+        self.cloud_data_ref = self.stats_collection_ref.document(u'cloud-data')
+        self.db_data_ref = self.stats_collection_ref.document(u'db-data')
+        self.lang_data_ref = self.stats_collection_ref.document(u'lang-data')
+        self.lib_data_ref = self.stats_collection_ref.document(u'lib-data')
+        self.loc_data_ref = self.stats_collection_ref.document(u'loc-data')
+        self.os_data_ref = self.stats_collection_ref.document(u'os-data')
+        self.salary_data_ref = self.stats_collection_ref.document(
+            u'salary-data')
+        self.tools_data_ref = self.stats_collection_ref.document(u'tools-data')
+        self.web_data_ref = self.stats_collection_ref.document(u'web-data')
+
     def get_dataframe(self):
         """Gets the entire database from firestore and returns it as
         a Panda dataframe.
@@ -143,27 +157,134 @@ class Database:
         """Increments the counter which keeps tracks of the
         number of jobs in database.
         """
-        size_document_ref = self.stats_collection_ref.document(
-            u'database-size')
-        new_size = int(size_document_ref.get().to_dict()['size']) + 1
-        size_document_ref.update({'size': new_size})
+        new_size = int(self.db_size_ref.get().to_dict()['size']) + 1
+        self.db_size_ref.update({'size': new_size})
 
-    def initialise_size_counter(self):
+    def recalculate_size_counter(self):
         """Initialises  the counter which keeps tracks of the
         number of jobs in database to its true value.
 
         WARNING : Use this function sparingly as it will
         heavily impact the quota usage for number of reads.
         """
-        size_document_ref = self.stats_collection_ref.document(
-            u'database-size')
         new_size = len(self.get_dataframe())
-        size_document_ref.update({'size': new_size})
+        self.db_size_ref.update({'size': new_size})
+
+    def doc_exists(self, collectionRef, docName):
+        """Given a valid collection, check if a document is present in it.
+
+        Args:
+            docName (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        doc_ref = collectionRef.document(docName)
+        doc = doc_ref.get()
+        if doc.exists:
+            return True
+        else:
+            return False
+
+    def update_filtered_statistics(self, incrementDict, document_ref):
+        """Updates filtered statistics on Firestore.
+
+        Args:
+            incrementDict (dict): A dictionary where the values are boolean.
+            documentName (dict): Name of document in the `statistics`
+            collection containing a dictionary.
+        """
+
+        def merge_dicts(a, b):
+            """Merges two dictionaries by adding the values of their
+            common keys and by preserving uncommon keys.
+
+            https://stackoverflow.com/a/39189980/17627866
+
+            Args:
+                a (dict): dictionary
+                b (dict): dictionary
+
+            Returns:
+                dict: merged dictionary
+            """
+            for k in b:
+                if k in a:
+                    b[k] = b[k] + a[k]
+            c = {**a, **b}
+            return c
+
+        # if (not self.doc_exists(self.stats_collection_ref, documentName)):
+        #     raise Exception(f"{documentName} document"
+        #                     "is not found in statistics collection")
+
+        # replace boolean values in incrementDict with integers
+        for key, val in incrementDict.items():
+            incrementDict[key] = 1 if val else 0
+
+        # get dictionary currently stored on Firestore
+        # ! add try catch here
+        current_dict = document_ref.get().to_dict()
+
+        # combine dictionaries by adding values
+        resultDict = merge_dicts(current_dict, incrementDict)
+
+        # if there's no change do nothing
+        if (resultDict == current_dict):
+            return
+
+        # save changes
+        document_ref.update(resultDict)
+
+    def initialise_stats_collection(self):
+        # set database size to 0
+        self.db_size_ref.set({'size': 0})
+
+        # create other documents which will store filtered data
+        self.cloud_data_ref.set({})
+        self.db_data_ref.set({})
+        self.lang_data_ref.set({})
+        self.lib_data_ref.set({})
+        self.loc_data_ref.set({})
+        self.os_data_ref.set({})
+        self.salary_data_ref.set({})
+        self.tools_data_ref.set({})
+        self.web_data_ref.set({})
+
+
+def merge_dicts(a, b):
+    """Merges two dictionaries by adding the values of their
+    common keys and by preserving uncommon keys.
+
+    https://stackoverflow.com/a/39189980/17627866
+
+    Args:
+        a (dict): dictionary
+        b (dict): dictionary
+
+    Returns:
+        dict: merged dictionary
+    """
+    for k in b:
+        if k in a:
+            b[k] = b[k] + a[k]
+    c = {**a, **b}
+    return c
 
 
 if __name__ == "__main__":
-    my_database = Database()
-    # my_database.initialise_size_counter()
+    is_present = {
+        "Windows": False,
+        "Mac": False,
+        "Linux": False,
+    }
+
+    # my_database = Database()
+    # my_database.initialise_stats_collection()
+    # my_database.recalculate_size_counter()
+    # my_database.update_filtered_statistics(is_present,
+    # my_database.os_data_ref)
+
     # my_database.increment_size_counter()
     # print(my_database.head())
     # x = my_database.get_recent_urls(2)
