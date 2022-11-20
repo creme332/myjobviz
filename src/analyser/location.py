@@ -1,0 +1,60 @@
+#!venv/bin/python3
+import unittest
+
+
+def location_count(location_list):
+    """Identifies the most common location for IT jobs.
+
+    Args:
+        destination_filename (str): path where statistics will be saved.
+    """
+    JobCountPerDistrict = {'Black River': 0, 'Flacq': 0,
+                           'Grand Port': 0, 'Moka': 0, 'Pamplemousses': 0,
+                           'Plaine Wilhems': 0, 'Port Louis': 0,
+                           'Riviere du Rempart': 0, 'Savanne': 0}
+    skipped_locations = []
+
+    for location in location_list:
+        location = location.replace('\r\n', '',).strip()
+        if location != "Mauritius" and location != "Rodrigues":
+            if (location not in JobCountPerDistrict.keys()):
+                skipped_locations.append(location)
+                continue
+            JobCountPerDistrict[location] += 1
+
+    # Rename Plaine Wilhems to Plaines Wilhems
+    # (myjob.my incorrectly wrote "Plaine Wilhems")
+    JobCountPerDistrict['Plaines Wilhems'] = JobCountPerDistrict.pop(
+        'Plaine Wilhems')
+    if (len(skipped_locations) > 0):
+        raise Exception('skipped :', skipped_locations)
+    return JobCountPerDistrict
+
+
+class Test(unittest.TestCase):
+    def filterDict(self, dict):
+        return {x: y for x, y in dict.items() if y != 0}
+
+    def test_plaine_wilhems(self):
+        list = ['Plaine Wilhems']
+        self.assertEqual(self.filterDict(
+            location_count(list)), {'Plaines Wilhems': 1})
+
+    def test_countries(self):
+        list = ['Rodrigues', 'Mauritius']
+        self.assertEqual(self.filterDict(
+            location_count(list)), {})
+
+    def test_exceptions(self):
+        list = ['fs', 'Mauritius']
+        try:
+            self.filterDict(
+                location_count(list))
+        except Exception:
+            pass
+        else:
+            self.fail('unexpected exception raised')
+
+
+if __name__ == '__main__':
+    unittest.main()
