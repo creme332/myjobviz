@@ -1,5 +1,6 @@
 #!venv/bin/python3
 import unittest
+from dictionaryUtils import filter_dict
 
 
 def location_count(location_list):
@@ -32,23 +33,21 @@ def location_count(location_list):
 
 
 class Test(unittest.TestCase):
-    def filterDict(self, dict):
-        return {x: y for x, y in dict.items() if y != 0}
 
     def test_plaine_wilhems(self):
         list = ['Plaine Wilhems']
-        self.assertEqual(self.filterDict(
+        self.assertEqual(filter_dict(
             location_count(list)), {'Plaines Wilhems': 1})
 
     def test_countries(self):
         list = ['Rodrigues', 'Mauritius']
-        self.assertEqual(self.filterDict(
+        self.assertEqual(filter_dict(
             location_count(list)), {})
 
     def test_exceptions(self):
         list = ['fs', 'Mauritius']
         try:
-            self.filterDict(
+            filter_dict(
                 location_count(list))
         except Exception:
             pass
