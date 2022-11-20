@@ -98,7 +98,7 @@ class TestCloudPlatormsCheck(unittest.TestCase):
     def test_getCount(self):
         test_list = ['unbuntu', 'azue azure', 'watson']
         x = cp_count(test_list)
-        # print(self.filterDict(x))
+        # print(filter_dict(x))
         self.assertEqual(filter_dict(x), {'Azure': 1,
                                           'Watson': 1})
 
