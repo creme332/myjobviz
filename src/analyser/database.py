@@ -1,7 +1,22 @@
 #!venv/bin/python3
 import unittest
 import re
-# import pandas as pd
+from dictionaryUtils import (toIntegerValues, merge_dicts,
+                             to_true_list, filter_dict)
+
+
+def db_count(job_details_list):
+    count = {
+        "MySQL": 0, "PostgreSQL": 0, "SQLite": 0, "MongoDB": 0,
+        "Microsoft SQL Server": 0, "Redis": 0, "MariaDB": 0,
+        "Firebase": 0, "Elasticsearch": 0, "Oracle": 0,
+        "DynamoDB": 0, "Cassandra": 0, "IBM DB2": 0,
+        "Couchbase": 0, "NoSQL": 0
+    }
+    for job_detail in job_details_list:
+        res = toIntegerValues(database_check(job_detail))
+        count = merge_dicts(count, res)
+    return count
 
 
 def database_check(job_details):
@@ -56,28 +71,27 @@ def database_check(job_details):
     if ("oracle database" in job_details):
         is_present["Oracle"] = True
 
-    # return matches only
-    return [key for key in is_present if is_present[key]]
+    return is_present
 
 
 class TestDatabaseCheck(unittest.TestCase):
 
     def test_uppercase(self):
         string = 'IBM DB2'
-        self.assertEqual(database_check(string), ['IBM DB2'])
+        self.assertEqual(to_true_list(database_check(string)), ['IBM DB2'])
 
     def test_substrings(self):
         string = 'sql'
-        self.assertCountEqual(database_check(string),
+        self.assertCountEqual(to_true_list(database_check(string)),
                               [])
 
     def test_postgres(self):
         string = 'postGReSQL'
-        self.assertCountEqual(database_check(string),
+        self.assertCountEqual(to_true_list(database_check(string)),
                               ['PostgreSQL'])
         string = ('Sait utiliser les principales bases de'
                   ' données relationnelles (MySQL, Postgres)')
-        self.assertCountEqual(database_check(string),
+        self.assertCountEqual(to_true_list(database_check(string)),
                               ['PostgreSQL', 'MySQL'])
 
     def test_all_databases(self):
@@ -89,31 +103,31 @@ class TestDatabaseCheck(unittest.TestCase):
                     'Firebase', 'Elasticsearch', 'Oracle',
                     'DynamoDB', 'Cassandra', 'IBM DB2',
                     'Couchbase', 'NoSQL']
-        self.assertCountEqual(database_check(string), expected)
+        self.assertCountEqual(to_true_list(database_check(string)), expected)
 
     def test_oracle_corner_case(self):
         string = ('oracle cloud is good')
         expected = []
-        self.assertCountEqual(database_check(string), expected)
+        self.assertCountEqual(to_true_list(database_check(string)), expected)
 
         string = ('oracle cloud')
         expected = []
-        self.assertCountEqual(database_check(string), expected)
+        self.assertCountEqual(to_true_list(database_check(string)), expected)
 
         string = ('oracle')
         expected = []
-        self.assertCountEqual(database_check(string), ['Oracle'])
+        self.assertCountEqual(to_true_list(database_check(string)), ['Oracle'])
 
     def test_real_job_details(self):
-        # data_source_filename = 'data/RawScrapedData.csv'
-        # df = pd.read_csv(data_source_filename, header=0)
-
-        # # filter df to include only rows mentioning sql
-        # df = df[df['job_details'].str.contains("sql")]
-        # string = df['job_details'].tolist()[0]
-
         string = 'expertise mysql/mariadb (database tuning, sql optimisation)'
-        self.assertCountEqual(database_check(string), ['MySQL', 'MariaDB'])
+        self.assertCountEqual(to_true_list(
+            database_check(string)), ['MySQL', 'MariaDB'])
+
+    def test_db_count(self):
+        List = ['mariadb', 'helpe das sql Mariadb', 'mysql']
+        x = filter_dict(db_count(List))
+        # print(x)
+        self.assertCountEqual(x, {'MySQL': 1, 'MariaDB': 2})
 
 
 if __name__ == '__main__':
