@@ -2,6 +2,34 @@
 import unittest
 import re
 import pandas as pd
+from dictionaryUtils import (toIntegerValues, merge_dicts,
+                             to_true_list, filter_dict)
+
+
+def web_count(job_details_list):
+    count = {"Svelte": False,
+             "ASP.NET": False,
+             "FastAPI": False,
+             "React": False,
+             "Vue.js": False,  # or Vue if  english job description
+             "Express": False,
+             "Spring": False,
+             "Ruby on Rails": False,
+             "Django": False,
+             "Laravel": False,
+             "Flask": False,
+             "Gatsby": False,
+             "Symfony": False,
+             "jQuery": False,
+             "Drupal": False,
+             "Angular.js": False,
+             "Angular": False
+             }
+    count = toIntegerValues(count)
+    for job_detail in job_details_list:
+        res = toIntegerValues(web_framework_check(job_detail))
+        count = merge_dicts(count, res)
+    return count
 
 
 def web_framework_check(job_details):
@@ -70,30 +98,29 @@ def web_framework_check(job_details):
     if ('vue.js' in job_details or 'vuejs' in job_details):
         is_present['Vue.js'] = True
 
-    # return matches only
-    return [key for key in is_present if is_present[key]]
+    return is_present
 
 
 class TestWebFrameworkCheck(unittest.TestCase):
 
     def test_uppercase(self):
         string = 'i love SVELTE'
-        self.assertEqual(web_framework_check(string), ['Svelte'])
+        self.assertEqual(to_true_list(web_framework_check(string)), ['Svelte'])
 
     @unittest.skip('Not sure how to distinguish between'
                    ' the verb and the framework')
     def test_react(self):
         string = 'The first word of -- react to danger -- is a verb.'
-        self.assertEqual(web_framework_check(string), [])
+        self.assertEqual(to_true_list(web_framework_check(string)), [])
 
     def test_substrings(self):
         # distinguish between Angular and Angular.js
         string = 'angular.js is...'
-        self.assertCountEqual(web_framework_check(string),
+        self.assertCountEqual(to_true_list(web_framework_check(string)),
                               ['Angular.js'])
 
         string = 'angular.js is not angular'
-        self.assertCountEqual(web_framework_check(string),
+        self.assertCountEqual(to_true_list(web_framework_check(string)),
                               ['Angular.js', 'Angular'])
 
     def test_all_frameworks(self):
@@ -104,19 +131,26 @@ class TestWebFrameworkCheck(unittest.TestCase):
                     'Vue.js', 'Express', 'Spring', 'Ruby on Rails',
                     'Django', 'Laravel', 'Flask', 'Gatsby', 'Symfony',
                     'jQuery', 'Drupal', 'Angular.js', 'Angular']
-        self.assertCountEqual(web_framework_check(string), expected)
+        self.assertCountEqual(to_true_list(
+            web_framework_check(string)), expected)
 
     # @unittest.skip('Reason for skipping')
     def test_real_job_details(self):
         data_source_filename = 'data/RawScrapedData.csv'
         df = pd.read_csv(data_source_filename, header=0)
 
-        # # filter df
+        # filter df
         df = df[df['job_details'].str.contains("angular")]
         string = df['job_details'].tolist()[0]
         # print(string)
-        self.assertCountEqual(web_framework_check(
-            string), ['Angular', 'React'])
+        self.assertCountEqual(to_true_list(web_framework_check(
+            string)), ['Angular', 'React'])
+
+    def test_getCount(self):
+        test_list = ['unbuntu', 'azue azure', 'watson']
+        x = web_count(test_list)
+        # print(filter_dict(x))
+        self.assertEqual(filter_dict(x), {})
 
 
 if __name__ == '__main__':
