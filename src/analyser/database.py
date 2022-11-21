@@ -1,8 +1,8 @@
 #!venv/bin/python3
 import unittest
 import re
-from dictionaryUtils import (toIntegerValues, merge_dicts,
-                             to_true_list, filter_dict)
+from analyser.dictionaryUtils import (toIntegerValues, merge_dicts,
+                                      to_true_list, filter_dict)
 
 
 def db_count(job_details_list):
@@ -128,7 +128,3 @@ class TestDatabaseCheck(unittest.TestCase):
         x = filter_dict(db_count(List))
         # print(x)
         self.assertCountEqual(x, {'MySQL': 1, 'MariaDB': 2})
-
-
-if __name__ == '__main__':
-    unittest.main()

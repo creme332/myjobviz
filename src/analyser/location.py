@@ -1,6 +1,6 @@
 #!venv/bin/python3
 import unittest
-from dictionaryUtils import filter_dict
+from analyser.dictionaryUtils import filter_dict
 
 
 def location_count(location_list):
@@ -53,7 +53,3 @@ class Test(unittest.TestCase):
             pass
         else:
             self.fail('unexpected exception raised')
-
-
-if __name__ == '__main__':
-    unittest.main()

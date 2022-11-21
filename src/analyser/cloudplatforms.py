@@ -2,8 +2,8 @@
 import unittest
 import pandas as pd
 import re
-from dictionaryUtils import (toIntegerValues, merge_dicts,
-                             to_true_list, filter_dict)
+from analyser.dictionaryUtils import (toIntegerValues, merge_dicts,
+                                      to_true_list, filter_dict)
 
 
 def cp_count(job_details_list) -> dict:
@@ -101,8 +101,3 @@ class TestCloudPlatormsCheck(unittest.TestCase):
         # print(filter_dict(x))
         self.assertEqual(filter_dict(x), {'Azure': 1,
                                           'Watson': 1})
-
-
-if __name__ == '__main__':
-    unittest.main()
-    # web_framework_check('')

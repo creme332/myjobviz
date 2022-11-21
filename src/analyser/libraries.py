@@ -1,8 +1,8 @@
 #!venv/bin/python3
 import unittest
 import pandas as pd
-from dictionaryUtils import (toIntegerValues, merge_dicts,
-                             to_true_list, filter_dict)
+from analyser.dictionaryUtils import (toIntegerValues, merge_dicts,
+                                      to_true_list, filter_dict)
 
 
 def lib_count(job_details_list) -> dict:
@@ -104,7 +104,3 @@ class TestLibrariesCheck(unittest.TestCase):
         x = lib_count(test_list)
         print(filter_dict(x))
         self.assertEqual(filter_dict(x), {'Pandas': 2})
-
-
-if __name__ == '__main__':
-    unittest.main()

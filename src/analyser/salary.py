@@ -46,7 +46,3 @@ class Test(unittest.TestCase):
             pass
         else:
             self.fail('unexpected exception raised')
-
-
-if __name__ == '__main__':
-    unittest.main()

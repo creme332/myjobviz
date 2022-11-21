@@ -2,8 +2,8 @@
 import unittest
 import re
 import pandas as pd
-from dictionaryUtils import (toIntegerValues, merge_dicts,
-                             to_true_list, filter_dict)
+from analyser.dictionaryUtils import (toIntegerValues, merge_dicts,
+                                      to_true_list, filter_dict)
 
 
 def web_count(job_details_list):
@@ -151,8 +151,3 @@ class TestWebFrameworkCheck(unittest.TestCase):
         x = web_count(test_list)
         # print(filter_dict(x))
         self.assertEqual(filter_dict(x), {})
-
-
-if __name__ == '__main__':
-    unittest.main()
-    # web_framework_check('')

@@ -2,8 +2,8 @@
 import unittest
 import pandas as pd
 import re
-from dictionaryUtils import (toIntegerValues, merge_dicts,
-                             to_true_list, filter_dict)
+from analyser.dictionaryUtils import (toIntegerValues, merge_dicts,
+                                      to_true_list, filter_dict)
 
 
 def os_count(job_details_list):
@@ -72,7 +72,3 @@ class TestOSCheck(unittest.TestCase):
         x = os_count(test_list)
         # print(filter_dict(x))
         self.assertEqual(filter_dict(x), {})
-
-
-if __name__ == '__main__':
-    unittest.main()

@@ -2,8 +2,8 @@
 import unittest
 import re
 import pandas as pd
-from dictionaryUtils import (toIntegerValues, merge_dicts,
-                             to_true_list, filter_dict)
+from analyser.dictionaryUtils import (toIntegerValues, merge_dicts,
+                                      to_true_list, filter_dict)
 
 
 def lang_count(job_details_list) -> dict:
@@ -158,7 +158,3 @@ class TestLanguageCheck(unittest.TestCase):
         x = lang_count(test_list)
         # print(filter_dict(x))
         self.assertEqual(filter_dict(x), {'Java': 2, 'C#': 2})
-
-
-if __name__ == '__main__':
-    unittest.main()
