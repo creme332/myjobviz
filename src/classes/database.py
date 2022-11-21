@@ -5,6 +5,7 @@ from firebase_admin import credentials
 import pandas as pd
 import os
 from dotenv import load_dotenv, find_dotenv
+from analyser.dictionaryUtils import merge_dicts
 
 
 class Database:
@@ -34,23 +35,23 @@ class Database:
 
         cred = credentials.Certificate(getServiceAccountKey())
         firebase_admin.initialize_app(cred)
-        db = firestore.client()
-        self.job_collection_ref = db.collection(u'jobs')
-        self.stats_collection_ref = db.collection(u'statistics')
+        self.db = firestore.client()
+        self.job_collection_ref = self.db.collection(u'jobs')
+        self.stats_collection_ref = self.db.collection(u'statistics')
 
         # initialise references to documents in stats_collection
         self.db_size_ref = self.stats_collection_ref.document(
-            u'database-size')
-        self.cloud_data_ref = self.stats_collection_ref.document(u'cloud-data')
-        self.db_data_ref = self.stats_collection_ref.document(u'db-data')
-        self.lang_data_ref = self.stats_collection_ref.document(u'lang-data')
-        self.lib_data_ref = self.stats_collection_ref.document(u'lib-data')
-        self.loc_data_ref = self.stats_collection_ref.document(u'loc-data')
-        self.os_data_ref = self.stats_collection_ref.document(u'os-data')
+            u'database_size')
+        self.cloud_data_ref = self.stats_collection_ref.document(u'cloud_data')
+        self.db_data_ref = self.stats_collection_ref.document(u'db_data')
+        self.lang_data_ref = self.stats_collection_ref.document(u'lang_data')
+        self.lib_data_ref = self.stats_collection_ref.document(u'lib_data')
+        self.loc_data_ref = self.stats_collection_ref.document(u'loc_data')
+        self.os_data_ref = self.stats_collection_ref.document(u'os_data')
         self.salary_data_ref = self.stats_collection_ref.document(
-            u'salary-data')
-        self.tools_data_ref = self.stats_collection_ref.document(u'tools-data')
-        self.web_data_ref = self.stats_collection_ref.document(u'web-data')
+            u'salary_data')
+        self.tools_data_ref = self.stats_collection_ref.document(u'tools_data')
+        self.web_data_ref = self.stats_collection_ref.document(u'web_data')
 
     def get_dataframe(self):
         """Gets the entire database from firestore and returns it as
@@ -186,6 +187,16 @@ class Database:
         else:
             return False
 
+    def sanitizeDict(self, dict):
+        """Dictionary keys containing chars other than
+        letters, numbers, and underscores must be sanitized
+        before uploading a dictionary to firestore.
+        """
+        new_dict = {}
+        for key in dict.keys():
+            new_dict[self.db.field_path(key)] = dict[key]
+        return new_dict
+
     def update_filtered_statistics(self, incrementDict, document_ref):
         """Updates filtered statistics on Firestore.
 
@@ -195,39 +206,17 @@ class Database:
             collection containing a dictionary.
         """
 
-        def merge_dicts(a, b):
-            """Merges two dictionaries by adding the values of their
-            common keys and by preserving uncommon keys.
-
-            https://stackoverflow.com/a/39189980/17627866
-
-            Args:
-                a (dict): dictionary
-                b (dict): dictionary
-
-            Returns:
-                dict: merged dictionary
-            """
-            for k in b:
-                if k in a:
-                    b[k] = b[k] + a[k]
-            c = {**a, **b}
-            return c
-
         # if (not self.doc_exists(self.stats_collection_ref, documentName)):
         #     raise Exception(f"{documentName} document"
         #                     "is not found in statistics collection")
-
-        # replace boolean values in incrementDict with integers
-        for key, val in incrementDict.items():
-            incrementDict[key] = 1 if val else 0
 
         # get dictionary currently stored on Firestore
         # ! add try catch here
         current_dict = document_ref.get().to_dict()
 
         # combine dictionaries by adding values
-        resultDict = merge_dicts(current_dict, incrementDict)
+        resultDict = merge_dicts(
+            current_dict, self.sanitizeDict(incrementDict))
 
         # if there's no change do nothing
         if (resultDict == current_dict):
@@ -250,42 +239,3 @@ class Database:
         self.salary_data_ref.set({})
         self.tools_data_ref.set({})
         self.web_data_ref.set({})
-
-
-def merge_dicts(a, b):
-    """Merges two dictionaries by adding the values of their
-    common keys and by preserving uncommon keys.
-
-    https://stackoverflow.com/a/39189980/17627866
-
-    Args:
-        a (dict): dictionary
-        b (dict): dictionary
-
-    Returns:
-        dict: merged dictionary
-    """
-    for k in b:
-        if k in a:
-            b[k] = b[k] + a[k]
-    c = {**a, **b}
-    return c
-
-
-if __name__ == "__main__":
-    is_present = {
-        "Windows": False,
-        "Mac": False,
-        "Linux": False,
-    }
-
-    # my_database = Database()
-    # my_database.initialise_stats_collection()
-    # my_database.recalculate_size_counter()
-    # my_database.update_filtered_statistics(is_present,
-    # my_database.os_data_ref)
-
-    # my_database.increment_size_counter()
-    # print(my_database.head())
-    # x = my_database.get_recent_urls(2)
-    # print(x)
