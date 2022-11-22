@@ -239,3 +239,6 @@ class Database:
         self.salary_data_ref.set({})
         self.tools_data_ref.set({})
         self.web_data_ref.set({})
+
+    def get_filtered_statistics(self, document_ref):
+        return document_ref.get().to_dict()
