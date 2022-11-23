@@ -240,5 +240,9 @@ class Database:
         self.tools_data_ref.set({})
         self.web_data_ref.set({})
 
-    def get_filtered_statistics(self, document_ref):
-        return document_ref.get().to_dict()
+    def get_filtered_statistics(self, document_ref, header):
+        dict = document_ref.get().to_dict()
+        df = pd.DataFrame.from_dict(dict, orient='index')
+        df = df.reset_index()
+        df.columns = [header, 'Frequency']
+        return df
