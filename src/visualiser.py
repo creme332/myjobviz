@@ -1,7 +1,7 @@
 #!venv/bin/python3
 
 """
-This module visualises data from `data/filtered` folder and saves the results
+This module visualises filtered statistics and saves the results
 to `charts` folder.
 """
 
@@ -14,10 +14,7 @@ import plotly.io as pio
 pio.renderers.default = 'browser'  # to show geojson map in web browser
 
 
-def HorizontalLollipopChart(source_filename, destination_filename, title):
-    # using data from csv file
-    df = pd.read_csv(source_filename, sep='\t')
-
+def HorizontalLollipopChart(df, destination_filename, title):
     # get rid of data with 0 frequency
     df = df[df['Frequency'] != 0]
 
@@ -40,8 +37,7 @@ def HorizontalLollipopChart(source_filename, destination_filename, title):
     plt.close()
 
 
-def HorizontalBarChart(source_filename, destination_filename, my_color, title):
-    df = pd.read_csv(source_filename, sep='\t')
+def HorizontalBarChart(df, destination_filename, my_color, title):
     df = df.sort_values(by=['Frequency'])
 
     # get rid of data with 0 frequency
@@ -65,9 +61,7 @@ def HorizontalBarChart(source_filename, destination_filename, my_color, title):
     plt.close()
 
 
-def PieChart(source_filename, destination_filename, title):
-
-    df = pd.read_csv(source_filename, sep='\t')
+def PieChart(df, destination_filename, title):
     column_headings = df.columns
 
     my_labels = df[column_headings[0]].tolist()
@@ -103,9 +97,7 @@ def PieChart(source_filename, destination_filename, title):
     plt.close()
 
 
-def donutChart(source_filename, destination_path, title):
-    df = pd.read_csv(source_filename, sep='\t')
-
+def donutChart(df, destination_path, title):
     # get rid of data with 0 frequency
     df = df[df['Frequency'] != 0]
 
@@ -144,11 +136,8 @@ def donutChart(source_filename, destination_path, title):
     plt.close()
 
 
-
-def CreateMap(source_path, geojson_path, destination_path):
-
+def CreateMap(df, geojson_path, destination_path):
     districts = json.load(open(geojson_path, 'r'))
-    df = pd.read_csv(source_path, sep='\t')
 
     # create a log scale to deal with outliers in JobCount
     # get rid of 0s in column (log 0 invalid)
@@ -191,41 +180,57 @@ def CreateMap(source_path, geojson_path, destination_path):
     # fig.show()
 
 
-def createVisualisations():
-    source_folder = 'data/filtered/'  # folder containing filtered data
+def createVisualisations(my_database):
     destination_folder = 'charts/'  # folder to store charts
 
-    CreateMap(source_folder + "LocationData.csv",
+    df = my_database.get_filtered_statistics(
+        my_database.cloud_data_ref, 'CloudPlatforms')
+    donutChart(df, destination_folder + "CloudChart", "Cloud platforms")
+
+    df = my_database.get_filtered_statistics(
+        my_database.db_data_ref, 'Database')
+    HorizontalBarChart(df,
+                       destination_folder + "DatabaseChart", '#5FE916',
+                       "Databases")
+
+    df = my_database.get_filtered_statistics(
+        my_database.lang_data_ref, 'Language')
+    HorizontalBarChart(df,
+                       destination_folder + "LanguageChart", 'orange',
+                       "Programming languages")
+
+    df = my_database.get_filtered_statistics(
+        my_database.lib_data_ref, 'Libraries')
+    HorizontalBarChart(df,
+                       destination_folder + "LibrariesChart", '#0FF0A3',
+                       "Libraries")
+    return
+    df = my_database.get_filtered_statistics(
+        my_database.loc_data_ref, 'Location')
+    CreateMap(df,
               "data/mauritius-districts-geojson.json",
               destination_folder + "choropleth-map-plotly.html")
 
-    HorizontalBarChart(source_folder + "DatabaseData.csv",
-                       destination_folder + "DatabaseChart", '#5FE916',
-                       "Databases")
-    HorizontalBarChart(source_folder + "LanguageData.csv",
-                       destination_folder + "LanguageChart", 'orange',
-                       "Programming languages")
-    HorizontalBarChart(source_folder + "LibrariesData.csv",
-                       destination_folder + "LibrariesChart", '#0FF0A3',
-                       "Libraries")
-    HorizontalBarChart(source_folder + "ToolsData.csv",
-                       destination_folder + "ToolsChart", '#a016e9', "Tools")
-    HorizontalBarChart(source_folder + "WebData.csv",
-                       destination_folder + "WebChart", '#F00F5C',
-                       "Web frameworks")
-
-    HorizontalLollipopChart(source_folder + "WebData.csv",
-                            destination_folder + "WebLollipopChart",
-                            "Web frameworks")
-
-    donutChart(source_folder + "OSData.csv", destination_folder +
+    df = my_database.get_filtered_statistics(
+        my_database.loc_data_ref, 'OS')
+    donutChart(df, destination_folder +
                "OSChart", "Operating systems")
-    donutChart(source_folder + "CloudData.csv",
-               destination_folder + "CloudChart", "Cloud platforms")
 
-    PieChart(source_folder + "SalaryData.csv",
+    df = my_database.get_filtered_statistics(
+        my_database.salary_data_ref, 'Salary')
+    PieChart(df,
              destination_folder + "SalaryChart", "Salary")
 
+    df = my_database.get_filtered_statistics(
+        my_database.tools_data_ref, 'Tools')
+    HorizontalBarChart(df,
+                       destination_folder + "ToolsChart", '#a016e9', "Tools")
 
-if __name__ == "__main__":
-    createVisualisations()
+    df = my_database.get_filtered_statistics(
+        my_database.web_data_ref, 'WebFrameworks')
+    HorizontalBarChart(df,
+                       destination_folder + "WebChart", '#F00F5C',
+                       "Web frameworks")
+    HorizontalLollipopChart(df,
+                            destination_folder + "WebLollipopChart",
+                            "Web frameworks")
