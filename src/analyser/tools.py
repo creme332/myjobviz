@@ -2,8 +2,8 @@
 import unittest
 import pandas as pd
 import re
-from dictionaryUtils import (toIntegerValues, merge_dicts,
-                             to_true_list, filter_dict)
+from analyser.dictionaryUtils import (toIntegerValues, merge_dicts,
+                                      to_true_list, filter_dict)
 
 
 def tools_count(job_details_list):
@@ -128,7 +128,3 @@ class TestToolsCheck(unittest.TestCase):
         x = tools_count(test_list)
         # print(filter_dict(x))
         self.assertEqual(filter_dict(x), {})
-
-
-if __name__ == '__main__':
-    unittest.main()
