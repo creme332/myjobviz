@@ -141,8 +141,8 @@ def CreateMap(df, geojson_path, destination_path):
 
     # create a log scale to deal with outliers in JobCount
     # get rid of 0s in column (log 0 invalid)
-    df["JobCount"].replace(0, 1, inplace=True)
-    df['log(JobCount)'] = np.log10(df['JobCount'])
+    df["Frequency"].replace(0, 1, inplace=True)
+    df['log(JobCount)'] = np.log10(df['Frequency'])
 
     fig = px.choropleth(df, geojson=districts,
                         featureidkey='properties.name_1',
@@ -154,7 +154,7 @@ def CreateMap(df, geojson_path, destination_path):
                         range_color=[0, max(df['log(JobCount)'])],
                         hover_name='Location',
                         hover_data={
-                            'JobCount': True,
+                            'Frequency': True,
                             'Location': False,
                             'log(JobCount)': False
                         },
@@ -204,7 +204,7 @@ def createVisualisations(my_database):
     HorizontalBarChart(df,
                        destination_folder + "LibrariesChart", '#0FF0A3',
                        "Libraries")
-    return
+
     df = my_database.get_filtered_statistics(
         my_database.loc_data_ref, 'Location')
     CreateMap(df,
@@ -212,7 +212,7 @@ def createVisualisations(my_database):
               destination_folder + "choropleth-map-plotly.html")
 
     df = my_database.get_filtered_statistics(
-        my_database.loc_data_ref, 'OS')
+        my_database.os_data_ref, 'OS')
     donutChart(df, destination_folder +
                "OSChart", "Operating systems")
 
