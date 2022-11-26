@@ -28,7 +28,7 @@ def location_count(location_list):
     JobCountPerDistrict['Plaines Wilhems'] = JobCountPerDistrict.pop(
         'Plaine Wilhems')
     if (len(skipped_locations) > 0):
-        raise Exception('skipped :', skipped_locations)
+        print('skipped districts :', skipped_locations)
     return JobCountPerDistrict
 
 
