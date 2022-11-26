@@ -102,5 +102,5 @@ class TestLibrariesCheck(unittest.TestCase):
     def test_count(self):
         test_list = ['pandas', 'java c#', 'pandas']
         x = lib_count(test_list)
-        print(filter_dict(x))
+        # print(filter_dict(x))
         self.assertEqual(filter_dict(x), {'Pandas': 2})
