@@ -6,7 +6,6 @@ to `charts` folder.
 """
 
 import matplotlib.pyplot as plt
-import pandas as pd
 import numpy as np
 import json
 import plotly.express as px
@@ -62,6 +61,10 @@ def HorizontalBarChart(df, destination_filename, my_color, title):
 
 
 def PieChart(df, destination_filename, title):
+
+    # get rid of data with 0 frequency
+    df = df[df['Frequency'] != 0]
+
     column_headings = df.columns
 
     my_labels = df[column_headings[0]].tolist()
@@ -70,12 +73,15 @@ def PieChart(df, destination_filename, title):
     # Change color of text
     plt.rcParams['text.color'] = 'black'
 
+    # choose a color scheme
     # colors = ['#FFC1CF', '#E8FFB7', '#E2A0FF', '#C4F5FC', '#B7FFD8',
     # '#36a2eb']
     colors = ['#B243B6', '#F363B1', '#FDBF3B', '#F7F570', '#93EE81', '#47D4C4']
 
-    explode = (0.1, 0.1, 0.1, 0.1, 0.1, 0.1)  # explode a slice if required.
-    # len(explode) = number of rows in df. Then add explode = explode below
+    # explode slices
+    explode = [0.1 for _ in range(len(my_labels))]
+    # ! Obey len(explode) == number of rows in df. Then add explode = explode
+    # ! as argument below
 
     plt.pie(my_data, shadow=True,
             autopct='%1.1f%%',
