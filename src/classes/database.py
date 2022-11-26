@@ -82,7 +82,7 @@ class Database:
 
         return df
 
-    def get_recent_urls(self, LIMIT=200):
+    def get_recent_urls(self, LIMIT=200) -> list:
         """Returns a list of the urls of recently scraped jobs. This function
         can be used to preventing adding duplicates when scraping.
 
@@ -102,7 +102,7 @@ class Database:
                 .stream())
         # return only the urls
         jobs_dict = list(map(lambda x: x.to_dict(), jobs))
-        return pd.DataFrame(jobs_dict)['url'].values
+        return pd.DataFrame(jobs_dict)['url'].values.tolist()
 
     def add_job(self, jobDictionary):
         """Takes as argument a single python dictionary and uploads
