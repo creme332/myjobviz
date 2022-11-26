@@ -6,6 +6,8 @@ import pandas as pd
 import os
 from dotenv import load_dotenv, find_dotenv
 from analyser.dictionaryUtils import merge_dicts
+import json
+import base64
 
 
 class Database:
@@ -18,20 +20,10 @@ class Database:
         """
         def getServiceAccountKey():
             load_dotenv(find_dotenv())
-            variables_keys = {
-                "type": os.getenv("TYPE"),
-                "project_id": os.getenv("PROJECT_ID"),
-                "private_key_id": os.getenv("PRIVATE_KEY_ID"),
-                "private_key": os.getenv("PRIVATE_KEY"),
-                "client_email": os.getenv("CLIENT_EMAIL"),
-                "client_id": os.getenv("CLIENT_ID"),
-                "auth_uri": os.getenv("AUTH_URI"),
-                "token_uri": os.getenv("TOKEN_URI"),
-                "auth_provider_x509_cert_url": os.getenv(
-                    "AUTH_PROVIDER_X509_CERT_URL"),
-                "client_x509_cert_url": os.getenv("CLIENT_X509_CERT_URL")
-            }
-            return variables_keys
+            encoded_key = os.getenv("SERVICE_ACCOUNT_KEY")
+            # https://stackoverflow.com/questions/50693871/error-in-json-loads-for-data-that-has-base64-decoding-applied
+            dic = base64.b64decode(str(encoded_key)[2:-1]).decode('utf-8')
+            return json.loads(dic)
 
         cred = credentials.Certificate(getServiceAccountKey())
         firebase_admin.initialize_app(cred)
