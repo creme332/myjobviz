@@ -13,8 +13,9 @@ def salary_count(salary_list):
     for salary in salary_list:
         if (salary not in invalid_salaries):
             if (salary not in count.keys()):
-                raise Exception('Unknown salary range', salary)
-            count[salary] += 1
+                print('Unknown salary ranges found: ', salary)
+            else:
+                count[salary] += 1
     return count
 
 
@@ -27,7 +28,8 @@ class Test(unittest.TestCase):
                                               '31,000 - 40,000': 0,
                                               '41,000 - 50,000': 0,
                                               '51,000 - 75,000': 1,
-                                              '76,000 - 100,000': 1})
+                                              '76,000 - 100,000': 1,
+                                              'More Than 100,000': 0})
 
     def test_invalid_salaries(self):
         list = ['10,000 - 20,000', 'Not disclosed',
@@ -37,14 +39,17 @@ class Test(unittest.TestCase):
                                               '31,000 - 40,000': 0,
                                               '41,000 - 50,000': 0,
                                               '51,000 - 75,000': 0,
-                                              '76,000 - 100,000': 0})
+                                              '76,000 - 100,000': 0,
+                                              'More Than 100,000': 0})
         return
 
     def test_unknown_ranges(self):
         list = ['10,000 - 20,000', '50,000 - 75,000', '76,000 - 100,000']
-        try:
-            salary_count(list)
-        except Exception:
-            pass
-        else:
-            self.fail('unexpected exception raised')
+        x = salary_count(list)
+        self.assertEqual(x, {'10,000 - 20,000': 1,
+                             '21,000 - 30,000': 0,
+                             '31,000 - 40,000': 0,
+                             '41,000 - 50,000': 0,
+                             '51,000 - 75,000': 0,
+                             '76,000 - 100,000': 1,
+                             'More Than 100,000': 0})

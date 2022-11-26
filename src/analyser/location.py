@@ -28,7 +28,7 @@ def location_count(location_list):
     JobCountPerDistrict['Plaines Wilhems'] = JobCountPerDistrict.pop(
         'Plaine Wilhems')
     if (len(skipped_locations) > 0):
-        print('skipped districts :', skipped_locations)
+        print('Unknown districts found :', skipped_locations)
     return JobCountPerDistrict
 
 
@@ -46,10 +46,5 @@ class Test(unittest.TestCase):
 
     def test_exceptions(self):
         list = ['fs', 'Mauritius']
-        try:
-            filter_dict(
-                location_count(list))
-        except Exception:
-            pass
-        else:
-            self.fail('unexpected exception raised')
+        self.assertEqual(filter_dict(
+            location_count(list)), {})
