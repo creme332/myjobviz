@@ -212,7 +212,7 @@ class Database:
 
         # get dictionary currently stored on Firestore
         # ! add try catch here
-        current_dict = document_ref.get().to_dict()
+        current_dict = self.sanitizeDict(document_ref.get().to_dict())
 
         # combine dictionaries by adding values
         resultDict = merge_dicts(
