@@ -22,7 +22,7 @@ def HorizontalLollipopChart(df, destination_filename, title):
     # Reorder it based on the values:
     ordered_df = df.sort_values(by=column_headings[1])
     my_range = range(1, len(df.index)+1)
-    plt.title(title, weight='bold')
+    # plt.title(title, weight='bold')
 
     plt.hlines(y=my_range, xmin=0,
                xmax=ordered_df[column_headings[1]], color='#00FF2A')
@@ -50,7 +50,7 @@ def HorizontalBarChart(df, destination_filename, my_color, title):
     plt.style.use('ggplot')
 
     plt.barh(my_labels, my_data, color=my_color)
-    plt.title(title, weight='bold')
+    # plt.title(title, weight='bold')
     # plt.ylabel(column_headings[0])  # VARIABLE
     plt.xlabel(column_headings[1])
 
@@ -93,7 +93,7 @@ def PieChart(df, destination_filename, title):
 
             )
 
-    plt.title(title, weight='bold')
+    # plt.title(title, weight='bold')
 
     plt.legend(my_labels, loc='upper left',
                fontsize=8, bbox_to_anchor=(1.04, 1), title="Rupees")
@@ -123,7 +123,7 @@ def donutChart(df, destination_path, title):
                         'linewidth': 1,
                         'antialiased': True}
             )
-    plt.title(title, weight='bold')
+    # plt.title(title, weight='bold')
 
     # draw a circle at the center of pie to make it look like a donut
     centre_circle = plt.Circle(
@@ -170,7 +170,7 @@ def CreateMap(df, geojson_path, destination_path):
     fig.update_geos(fitbounds="locations")
     fig.update_layout(margin={"r": 300, "t": 50, "l": 300, "b": 50})
     fig.update_layout(
-        title='May-July 2022 MU IT jobs by District',
+        title='IT jobs count by District',
         margin=dict(l=100, r=100, t=100, b=100),
         font=dict(size=10),
         hoverlabel=dict(
