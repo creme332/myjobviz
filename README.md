@@ -1,51 +1,100 @@
-# Mauritius Job Survey 📊 <a name="intro"></a> #
-<img src="https://img.shields.io/badge/Python-3.9.7-orange"> <img src = "https://img.shields.io/badge/Panda-1.3.3-blue"> <img src = "https://img.shields.io/badge/BeautifulSoup-4.10.0-brightgreen"> <img src = "https://img.shields.io/badge/MatPlotLib-3.4.3-yellowgreen"> <img src = "https://img.shields.io/badge/Plotly-5.8.0-lightgrey">
+# mauritius-tech-job-scraper 📊 
+![Build status of workflow](https://github.com/creme332/mauritius-scholarship-alert/actions/workflows/main.yml/badge.svg)
 
-> Purpose : Analyse statistics of IT jobs in Mauritius.
+An automatic web scraper which scrapes IT jobs from `myjob.mu` using Github Actions and Selenium. Scraped data is saved to Google Firestore and data visualisations are deployed on Github Pages. 
 
-#  Methodology #
-- In the span of $1$ months (1 May 2022 - 10 June 2022), $600$ unique **IT** job listings were scraped from [myjob.mu](https://www.myjob.mu/) using BeautifulSoup library.
--  Specific data (programming languages, databases, ...) from each job description were extracted.
--   `MatlPlotLib` and `Plotly` were used to visualise the filtered data.
-
-# Results #
-> ⚠️ **Interpret the following result at your own discretion, keeping in mind the sample size and methodology used.**
-
-## Job count per district ##
-![](Charts/choroplethmap.png)
-*[View interactive map](https://creme332.github.io/interactive/mauritius/)* 
-
-## Technologies ##
-![](Charts/LanguageChart.png)
-![](Charts/WebChart.png)
-
-![](Charts/DatabaseChart.png)
-![](Charts/LibrariesChart.png)
-![](Charts/ToolsChart.png)
-![](Charts/WebLollipopChart.png)
-
-![](Charts/OSChart.png)
-![](Charts/CloudChart.png)
-> ⚠️ **The percentage represents the percentage of jobs mentioning a particular criteria as opposed to the percentage of all jobs**
-
-
-## Salary of IT jobs ##
-![](Charts/SalaryChart.png)
-
-> ⚠️ **Only around 100 job listings disclosed the salary**
-
-# 🌠Resources used  <a name="resources"></a> #
-
-[Tutorial on web scraping to CSV file](https://www.youtube.com/watch?v=RvCBzhhydNk&ab_channel=Pythonology)
-
-[Interactive map](https://towardsdatascience.com/a-complete-guide-to-an-interactive-geographical-map-using-python-f4c5197e23e0) 
-
-[Tutorial on how to create choropleth map](https://www.youtube.com/watch?v=aJmaw3QKMvk&ab_channel=IndianPythonista)
-
-# 🔮 Future work <a name="future"></a> # 
-- [ ]  Collect data over a longer period
-- [ ] Add ratelimit for API calls
-- [ ] Automate data collection process
-- [ ] Collect data from more job websites
+# To-do 
+- [ ] in analyser functions pass around a single dictionary. make use of dictUtils.
+- [ ] update `requirements.txt`.
+- [ ] deal with case where collection is empty in library 
+- [ ] implement [github scraping workflow](https://github.com/MarketingPipeline/Python-Selenium-Action/blob/main/.github/workflows/Selenium-Action_Template.yaml)
 - [ ] Add timeseries data viz
-- [ ] Display results on website
+- [ ] add a workflow to backup database (and maybe release a public version)
+- [ ] add a badge for number of jobs scraped
+- [ ] Fix : Riviere du Rempart district includes some nearby small islands.
+
+- [x] Work on website
+- [x] save new jobs just after scraping
+- [x] find a way to run all tests at once
+- [x] add docstrings to all functions
+- [x] use a cumulative approach : instead of having to analyse whole database every time, analyse only new jobs.
+- [x] add tests for `analyser.py`
+- [x] breakdown `analyser.py` in smaller modules.
+- [x] store database size, 
+- [x] fetch only 200 most recent jobs.	
+- [x] change data type of `date_posted` and `closing_date` to date in firestore
+- [x] add progress bar in miner
+- [x] save library to cloud firestore
+- [x] try to request a second time without sleeping
+- [x] update analyser and visualiser. 
+
+## statistics
+- [ ] add statistics for each job title.
+  
+# Features
+- Automatic scraping every day using Github Actions.
+- Scraped data is saved to a Google Firestore database.
+- Wide range of plots (pie chart, donut chart, choropleth map, lollipop chart, ... ).
+- Responsive website.
+
+## Structure of scraped data ##
+```
+{
+	'job_title': 'télévendeurs avec expérience (1 an minimum)',
+	'date_posted': '31/10/2022',
+	'closing_date': '30/11/2022',
+	'url': 'http://myjob.mu/Jobs/TELEVENDEURS-AVEC-EXPERIENCE-1-AN-135694.aspx',
+	'location': '\nMoka ',
+	'employment_type': 'Permanent',
+	'company': 'EURO CRM (Mauritius) Ltd',
+	'salary': '10,000 - 20,000',
+	'job_details': "\nLe Télévendeur prospecte et ... \n"
+}
+```
+
+### Notes
+- The URLs scraped may not work as myjob.mu takes down a job post after a certain time. 
+- The job URL was used as a primary key during scraping to avoid duplicate entries.
+- `job_title` and `job_details` can be in French or English. 
+- `salary` is not always disclosed.
+- `date_posted` and `closing_date` are strings which follow `DD/MM/YYYY` format.
+
+# Attributions
+
+Resource | Source | Note
+---|---| ---|
+[Geojson file for Mauritian districts](data/mauritius-districts-geojson.json) | https://data.govmu.org/dkan/?q=dataset/mauritius-districts | The original geojson file contains some spelling mistakes which were corrected in [my version of the geojson file](data/mauritius-districts-geojson.json) .
+
+# Installation
+```
+git clone
+```
+Install dependencies for website:
+```
+npm install
+```
+Install dependencies for scraper:
+```
+pip install
+```
+
+Create a firestore database and get a service account key for this database.
+
+Create `.env` file at the root directory with details from the service account key:
+```js
+TYPE = "service_account"
+PROJECT_ID = "XXXX"
+PRIVATE_KEY_ID = "XXXX"
+PRIVATE_KEY = "-----BEGIN PRIVATE KEY-----XXXX-----END PRIVATE KEY-----\n"
+CLIENT_EMAIL = "XXXX"
+CLIENT_ID = "XXXX"
+AUTH_URI = "XXXX"
+TOKEN_URI = "XXXX"
+AUTH_PROVIDER_X509_CERT_URL = "XXXX"
+CLIENT_X509_CERT_URL = "XXXX"
+```
+
+Run python tests in the root directory of the project:
+```
+nose2
+```
