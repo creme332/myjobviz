@@ -7,13 +7,16 @@ import pandas as pd
 
 
 def debug():
+    """Loads sample statistics to firestore for debugging.
+    """
 
     # initialise database and scraper.
     my_database = Database()
-    # return
+
+    # reset statistics
+    my_database.initialise_stats_collection()
 
     # fetch new jobs from website
-    # new_jobs = my_scraper.get_new_jobs()
     new_jobs = pd.read_csv('data/RawScrapedData.csv').to_dict('records')
 
     if (len(new_jobs) == 0):
@@ -25,13 +28,6 @@ def debug():
     location_list = [job['location'] for job in new_jobs]
 
     analyseAndUpdate(my_database, job_details_list, location_list, salary_list)
-    return
-
-    createVisualisations(my_database)
-
-    # save all new jobs to database
-    for job in new_jobs:
-        my_database.add_job(job)
 
 
 def rebaseStatsCollection():
@@ -93,10 +89,9 @@ def main():
 
 
 if __name__ == "__main__":
-    my_database = Database()
+    # my_database = Database()
     # my_database.check_duplicates()
-    # my_database.initialise_stats_collection()
-    # main()
+    main()
     # rebaseStatsCollection()
-    createVisualisations(my_database)
+    # createVisualisations(my_database)
     # debug()
