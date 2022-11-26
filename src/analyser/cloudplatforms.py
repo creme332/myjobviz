@@ -58,7 +58,7 @@ def cloud_platforms_check(job_details):
     return is_present
 
 
-class TestCloudPlatormsCheck(unittest.TestCase):
+class TestCloudPlatformsCheck(unittest.TestCase):
     def test_uppercase(self):
         string = 'i love WATSON'
         x = cloud_platforms_check(string)
