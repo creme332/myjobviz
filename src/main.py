@@ -3,7 +3,6 @@ from classes.database import Database
 from miner import Scraper
 from anal import analyseAndUpdate
 from visualiser import createVisualisations
-import pandas as pd
 
 
 def debug():
@@ -17,7 +16,7 @@ def debug():
     my_database.initialise_stats_collection()
 
     # fetch new jobs from website
-    new_jobs = pd.read_csv('data/RawScrapedData.csv').to_dict('records')
+    new_jobs = my_database.get_sample_dataframe().to_dict('records')
 
     if (len(new_jobs) == 0):
         return
@@ -89,9 +88,8 @@ def main():
 
 
 if __name__ == "__main__":
-    # my_database = Database()
+    my_database = Database()
     # my_database.check_duplicates()
-    main()
+    # main()
     # rebaseStatsCollection()
-    # createVisualisations(my_database)
     # debug()

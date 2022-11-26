@@ -63,14 +63,14 @@ class Database:
         jobs_dict = list(map(lambda x: x.to_dict(), jobs))
         return pd.DataFrame(jobs_dict)
 
-    def get_dataframe_from_file(self):
+    def get_sample_dataframe(self):
         """Get a sample dataframe containing scraped data for testing purposes.
 
         Returns:
             dataframe: A 2D panda dataframe
         """
 
-        data_source_filename = 'data/RawScrapedData.csv'
+        data_source_filename = 'data/sample-raw.csv'
         df = pd.read_csv(data_source_filename, header=0)
 
         # parse dates and sort df
