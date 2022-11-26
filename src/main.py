@@ -88,8 +88,4 @@ def main():
 
 
 if __name__ == "__main__":
-    my_database = Database()
-    # my_database.check_duplicates()
-    # main()
-    # rebaseStatsCollection()
-    # debug()
+    main()
