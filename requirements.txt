@@ -7,3 +7,4 @@ plotly==5.11.0
 selenium==4.6.0
 tqdm==4.64.1
 lxml==4.9.1      
+python-dotenv==0.21.0     
