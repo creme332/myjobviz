@@ -1,5 +1,5 @@
 # mauritius-tech-job-scraper 📊 
-![Build status of workflow](https://github.com/creme332/mauritius-scholarship-alert/actions/workflows/main.yml/badge.svg)
+![Build status of workflow](https://github.com/creme332/mauritius-tech-job-statistics/actions/workflows/scrape.yml/badge.svg)
 
 An automatic web scraper which scrapes IT jobs from `myjob.mu` using Github Actions and Selenium. Scraped data is saved to Google Firestore and data visualisations are deployed on Github Pages. 
 
