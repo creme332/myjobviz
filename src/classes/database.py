@@ -89,7 +89,7 @@ class Database:
         """
         # get the most recent scraped jobs
         jobs = (self.job_collection_ref
-                .order_by("date_posted", direction=firestore.Query.DESCENDING)
+                .order_by("timestamp", direction=firestore.Query.DESCENDING)
                 .limit(LIMIT)
                 .stream())
 
@@ -101,7 +101,7 @@ class Database:
             return pd.DataFrame(jobs_list)['url'].values.tolist()
         return []
 
-    def add_job(self, jobDictionary):
+    def add_job(self, jobDictionary: dict):
         """Takes as argument a single python dictionary and uploads
         it to my Firestore database.
 
@@ -112,9 +112,6 @@ class Database:
         """
         update_time, job_ref = self.job_collection_ref.add(jobDictionary)
         # print(f'Added document with id {job_ref.id} at: {update_time}')
-
-        # increment database size counter
-        self.increment_size_counter()
 
     def update_all_documents(self):
         """This function can be extended to update any fields of all documents.
