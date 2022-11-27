@@ -9,11 +9,7 @@ An automatic web scraper which scrapes IT jobs from `myjob.mu` using Github Acti
 # To-do 
 - [ ] in analyser functions pass around a single dictionary. make use of dictUtils.
 - [ ] automatically check for duplicates.
-- [ ] find new method to identify duplicates.
-- [ ] add a server timestamp to each job.
-- [ ] create function to recalculate all db stats.
-- [ ] add a workflow to run tests.
-- [ ] deal with case where collection is empty in library 
+- [ ] update structure of scraped data in readme
 - [ ] Add timeseries data viz
 - [ ] add a workflow to backup database (and maybe release a public version)
 - [ ] add a badge for number of jobs scraped
@@ -27,8 +23,9 @@ An automatic web scraper which scrapes IT jobs from `myjob.mu` using Github Acti
 - Responsive website.
 
 # Installation
+Clone project
 ```
-git clone
+git clone git@github.com:creme332/mauritius-tech-job-statistics.git
 ```
 Install dependencies for website:
 ```
@@ -38,24 +35,65 @@ Install dependencies for scraper:
 ```
 pip install
 ```
+## Connecting to Firestore database 
+Create a Firestore database and get a service account key.
 
-Create a firestore database and get a service account key.
+Convert service account JSON to a base-64 encoded string by running the following code:
+```python
+import json
+import base64
+import os
+
+
+service_key = {
+    "type": "service_account",
+    "project_id": "xxx",
+    "private_key_id": "xxx",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nxxxxx\n-----END PRIVATE KEY-----\n",
+    "client_email": "xxxx.com",
+    "client_id": "xxxx",
+    "auth_uri": "xxxx",
+    "token_uri": "xxxx",
+    "auth_provider_x509_cert_url": "xxxx",
+    "client_x509_cert_url": "xxxx"
+}
+
+# convert json to a string
+service_key = json.dumps(service_key)
+
+# encode service key
+encoded_service_key= base64.b64encode(service_key.encode('utf-8'))
+
+print(encoded_service_key)
+# FORMAT: b'a_lot_of_chars'
+```
 
 Create `.env` file at the root directory with details from the service account key:
 ```js
 SERVICE_ACCOUNT_KEY = b'a_lot_of_chars'
 ```
 
-Run:
-```
-```
+Create a Github Secret `SERVICE_ACCOUNT_KEY` same as above
 
+Initialise documents in Firestore by running the following code in `miner.py` :
+```python
+from classes.database import Database
+
+my_database = Database()
+my_database.initialise_stats_collection()
+```
+Restore `miner.py` to its initial state afterwards.
+
+## Testing
 Run python tests in the root directory of the project:
 ```
 nose2
 ```
 
-To scrape website for the first time:
+## Scraping
+
+
+> Scraping for the first time will take around 40 minutes. You can temporarily set  `self.crawl_delay = 3` in `miner.py` to speed up the process.
 
 ## Structure of scraped data ##
 ```
@@ -76,7 +114,6 @@ To scrape website for the first time:
 - The URLs scraped may not work as myjob.mu takes down a job post after a certain time. 
 - The job URL was used as a primary key during scraping to avoid duplicate entries.
 - `job_title` and `job_details` can be in French or English. 
-- `salary` is not always disclosed.
 - `date_posted` and `closing_date` are strings which follow `DD/MM/YYYY` format.
 
 # Attributions
