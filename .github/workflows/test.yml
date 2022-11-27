@@ -1,0 +1,25 @@
+name: scrape website
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: checkout repo content
+        uses: actions/checkout@v3
+
+      - name: setup python with pip cache
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9' 
+          cache: 'pip' # caching pip dependencies
+
+      - name : install any new python dependencies
+        run: pip install -r requirements.txt
+
+      - name: run tests
+        run: nose2
