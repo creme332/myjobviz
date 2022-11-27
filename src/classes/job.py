@@ -1,5 +1,6 @@
 #!venv/bin/python3
 from datetime import datetime
+from firebase_admin import firestore
 
 
 class Job:
@@ -13,6 +14,9 @@ class Job:
         self.company = None  # string
         self.salary = None  # string
         self.job_details = None  # string
+
+        # track when the server receives the Job.
+        self.timestamp = firestore.SERVER_TIMESTAMP
 
 
 if __name__ == "__main__":
