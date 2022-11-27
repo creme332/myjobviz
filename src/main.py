@@ -59,20 +59,24 @@ def main():
 
     # initialise database and scraper.
     my_database = Database()
-    recent_urls = my_database.get_recent_urls()
-    # print(recent_urls)
-    my_scraper = Scraper(recent_urls)
+    my_scraper = Scraper(my_database.get_recent_urls())
 
     # fetch new jobs from website
     new_jobs = my_scraper.get_new_jobs()
 
+    # if no new jobs found return
     if (len(new_jobs) == 0):
         return
+
+    # print some info about new jobs found
+    job_title_list = [job['job_title'] for job in new_jobs]
     print(len(new_jobs), ' new jobs found!')
+    print(job_title_list)
 
     # save new jobs to database
     for job in new_jobs:
         my_database.add_job(job)
+        my_database.increment_size_counter()
 
     # get data to be analysed in a list
     job_details_list = [job['job_details'] for job in new_jobs]
