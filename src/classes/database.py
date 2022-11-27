@@ -74,7 +74,7 @@ class Database:
 
         return df
 
-    def get_recent_urls(self, LIMIT=200) -> list:
+    def get_recent_urls(self, LIMIT=500) -> list:
         """Returns a list of the urls of recently scraped jobs. This function
         can be used to preventing adding duplicates when scraping.
 
@@ -82,7 +82,7 @@ class Database:
 
         Args:
             LIMIT (int, optional): Maximum number of urls to be
-            returned. Defaults to 200.
+            returned. Defaults to 500.
 
         Returns:
             list[str]: A list urls
@@ -92,9 +92,14 @@ class Database:
                 .order_by("date_posted", direction=firestore.Query.DESCENDING)
                 .limit(LIMIT)
                 .stream())
+
+        # convert to a list of dictionaries
+        jobs_list = list(map(lambda x: x.to_dict(), jobs))
+
         # return only the urls
-        jobs_dict = list(map(lambda x: x.to_dict(), jobs))
-        return pd.DataFrame(jobs_dict)['url'].values.tolist()
+        if len(jobs_list) > 0:
+            return pd.DataFrame(jobs_list)['url'].values.tolist()
+        return []
 
     def add_job(self, jobDictionary):
         """Takes as argument a single python dictionary and uploads
