@@ -147,7 +147,7 @@ class TestLanguageCheck(unittest.TestCase):
         self.assertCountEqual(to_true_list(language_check(string)), expected)
 
     def test_real_job_details(self):
-        data_source_filename = 'data/RawScrapedData.csv'
+        data_source_filename = 'data/sample-raw.csv'
         df = pd.read_csv(data_source_filename, header=0)
         string = df.head()['job_details'].values[0]
         self.assertCountEqual(to_true_list(language_check(string)), [

@@ -113,7 +113,7 @@ class TestToolsCheck(unittest.TestCase):
 
     # @unittest.skip('Reason for skipping')
     def test_real_job_details(self):
-        data_source_filename = 'data/RawScrapedData.csv'
+        data_source_filename = 'data/sample-raw.csv'
         df = pd.read_csv(data_source_filename, header=0)
 
         # filter df to include only rows mentioning sql
