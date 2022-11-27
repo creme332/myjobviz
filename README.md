@@ -10,7 +10,8 @@ An automatic web scraper which scrapes IT jobs from `myjob.mu` using Github Acti
 - [ ] in analyser functions pass around a single dictionary. make use of dictUtils.
 - [ ] automatically check for duplicates.
 - [ ] find new method to identify duplicates.
-- [ ] add a server timestamp to each job
+- [ ] add a server timestamp to each job.
+- [ ] create function to recalculate all db stats.
 - [ ] add a workflow to run tests.
 - [ ] deal with case where collection is empty in library 
 - [ ] Add timeseries data viz
@@ -43,7 +44,10 @@ Create a firestore database and get a service account key.
 Create `.env` file at the root directory with details from the service account key:
 ```js
 SERVICE_ACCOUNT_KEY = b'a_lot_of_chars'
+```
 
+Run:
+```
 ```
 
 Run python tests in the root directory of the project:
