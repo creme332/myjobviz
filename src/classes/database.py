@@ -28,7 +28,7 @@ class Database:
         cred = credentials.Certificate(getServiceAccountKey())
         firebase_admin.initialize_app(cred)
         self.db = firestore.client()
-        self.job_collection_ref = self.db.collection(u'jobs')
+        self.job_collection_ref = self.db.collection(u'jobs_collection')
         self.stats_collection_ref = self.db.collection(u'statistics')
 
         # initialise references to documents in stats_collection
@@ -181,7 +181,7 @@ class Database:
         else:
             return False
 
-    def sanitizeDict(self, dict):
+    def sanitize_dict(self, dict):
         """Dictionary keys containing chars other than
         letters, numbers, and underscores must be sanitized
         before uploading a dictionary to firestore.
@@ -206,11 +206,11 @@ class Database:
 
         # get dictionary currently stored on Firestore
         # ! add try catch here
-        current_dict = self.sanitizeDict(document_ref.get().to_dict())
+        current_dict = self.sanitize_dict(document_ref.get().to_dict())
 
         # combine dictionaries by adding values
         resultDict = merge_dicts(
-            current_dict, self.sanitizeDict(incrementDict))
+            current_dict, self.sanitize_dict(incrementDict))
 
         # if there's no change do nothing
         if (resultDict == current_dict):
