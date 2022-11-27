@@ -1,41 +1,57 @@
 # mauritius-tech-job-scraper 📊 
 ![Build status of workflow](https://github.com/creme332/mauritius-tech-job-statistics/actions/workflows/scrape.yml/badge.svg)
+![Badge storing the total number of jobs scraped](https://img.shields.io/badge/Total%20jobs%20scraped-100-brightgreen)
 
 An automatic web scraper which scrapes IT jobs from `myjob.mu` using Github Actions and Selenium. Scraped data is saved to Google Firestore and data visualisations are deployed on Github Pages. 
 
+[▶ Live preview](https://github.com/creme332/mauritius-tech-job-statistics/dist)
+
 # To-do 
 - [ ] in analyser functions pass around a single dictionary. make use of dictUtils.
-- [ ] update `requirements.txt`.
+- [ ] automatically check for duplicates.
+- [ ] find new method to identify duplicates.
+- [ ] add a server timestamp to each job
+- [ ] add a workflow to run tests.
 - [ ] deal with case where collection is empty in library 
-- [ ] implement [github scraping workflow](https://github.com/MarketingPipeline/Python-Selenium-Action/blob/main/.github/workflows/Selenium-Action_Template.yaml)
 - [ ] Add timeseries data viz
 - [ ] add a workflow to backup database (and maybe release a public version)
 - [ ] add a badge for number of jobs scraped
 - [ ] Fix : Riviere du Rempart district includes some nearby small islands.
-
-- [x] Work on website
-- [x] save new jobs just after scraping
-- [x] find a way to run all tests at once
-- [x] add docstrings to all functions
-- [x] use a cumulative approach : instead of having to analyse whole database every time, analyse only new jobs.
-- [x] add tests for `analyser.py`
-- [x] breakdown `analyser.py` in smaller modules.
-- [x] store database size, 
-- [x] fetch only 200 most recent jobs.	
-- [x] change data type of `date_posted` and `closing_date` to date in firestore
-- [x] add progress bar in miner
-- [x] save library to cloud firestore
-- [x] try to request a second time without sleeping
-- [x] update analyser and visualiser. 
-
-## statistics
-- [ ] add statistics for each job title.
+- [ ] add statistics about job title. (for example : count most common jobs)
   
 # Features
 - Automatic scraping every day using Github Actions.
 - Scraped data is saved to a Google Firestore database.
 - Wide range of plots (pie chart, donut chart, choropleth map, lollipop chart, ... ).
 - Responsive website.
+
+# Installation
+```
+git clone
+```
+Install dependencies for website:
+```
+npm install
+```
+Install dependencies for scraper:
+```
+pip install
+```
+
+Create a firestore database and get a service account key.
+
+Create `.env` file at the root directory with details from the service account key:
+```js
+SERVICE_ACCOUNT_KEY = b'a_lot_of_chars'
+
+```
+
+Run python tests in the root directory of the project:
+```
+nose2
+```
+
+To scrape website for the first time:
 
 ## Structure of scraped data ##
 ```
@@ -63,38 +79,4 @@ An automatic web scraper which scrapes IT jobs from `myjob.mu` using Github Acti
 
 Resource | Source | Note
 ---|---| ---|
-[Geojson file for Mauritian districts](data/mauritius-districts-geojson.json) | https://data.govmu.org/dkan/?q=dataset/mauritius-districts | The original geojson file contains some spelling mistakes which were corrected in [my version of the geojson file](data/mauritius-districts-geojson.json) .
-
-# Installation
-```
-git clone
-```
-Install dependencies for website:
-```
-npm install
-```
-Install dependencies for scraper:
-```
-pip install
-```
-
-Create a firestore database and get a service account key for this database.
-
-Create `.env` file at the root directory with details from the service account key:
-```js
-TYPE = "service_account"
-PROJECT_ID = "XXXX"
-PRIVATE_KEY_ID = "XXXX"
-PRIVATE_KEY = "-----BEGIN PRIVATE KEY-----XXXX-----END PRIVATE KEY-----\n"
-CLIENT_EMAIL = "XXXX"
-CLIENT_ID = "XXXX"
-AUTH_URI = "XXXX"
-TOKEN_URI = "XXXX"
-AUTH_PROVIDER_X509_CERT_URL = "XXXX"
-CLIENT_X509_CERT_URL = "XXXX"
-```
-
-Run python tests in the root directory of the project:
-```
-nose2
-```
+[Geojson file for Mauritian districts](data/mauritius-districts-geojson.json) | https://data.govmu.org/dkan/?q=dataset/mauritius-districts | The original geojson file contains some spelling mistakes which were corrected in [my version of the geojson file](data/mauritius-districts-geojson.json).
