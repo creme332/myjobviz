@@ -1,4 +1,4 @@
-name: scrape website
+name: run python tests
 
 on:
   push:
