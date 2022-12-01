@@ -2,13 +2,13 @@
 ![Build status of workflow](https://github.com/creme332/mauritius-tech-job-statistics/actions/workflows/scrape.yml/badge.svg)
 ![Badge storing the total number of jobs scraped](https://img.shields.io/badge/Total%20jobs%20scraped-100-brightgreen)
 
-An automatic web scraper which scrapes IT jobs from `myjob.mu` using Github Actions and Selenium. Scraped data is saved to Google Firestore and data visualisations are deployed on Github Pages. 
+An automatic web scraper which scrapes IT jobs from [`myjob.mu`](myjob.mu) using Github Actions and Selenium. Scraped data is saved to Google Firestore and data visualisations are deployed on Github Pages. 
 
 [▶ Live preview](https://github.com/creme332/mauritius-tech-job-statistics/dist)
 
 # To-do 
-- [ ] in analyser functions pass around a single dictionary. make use of dictUtils.
-- [ ] automatically check for duplicates.
+- [ ] In `analyser` folder, make it easier to add/remove techs. Also make use of dictUtils.
+- [ ] Automatically check for duplicates.
 - [ ] update structure of scraped data in readme
 - [ ] Add timeseries data viz
 - [ ] add a workflow to backup database (and maybe release a public version)
@@ -35,16 +35,15 @@ Install dependencies for scraper:
 ```
 pip install
 ```
-## Connecting to Firestore database 
-Create a Firestore database and get a service account key.
+## Setting up Firestore database 
+[Create a Firestore database](https://firebase.google.com/docs/firestore/quickstart#create) and generate a service account key in JSON format.
 
-Convert service account JSON to a base-64 encoded string by running the following code:
+Convert your service account key JSON to a base-64 encoded string by running the following code:
 ```python
 import json
 import base64
-import os
 
-
+# replace JSON below with yours
 service_key = {
     "type": "service_account",
     "project_id": "xxx",
@@ -68,12 +67,12 @@ print(encoded_service_key)
 # FORMAT: b'a_lot_of_chars'
 ```
 
-Create `.env` file at the root directory with details from the service account key:
+Create `.env` file in the root directory of the project and add following:
 ```js
 SERVICE_ACCOUNT_KEY = b'a_lot_of_chars'
 ```
 
-Create a Github Secret `SERVICE_ACCOUNT_KEY` same as above
+Create a Github Secret `SERVICE_ACCOUNT_KEY` with value given by `encoded_service_key`.
 
 Initialise documents in Firestore by running the following code in `miner.py` :
 ```python
@@ -92,10 +91,13 @@ nose2
 
 ## Scraping
 
+Run program in terminal (or otherwise):
+```sh
+python src/main.py
+```
+> Scraping the website and analysing the data for the first time will take around 40 minutes. You can temporarily set  `self.crawl_delay = 2` in `miner.py` to speed up the process.
 
-> Scraping for the first time will take around 40 minutes. You can temporarily set  `self.crawl_delay = 3` in `miner.py` to speed up the process.
-
-## Structure of scraped data ##
+### Structure of scraped data ##
 ```
 {
 	'job_title': 'télévendeurs avec expérience (1 an minimum)',
