@@ -5,6 +5,35 @@ from anal import analyseAndUpdate
 from visualiser import createVisualisations
 
 
+def updateJobBadge(new_job_count):
+    """Updates the job badge found in the README.
+
+    Args:
+        new_job_count (int): new job count
+    """
+    file_path = "README.md"
+    new_badge = ('![Badge storing the total number of jobs'
+                 ' scraped](https://img.shields.io'
+                 '/badge/Total%20jobs%20scraped'
+                 f'-{new_job_count}-brightgreen)\n')
+    new_file_content = ''
+    print(f'new job count = {new_job_count}')
+    with open(file_path, 'r', encoding='utf-8') as f:
+
+        # get all lines in readme
+        lines = [line for line in f]
+
+        # replace old badge with new badge
+        lines[2] = new_badge
+
+        # concatenate lines
+        new_file_content = ''.join(lines)
+
+    # update file
+    with open(file_path, 'w', encoding='utf-8') as f:
+        f.write(new_file_content)
+
+
 def debug():
     """Loads sample statistics to firestore for debugging.
     """
@@ -89,6 +118,9 @@ def main():
 
     # update data visualisations
     createVisualisations(my_database)
+
+    # update job count in readme
+    updateJobBadge(my_database.get_size())
 
 
 if __name__ == "__main__":
