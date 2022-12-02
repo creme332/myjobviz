@@ -32,11 +32,7 @@ pip install
 ## Setting up Firestore database 
 [Create a Firestore database](https://firebase.google.com/docs/firestore/quickstart#create) and generate a service account key in JSON format.
 
-Convert your service account key JSON to a base-64 encoded string by running the following code in CLI:
-```
-cat path-to-your-service-account.json | base64
-```
-Another way to get the base-64 value is to run the python code below:
+Convert your service account key JSON to a base-64 encoded string by running the python code below:
 
 ```python
 import json
@@ -70,11 +66,11 @@ Create a `.env` file in the root directory and create an environment variable `S
 ```js
 SERVICE_ACCOUNT_KEY = b'a_lot_of_chars'
 ```
-> Notice how the value starts with `b'`. Obey this format.
+> Notice how the value starts with `b'` and ends with `'`. Obey this format.
 
 Create a Github Secret `SERVICE_ACCOUNT_KEY` with value given by `encoded_service_key`.
 
-Initialise documents in Firestore by running the following function in `main.py` :
+Initialise your Firestore database by running the following function in `main.py` :
 ```python
 rebaseStatsCollection()
 ```
