@@ -11,11 +11,12 @@ def updateJobBadge(new_job_count):
     Args:
         new_job_count (int): new job count
     """
+    badge_color = 'orange'
     file_path = "README.md"
     new_badge = ('![Badge storing the total number of jobs'
                  ' scraped](https://img.shields.io'
                  '/badge/Total%20jobs%20scraped'
-                 f'-{new_job_count}-brightgreen)\n')
+                 f'-{new_job_count}-{badge_color})\n')
     new_file_content = ''
     print(f'new job count = {new_job_count}')
     with open(file_path, 'r', encoding='utf-8') as f:
