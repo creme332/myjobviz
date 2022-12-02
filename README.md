@@ -66,7 +66,7 @@ print(encoded_service_key)
 # FORMAT: b'a_lot_of_chars'
 ```
 
-Create `.env` file in the root directory of the project and add following:
+Create a `.env` file in the root directory and create an environment variable `SERVICE_ACCOUNT_KEY` having the same value as `encoded_service_key`:
 ```js
 SERVICE_ACCOUNT_KEY = b'a_lot_of_chars'
 ```
@@ -95,6 +95,11 @@ Run program in terminal (or otherwise):
 python src/main.py
 ```
 > Scraping the website and analysing the data for the first time will take around 40 minutes. You can temporarily set  `self.crawl_delay = 2` in `miner.py` to speed up the process.
+
+To run website in development mode:
+```sh
+npm start
+```
 
 ### Structure of scraped data ##
 ```
