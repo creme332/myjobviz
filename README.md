@@ -2,7 +2,7 @@
 ![Build status of workflow](https://github.com/creme332/mauritius-tech-job-statistics/actions/workflows/scrape.yml/badge.svg)
 ![Badge storing the total number of jobs scraped](https://img.shields.io/badge/Total%20jobs%20scraped-367-brightgreen)
 
-An automatic web scraper which scrapes IT jobs from [`myjob.mu`](myjob.mu) using Github Actions and Selenium. Scraped data is saved to Google Firestore and data visualisations are deployed on Github Pages. 
+An automatic web scraper which scrapes IT jobs from [`myjob.mu`](https://www.myjob.mu/) using Github Actions and Selenium. Scraped data is saved to Google Firestore and data visualisations are deployed on Github Pages. 
 
 ![GIF of visualised data](website.gif)
 
@@ -16,7 +16,7 @@ An automatic web scraper which scrapes IT jobs from [`myjob.mu`](myjob.mu) using
 - Responsive website.
 
 # Installation
-Clone project
+Clone project:
 ```
 git clone git@github.com:creme332/mauritius-tech-job-statistics.git
 ```
@@ -69,17 +69,14 @@ Create a `.env` file in the root directory and create an environment variable `S
 ```js
 SERVICE_ACCOUNT_KEY = b'a_lot_of_chars'
 ```
+> Notice how the value starts with `b'`. Obey this format.
 
 Create a Github Secret `SERVICE_ACCOUNT_KEY` with value given by `encoded_service_key`.
 
-Initialise documents in Firestore by running the following code in `miner.py` :
+Initialise documents in Firestore by running the following function in `main.py` :
 ```python
-from classes.database import Database
-
-my_database = Database()
-my_database.initialise_stats_collection()
+rebaseStatsCollection()
 ```
-Restore `miner.py` to its initial state afterwards.
 
 # Usage
 Run main program in terminal (or otherwise):
@@ -101,15 +98,16 @@ npm start
 ## Structure of scraped data
 ```
 {
-	'job_title': 'télévendeurs avec expérience (1 an minimum)',
-	'date_posted': '31/10/2022',
-	'closing_date': '30/11/2022',
-	'url': 'http://myjob.mu/Jobs/TELEVENDEURS-AVEC-EXPERIENCE-1-AN-135694.aspx',
-	'location': '\nMoka ',
+	'job_title': 'software developer',
+	'date_posted': datetime.datetime(2022, 10, 5, 0, 0),
+	'closing_date': datetime.datetime(2022, 10, 12, 0, 0),
+	'url': 'something.com',
+	'location': 'Moka',
 	'employment_type': 'Permanent',
-	'company': 'EURO CRM (Mauritius) Ltd',
-	'salary': '10,000 - 20,000',
-	'job_details': "\nLe Télévendeur prospecte et ... \n"
+	'company': 'company',
+	'salary': '10000-20000',
+	'job_details': 'details',
+	'timestamp': Sentinel: Value used to set a document field to the server timestamp.
 }
 ```
 
