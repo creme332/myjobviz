@@ -4,21 +4,15 @@
 
 An automatic web scraper which scrapes IT jobs from [`myjob.mu`](myjob.mu) using Github Actions and Selenium. Scraped data is saved to Google Firestore and data visualisations are deployed on Github Pages. 
 
-[▶ Live preview](https://github.com/creme332/mauritius-tech-job-statistics/dist)
+![GIF of visualised data](website.gif)
 
-# To-do 
-- [ ] In `analyser` folder, make it easier to add/remove techs. Also make use of dictUtils.
-- [ ] Automatically check for duplicates.
-- [ ] update structure of scraped data in readme
-- [ ] Add timeseries data viz
-- [ ] add a workflow to backup database (and maybe release a public version)
-- [ ] Fix : Riviere du Rempart district includes some nearby small islands.
-- [ ] add statistics about job title. (for example : count most common jobs)
+[▶ Live preview](https://creme332.github.io/mauritius-tech-job-statistics/dist/)
   
 # Features
-- Automatic scraping every day using Github Actions.
+- Automatic daily scraping using Github Actions.
 - Scraped data is saved to a Google Firestore database.
-- Wide range of plots (pie chart, donut chart, choropleth map, lollipop chart, ... ).
+- Multiple data analysed : salary, common technologies, ...
+- Wide range of plots : interactive plots, pie chart, donut chart, choropleth map, lollipop chart, ... 
 - Responsive website.
 
 # Installation
@@ -37,7 +31,12 @@ pip install
 ## Setting up Firestore database 
 [Create a Firestore database](https://firebase.google.com/docs/firestore/quickstart#create) and generate a service account key in JSON format.
 
-Convert your service account key JSON to a base-64 encoded string by running the following code:
+Convert your service account key JSON to a base-64 encoded string by running the following code in CLI:
+```
+cat path-to-your-service-account.json | base64
+```
+Another way to get the base-64 value is to run the python code below:
+
 ```python
 import json
 import base64
@@ -82,26 +81,24 @@ my_database.initialise_stats_collection()
 ```
 Restore `miner.py` to its initial state afterwards.
 
-## Testing
-Run python tests in the root directory of the project:
-```
-nose2
-```
-
-## Scraping
-
-Run program in terminal (or otherwise):
+# Usage
+Run main program in terminal (or otherwise):
 ```sh
 python src/main.py
 ```
 > Scraping the website and analysing the data for the first time will take around 40 minutes. You can temporarily set  `self.crawl_delay = 2` in `miner.py` to speed up the process.
+
+Run python tests in the root directory of the project:
+```
+nose2
+```
 
 To run website in development mode:
 ```sh
 npm start
 ```
 
-### Structure of scraped data ##
+## Structure of scraped data
 ```
 {
 	'job_title': 'télévendeurs avec expérience (1 an minimum)',
@@ -127,3 +124,12 @@ npm start
 Resource | Source | Note
 ---|---| ---|
 [Geojson file for Mauritian districts](data/mauritius-districts-geojson.json) | https://data.govmu.org/dkan/?q=dataset/mauritius-districts | The original geojson file contains some spelling mistakes which were corrected in [my version of the geojson file](data/mauritius-districts-geojson.json).
+
+# To-do 
+- [ ] In `analyser` folder, make it easier to add/remove techs. Also make use of dictUtils.
+- [ ] Automatically check for duplicates.
+- [ ] update structure of scraped data in readme
+- [ ] Add timeseries data viz
+- [ ] add a workflow to backup database (and maybe release a public version)
+- [ ] Fix : Riviere du Rempart district includes some nearby small islands.
+- [ ] add statistics about job title. (for example : count most common jobs)
