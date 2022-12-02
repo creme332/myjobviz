@@ -148,11 +148,19 @@ class Database:
         else:
             print('No duplicate jobs found.')
 
+    def get_size(self):
+        """Returns the number of jobs in database
+
+        Returns:
+            int: The number of jobs stored in `job_collection`
+        """
+        return int(self.db_size_ref.get().to_dict()['size'])
+
     def increment_size_counter(self):
         """Increments the counter which keeps tracks of the
         number of jobs in database.
         """
-        new_size = int(self.db_size_ref.get().to_dict()['size']) + 1
+        new_size = self.get_size() + 1
         self.db_size_ref.update({'size': new_size})
 
     def recalculate_size_counter(self):
