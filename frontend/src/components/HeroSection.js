@@ -6,7 +6,7 @@ import {
   Group,
   rem,
 } from "@mantine/core";
-
+import { useNavigate } from "react-router-dom";
 const useStyles = createStyles((theme) => ({
   wrapper: {
     position: "relative",
@@ -74,6 +74,7 @@ const useStyles = createStyles((theme) => ({
 
 export default function HeroSection() {
   const { classes } = useStyles();
+  const navigate = useNavigate();
 
   return (
     <div className={classes.wrapper}>
@@ -96,7 +97,13 @@ export default function HeroSection() {
         </Text>
 
         <Group className={classes.controls}>
-          <Button size="xl" className={classes.control} color="orange" variant="outline">
+          <Button
+            onClick={() => navigate("/results")}
+            size="xl"
+            className={classes.control}
+            color="orange"
+            variant="outline"
+          >
             View results
           </Button>
         </Group>
