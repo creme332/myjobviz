@@ -4,13 +4,13 @@ import Home from "./pages/Home";
 import HeaderWithTabs from "./components/HeaderWithTabs";
 import { MantineProvider, ColorSchemeProvider } from "@mantine/core";
 import FooterSocial from "./components/FooterSocial";
-
+import Results from "./pages/Results";
 const RouteSwitch = () => {
   const tabs = [
     { tabName: "Home", pathname: "/", id: "home-tab" },
     { tabName: "Results", pathname: "/results", id: "results-tab" },
     {
-      tabName: "Methhodology",
+      tabName: "Methodology",
       pathname: "/methodology",
       id: "methodology-tab",
     },
@@ -33,6 +33,7 @@ const RouteSwitch = () => {
           <HeaderWithTabs links={tabs} />
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/results" element={<Results />} />
           </Routes>
           <FooterSocial />
         </BrowserRouter>

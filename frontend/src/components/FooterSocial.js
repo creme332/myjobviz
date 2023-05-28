@@ -1,5 +1,5 @@
 import { createStyles, Container, Group, ActionIcon, rem } from "@mantine/core";
-import { IconBrandGithub, IconMail, IconChartLine } from "@tabler/icons-react";
+import { IconBrandGithub, IconMail } from "@tabler/icons-react";
 import Logo from "./Logo";
 const useStyles = createStyles((theme) => ({
   logo: {
@@ -51,7 +51,7 @@ function FooterSocial() {
           <ActionIcon
             aria-label="Github"
             component="a"
-            href="https://github.com/creme332/my-odin-projects/tree/main/photo-tagging"
+            href="https://github.com/creme332/myjobviz"
             size="lg"
           >
             <IconBrandGithub size="1.5rem" stroke={1.5} />
