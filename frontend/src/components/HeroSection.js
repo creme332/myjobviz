@@ -79,32 +79,25 @@ export default function HeroSection() {
     <div className={classes.wrapper}>
       <Container size={1000} className={classes.inner}>
         <h1 className={classes.title}>
-          A{" "}
+          Discover{" "}
           <Text
             component="span"
             variant="gradient"
             gradient={{ from: "blue", to: "cyan" }}
             inherit
           >
-            fully featured
+            insights
           </Text>{" "}
-          React components and hooks library
+          with our visualization tool.{" "}
         </h1>
 
         <Text className={classes.description} color="dimmed">
-          Build fully functional accessible web applications with ease – Mantine
-          includes more than 100 customizable components and hooks to cover you
-          in any situation
+          Visualize the latest job trends in the IT job market in Mauritius.
         </Text>
 
         <Group className={classes.controls}>
-          <Button
-            size="xl"
-            className={classes.control}
-            variant="gradient"
-            gradient={{ from: "blue", to: "cyan" }}
-          >
-            Get started
+          <Button size="xl" className={classes.control} color="orange" variant="outline">
+            View results
           </Button>
         </Group>
       </Container>

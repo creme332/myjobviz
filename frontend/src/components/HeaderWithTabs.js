@@ -7,14 +7,14 @@ import {
   Burger,
   Paper,
   Transition,
-  Text,
   ActionIcon,
   useMantineColorScheme,
   rem,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconChartLine, IconMoonStars, IconSun } from "@tabler/icons-react";
+import {  IconMoonStars, IconSun } from "@tabler/icons-react";
 import { Link, useLocation } from "react-router-dom";
+import Logo from "./Logo";
 const HEADER_HEIGHT = rem(60);
 
 const useStyles = createStyles((theme) => ({
@@ -140,29 +140,7 @@ export default function HeaderWithTabs({ links }) {
   return (
     <Header height={HEADER_HEIGHT} className={classes.root}>
       <Container className={classes.header}>
-        <Link
-          title="Go to home page"
-          style={{ textDecoration: "none" }}
-          to={"/"}
-        >
-          <Group>
-            <IconChartLine size={48} strokeWidth={2} />
-            <h1 className={classes.logo}>
-              <Text span color="red">
-                my
-              </Text>
-              <Text span color="blue">
-                job
-              </Text>
-              <Text span color="yellow">
-                vi
-              </Text>
-              <Text span color="green">
-                z
-              </Text>
-            </h1>
-          </Group>
-        </Link>
+      <Logo />
         <Group spacing={5} className={classes.links}>
           {items}
           <ActionIcon

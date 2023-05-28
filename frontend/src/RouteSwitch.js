@@ -8,7 +8,12 @@ import FooterSocial from "./components/FooterSocial";
 const RouteSwitch = () => {
   const tabs = [
     { tabName: "Home", pathname: "/", id: "home-tab" },
-    { tabName: "Other", pathname: "/leaderboard", id: "other-tab" },
+    { tabName: "Results", pathname: "/results", id: "results-tab" },
+    {
+      tabName: "Methhodology",
+      pathname: "/methodology",
+      id: "methodology-tab",
+    },
   ];
   const [colorScheme, setColorScheme] = useState("dark");
   const toggleColorScheme = (value) =>

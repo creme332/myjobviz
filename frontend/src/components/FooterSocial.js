@@ -1,10 +1,6 @@
 import { createStyles, Container, Group, ActionIcon, rem } from "@mantine/core";
-import {
-  IconBrandGithub,
-  IconMail,
-  IconChartLine,
-} from "@tabler/icons-react";
-
+import { IconBrandGithub, IconMail, IconChartLine } from "@tabler/icons-react";
+import Logo from "./Logo";
 const useStyles = createStyles((theme) => ({
   logo: {
     color: theme.colorScheme === "dark" ? theme.white : theme.black,
@@ -50,18 +46,15 @@ function FooterSocial() {
   return (
     <div className={classes.footer}>
       <Container className={classes.inner}>
-        <Group>
-          <IconChartLine size={28} strokeWidth={2} />
-          <h1 className={classes.logo}>myjobviz</h1>
-        </Group>{" "}
-        <Group spacing={0} className={classes.links} position="right" noWrap>
+        <Logo logoSize={38} fontSize={25} />
+        <Group spacing={25} className={classes.links} position="right" noWrap>
           <ActionIcon
             aria-label="Github"
             component="a"
             href="https://github.com/creme332/my-odin-projects/tree/main/photo-tagging"
             size="lg"
           >
-            <IconBrandGithub size="1.05rem" stroke={1.5} />
+            <IconBrandGithub size="1.5rem" stroke={1.5} />
           </ActionIcon>
           <ActionIcon
             aria-label="Email"
@@ -69,7 +62,7 @@ function FooterSocial() {
             href="mailto:c34560814@gmail.com"
             size="lg"
           >
-            <IconMail size="1.05rem" stroke={1.5} />
+            <IconMail size="1.5rem" stroke={1.5} />
           </ActionIcon>
         </Group>
       </Container>
