@@ -1,22 +1,25 @@
 #!venv/bin/python3
 from datetime import datetime
 from firebase_admin import firestore
+from typing import Optional
 
 
 class Job:
     def __init__(self):
-        self.job_title = None  # string
-        self.date_posted = None  # datetime format: DD/MM/YYYY
-        self.closing_date = None  # datetime format: DD/MM/YYYY
-        self.url = None  # string
-        self.location = None  # string
-        self.employment_type = None  # string
-        self.company = None  # string
-        self.salary = None  # string
-        self.job_details = None  # string
+        self.job_title: str = ""
+        self.url: str = ""
+        self.location: str = ""
+        self.employment_type: str = ""
+        self.company: str = ""
+        self.salary: str = ""
+        self.job_details: str = ""
 
-        # track when the server receives the Job.
-        self.timestamp = firestore.SERVER_TIMESTAMP
+        # datetime format: DD/MM/YYYY
+        self.date_posted: Optional[datetime] = None
+        self.closing_date: Optional[datetime] = None
+
+        # Store time when the server receives the Job.
+        self.timestamp = firestore.SERVER_TIMESTAMP  # type: ignore
 
 
 if __name__ == "__main__":

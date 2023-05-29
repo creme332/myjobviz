@@ -1,7 +1,5 @@
 #!venv/bin/python3
-"""This module is responsible for scraping the latest IT jobs
-from myjob.mu website.
-"""
+from __future__ import annotations
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import time
@@ -11,10 +9,27 @@ from datetime import datetime
 from classes.job import Job
 
 
-class Scraper:
+class JobScraper:
+    """
+    Scrapes IT jobs from myjob.mu website
+    """
 
-    def __init__(self, scraped_urls: list) -> None:
+    def __init__(self, scraped_urls: list[str], limit: int = -1) -> None:
+        """
+        Creates an instance of a scraper.
+
+        Args:
+            scraped_urls (list): A list of job URLs previously scraped. These
+            jobs will be skipped. If an empty list is passed, all jobs found
+            will be processed.
+
+            limit (int): Maximum number of jobs that must be scraped. Default
+            value of -1 means there's no limit.
+        """
+
         self.scraped_urls = scraped_urls
+
+        self.limit = limit
 
         # default url for IT jobs sorted by most recent
         self.default_url = ('https://www.myjob.mu/ShowResults.aspx?'
@@ -23,8 +38,7 @@ class Scraper:
                             'SortBy=MostRecent&Page=')
 
         # duration of loading page animation
-        # ! DO NOT DECREASE THIS VALUE
-        self.load_duration = 5
+        self.load_duration = 5  # ! Avoid decreasing this value
 
         # number of seconds to wait between requests
         self.crawl_delay = 5
@@ -36,12 +50,16 @@ class Scraper:
         chrome_options.add_argument('--headless')
         self.driver = webdriver.Chrome(options=chrome_options)
 
-        # store new job found
+        # store new jobs found
         self.new_jobs = []
 
-    def scrapeJobModules(self) -> None:
-        """Extracts all job data on current page and saves this
+    def get_jobs(self) -> int:
+        """
+        Extracts all job data on current page and saves this
         data to `new_jobs`.
+
+        Returns:
+            int: number of new jobs scraped on current page
         """
 
         # get all job modules on current page
@@ -67,8 +85,9 @@ class Scraper:
             jobs_added_count += 1
             self.scraped_urls.append(jobObj.url)
 
+            # extract job title
             jobObj.job_title = job_module.find(
-                'h2', itemprop='title').text.lower()
+                'h2', itemprop='title'). text.lower()
 
             # extract company name
             if (job_module.find('a', itemprop='hiringOrganization')
@@ -90,50 +109,75 @@ class Scraper:
 
             # extract job location
             jobObj.location = job_module.find(
-                'li', itemprop='jobLocation').text
+                'li', itemprop='jobLocation').text if job_module.find(
+                'li', itemprop='jobLocation') else 'Unknown'
 
             # extract salary
-            jobObj.salary = job_module.find('li', itemprop='baseSalary').text
+            jobObj.salary = (job_module.find('li', itemprop='baseSalary').text
+                             if job_module.find(
+                'li', itemprop='baseSalary') else 'Unknown')
 
             # Extract job description from Show More option
             self.driver.get(jobObj.url)
             show_more = BeautifulSoup(self.driver.page_source, 'lxml')
-            jobObj.job_details = show_more.find(
-                'div', class_='job-details').text
+            x = show_more.find(
+                'div', class_='job-details')
+            jobObj.job_details = x.text if x else 'Unknown'
 
             # extract employment type
-            if (show_more.find('li', class_='employment-type') is not None):
-                jobObj.employment_type = show_more.find(
-                    'li', class_='employment-type').text
+            x = show_more.find('li', class_='employment-type')
+            jobObj.employment_type = x.text if x else 'Unknown'
 
-            # save job in database
+            # save job to list of scraped jobs
             self.new_jobs.append(jobObj.__dict__)
+
+            if (len(self.new_jobs) == self.limit):
+                return jobs_added_count
+
+            # sleep
             time.sleep(self.crawl_delay)
 
         return jobs_added_count
 
-    def get_new_jobs(self) -> list:
-        """Returns a list of dictionaries representing the new jobs
-        found.
+    def scrape(self) -> list[dict]:
         """
+        Start scraping
+
+
+        Raises:
+            Exception: Unable to find number of pages
+
+        Returns:
+            list[dict]: New jobs found.
+        """
+
         # start a session
         self.driver.get(self.default_url+'1')
         time.sleep(self.load_duration)  # wait for loading page to be over
 
         # get total number of pages present
         soup = BeautifulSoup(self.driver.page_source, 'lxml')
-        last_page = int(soup.find('ul', id="pagination").find_all(
-            'li')[-2].text)
 
-        # scrape pages
+        paginationContainer = soup.find('ul', id="pagination")
+        pageButtons = paginationContainer.find_all('li')  # pyright: ignore
+        # last element is the navigation button so use before last element
+        last_page = int(pageButtons[-2].text)
+
+        if (last_page is None):
+            raise Exception("Unable to obtain number of pages")
+
+        # scrape each page
         for pageNumber in tqdm(range(1, last_page+1)):
+            # go to page
             self.driver.get(self.default_url+str(pageNumber))
-            jobs_added_count = self.scrapeJobModules()
+
+            # extract job data
+            jobs_added_count = self.get_jobs()
 
             # since jobs are sorted by recent, as soon as
             # we encounter a page which has already been visited we can stop
             # scraping. (all pages after current page are also already visited)
-            if (jobs_added_count == 0):
+            if (jobs_added_count == 0 or jobs_added_count == self.limit):
                 break
 
         self.driver.quit()
@@ -141,7 +185,7 @@ class Scraper:
 
 
 if __name__ == "__main__":
-    x = Scraper([])
-    jobs = x.get_new_jobs()
+    x = JobScraper([], 1)  # scrape only 1 job
+    jobs = x.scrape()
     print(len(jobs))
     print(jobs[0])
