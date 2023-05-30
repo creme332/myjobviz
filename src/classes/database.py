@@ -1,34 +1,34 @@
 #!venv/bin/python3
+from __future__ import annotations
 import firebase_admin
 from firebase_admin import firestore
 from firebase_admin import credentials
 import pandas as pd
-import os
-from dotenv import load_dotenv, find_dotenv
 from analyser.dictionaryUtils import merge_dicts
-import json
-import base64
 
 
 class Database:
-    """This class is responsible for managing the Firestore database which
-    contains all scraped jobs' data.
+    """
+    Manages the Firestore database
     """
 
-    def __init__(self):
-        """Initialises firestore client
+    def __init__(self, service_key: dict):
         """
-        def getServiceAccountKey():
-            load_dotenv(find_dotenv())
-            encoded_key = os.getenv("SERVICE_ACCOUNT_KEY")
-            # https://stackoverflow.com/questions/50693871/error-in-json-loads-for-data-that-has-base64-decoding-applied
-            dic = base64.b64decode(str(encoded_key)[2:-1]).decode('utf-8')
-            return json.loads(dic)
+        Initialises firestore client
 
-        cred = credentials.Certificate(getServiceAccountKey())
+        Args:
+            service_key (dict): Service key of firestore database
+        """
+
+        cred = credentials.Certificate(service_key)
         firebase_admin.initialize_app(cred)
         self.db = firestore.client()
+
+        # save reference to collection for saving scraped jobs
         self.job_collection_ref = self.db.collection(u'jobs_collection')
+
+        # save reference to collection for saving statistics extracted
+        # from job collection
         self.stats_collection_ref = self.db.collection(u'statistics')
 
         # initialise references to documents in stats_collection
@@ -45,18 +45,38 @@ class Database:
         self.tools_data_ref = self.stats_collection_ref.document(u'tools_data')
         self.web_data_ref = self.stats_collection_ref.document(u'web_data')
 
-    def get_dataframe(self):
-        """Gets the entire database from firestore and returns it as
+        # create documents if missing from database
+        self.create_doc_if_missing(self.db_size_ref)
+
+        # ! what if database size is non-zero initially
+        self.create_doc_if_missing(self.cloud_data_ref)
+        self.create_doc_if_missing(self.db_data_ref)
+        self.create_doc_if_missing(self.lang_data_ref)
+        self.create_doc_if_missing(self.lib_data_ref)
+        self.create_doc_if_missing(self.loc_data_ref)
+        self.create_doc_if_missing(self.os_data_ref)
+        self.create_doc_if_missing(self.salary_data_ref)
+        self.create_doc_if_missing(self.tools_data_ref)
+        self.create_doc_if_missing(self.web_data_ref)
+
+    def get_dataframe(self) -> pd.DataFrame:
+        """
+        Fetches the entire database from firestore and returns it as
         a Panda dataframe.
-        WARNING : Use this function sparingly as it will
+
+        `WARNING`: Use this function sparingly as it will
         heavily impact the quota usage for number of reads.
+
+        Returns:
+            pd.DataFrame: All scraped jobs
         """
         jobs = self.job_collection_ref.stream()
         jobs_dict = list(map(lambda x: x.to_dict(), jobs))
         return pd.DataFrame(jobs_dict)
 
-    def get_sample_dataframe(self):
-        """Get a sample dataframe containing scraped data for testing purposes.
+    def get_sample_dataframe(self) -> pd.DataFrame:
+        """
+        Get a sample dataframe containing scraped data for testing purposes.
 
         Returns:
             dataframe: A 2D panda dataframe
@@ -74,14 +94,15 @@ class Database:
 
         return df
 
-    def get_recent_urls(self, LIMIT=500) -> list:
-        """Returns a list of the urls of recently scraped jobs. This function
+    def get_recent_urls(self, LIMIT: int = 500) -> list[str]:
+        """
+        Returns a list of the urls of recently scraped jobs. This function
         can be used to preventing adding duplicates when scraping.
 
-        - Keep 5 <`LIMIT` < 1000 to avoid exceeding read quotas.
+        - Keep 5 < `LIMIT` < 1000 to avoid exceeding read quotas.
 
         Args:
-            LIMIT (int, optional): Maximum number of urls to be
+            LIMIT(int, optional): Maximum number of urls to be
             returned. Defaults to 500.
 
         Returns:
@@ -89,7 +110,9 @@ class Database:
         """
         # get the most recent scraped jobs
         jobs = (self.job_collection_ref
-                .order_by("timestamp", direction=firestore.Query.DESCENDING)
+
+                .order_by("timestamp",
+                          direction=firestore.Query.DESCENDING)  # type: ignore
                 .limit(LIMIT)
                 .stream())
 
@@ -101,43 +124,28 @@ class Database:
             return pd.DataFrame(jobs_list)['url'].values.tolist()
         return []
 
-    def add_job(self, jobDictionary: dict):
-        """Takes as argument a single python dictionary and uploads
-        it to my Firestore database.
+    def add_job(self, jobDictionary: dict) -> None:
+        """
+        Add job to database.
 
         Args:
-            jobDictionary (dictionary): A dictionary with the following keys :
+            jobDictionary(dictionary): A dictionary with the following keys:
             `job_title`, `date_posted`, `closing_date`, `url`, `location`,
-            `employment_type`, `company`, `salary`, `job_details`
+            `employment_type`, `company`, `salary`, `job_details`, `timestamp`
         """
         update_time, job_ref = self.job_collection_ref.add(jobDictionary)
         # print(f'Added document with id {job_ref.id} at: {update_time}')
 
-    def update_all_documents(self):
-        """This function can be extended to update any fields of all documents.
-
-        WARNING : Use this function sparingly as it will
-        heavily impact the quota usage for number of reads.
+    def duplicates_exist(self) -> bool:
         """
-        return
-        jobs = self.get_dataframe()
-        for job in jobs:
-            job_ref = self.job_collection_ref.document(job.id)
-            job_doc = job_ref.get()
-
-            # get date field values
-            closingDate = job_doc.to_dict()['closing_date']
-            datePosted = job_doc.to_dict()['date_posted']
-            print(closingDate, datePosted)
-            # update
-            # job_ref.update({})
-
-    def check_duplicates(self):
-        """Uses `url` as primary key and checks for duplicate jobs in database.
+        Uses `url` as primary key and checks for duplicate jobs in database.
         Result is printed out.
 
-        WARNING : Use this function sparingly as it will
+        WARNING: Use this function sparingly as it will
         heavily impact the quota usage for number of reads.
+
+        Returns:
+            bool: True if duplicates exist
         """
         # https://stackoverflow.com/a/14657511/17627866
         df = self.get_dataframe()
@@ -145,76 +153,87 @@ class Database:
         df = df[ids.isin(ids[ids.duplicated()])].sort_values("url")
         if (len(df) > 0):
             print(df)
-        else:
-            print('No duplicate jobs found.')
+            return True
+        print('No duplicate jobs found.')
+        return False
 
-    def get_size(self):
-        """Returns the number of jobs in database
+    def get_size(self) -> int:
+        """
+        Returns the number of jobs in database.
 
         Returns:
             int: The number of jobs stored in `job_collection`
         """
         return int(self.db_size_ref.get().to_dict()['size'])
 
-    def increment_size_counter(self):
-        """Increments the counter which keeps tracks of the
+    def increment_size_counter(self) -> None:
+        """
+        Increments the counter by 1 which keeps tracks of the
         number of jobs in database.
         """
         new_size = self.get_size() + 1
         self.db_size_ref.update({'size': new_size})
 
-    def recalculate_size_counter(self):
-        """Initialises  the counter which keeps tracks of the
+    def recalculate_size_counter(self) -> None:
+        """
+        Initialises  the counter which keeps tracks of the
         number of jobs in database to its true value.
 
-        WARNING : Use this function sparingly as it will
+        WARNING: Use this function sparingly as it will
         heavily impact the quota usage for number of reads.
         """
         new_size = len(self.get_dataframe())
         self.db_size_ref.update({'size': new_size})
 
-    def doc_exists(self, collectionRef, docName):
-        """Given a valid collection, check if a document is present in it.
+    def doc_exists(self, collectionRef, docName: str) -> None:
+        """
+        Given a valid reference to a collection, check if a particular document
+        is present in it.
 
         Args:
-            docName (_type_): _description_
+            docName(_type_): _description_
 
         Returns:
             _type_: _description_
         """
         doc_ref = collectionRef.document(docName)
-        doc = doc_ref.get()
-        if doc.exists:
-            return True
-        else:
-            return False
+        return doc_ref.get().exists
 
-    def sanitize_dict(self, dict):
-        """Dictionary keys containing chars other than
+    def sanitize_dict(self, dict: dict) -> dict:
+        # !update docstring
+        """
+        Dictionary key names containing characters other than
         letters, numbers, and underscores must be sanitized
-        before uploading a dictionary to firestore.
+        before uploading to firestore.
+
+        https://cloud.google.com/python/docs/reference/firestore/latest/field_path
         """
         new_dict = {}
         for key in dict.keys():
             new_dict[self.db.field_path(key)] = dict[key]
         return new_dict
 
-    def update_filtered_statistics(self, incrementDict, document_ref):
-        """Updates filtered statistics on Firestore.
+    def update_stats(self, incrementDict: dict,
+                     document_ref) -> None:
+        # ! rethink
+        """
+        Updates a particular document in the statistics collection on
+        Firestore.
 
         Args:
-            incrementDict (dict): A dictionary where the values are boolean.
-            documentName (dict): Name of document in the `statistics`
+            incrementDict(dict): The dictionary which must be added to
+            the currently stored dictionary.
+            documentName(dict): Name of document in the `statistics`
             collection containing a dictionary.
         """
 
-        # if (not self.doc_exists(self.stats_collection_ref, documentName)):
-        #     raise Exception(f"{documentName} document"
-        #                     "is not found in statistics collection")
+        current_doc = document_ref.get()
 
-        # get dictionary currently stored on Firestore
-        # ! add try catch here
-        current_dict = self.sanitize_dict(document_ref.get().to_dict())
+        if (not current_doc.exists):
+            raise Exception(f"{document_ref}"
+                            "is missing")
+
+        current_dict = self.sanitize_dict(current_doc.to_dict())
 
         # combine dictionaries by adding values
         resultDict = merge_dicts(
@@ -227,22 +246,30 @@ class Database:
         # save changes
         document_ref.update(resultDict)
 
-    def initialise_stats_collection(self):
-        # set database size to 0
-        self.db_size_ref.set({'size': 0})
+    def create_doc_if_missing(self, document_ref, initial_val={}) -> None:
+        """
+        Checks if a document exists and creates it if not.
 
-        # create other documents which will store filtered data
-        self.cloud_data_ref.set({})
-        self.db_data_ref.set({})
-        self.lang_data_ref.set({})
-        self.lib_data_ref.set({})
-        self.loc_data_ref.set({})
-        self.os_data_ref.set({})
-        self.salary_data_ref.set({})
-        self.tools_data_ref.set({})
-        self.web_data_ref.set({})
+        Args:
+            document_ref (firestore.documentReference): _description_
+            initial_val (dict, optional): Default value stored in document.
+            Defaults to {}.
+        """
+        if (not document_ref.get().exists):
+            document_ref.set(initial_val)
 
-    def get_filtered_statistics(self, document_ref, header):
+    def get_doc_data(self, document_ref, header) -> pd.DataFrame:
+        """
+        Returns data from a document in `statistics` collection.
+
+        Args:
+            document_ref (firestore.document): Reference to document
+            header (string): Name of first column. Name of second column is
+            frequency.
+
+        Returns:
+            pd.DataFrame: Data from document in a table with 2 columns.
+        """
         dict = document_ref.get().to_dict()
         df = pd.DataFrame.from_dict(dict, orient='index')
         df = df.reset_index()
