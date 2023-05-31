@@ -19,7 +19,13 @@ ChartJS.register(
   Legend
 );
 
-export default function HorizontalBarChart({ themeIndex = 0 }) {
+export default function HorizontalBarChart({
+  themeIndex = 0,
+  labelsArray,
+  dataArray,
+  dataLabel = "Dataset",
+  titleName = "Sample title",
+}) {
   const themes = [
     {
       borderColor: "rgb(255, 99, 132)", // red
@@ -60,29 +66,19 @@ export default function HorizontalBarChart({ themeIndex = 0 }) {
       },
       title: {
         display: true,
-        text: "Chart.js Horizontal Bar Chart",
+        text: titleName,
       },
     },
   };
 
-  const labels = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-  ];
-
   const data = {
-    labels,
+    labels: labelsArray,
     datasets: [
       {
-        label: "Dataset 1",
-        data: labels.map(() => Math.random() * 1000),
-        borderColor: themes[themeIndex].borderColor,
-        backgroundColor: themes[themeIndex].backgroundColor,
+        label: dataLabel,
+        data: dataArray,
+        borderColor: themes[themeIndex % themes.length].borderColor,
+        backgroundColor: themes[themeIndex % themes.length].backgroundColor,
       },
     ],
   };
