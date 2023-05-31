@@ -1,11 +1,11 @@
 #!venv/bin/python3
 from classes.database import Database
-from miner import Scraper
+from miner import JobScraper
 from anal import analyseAndUpdate
-from visualiser import createVisualisations
+from classes.utils import get_service_account_key
 
 
-def updateJobBadge(new_job_count):
+def update_readme_job_badge(new_job_count):
     """Updates the job badge found in the README.
 
     Args:
@@ -35,43 +35,22 @@ def updateJobBadge(new_job_count):
         f.write(new_file_content)
 
 
-def debug():
-    """Loads sample statistics to firestore for debugging.
+def rebase_statistics():
     """
+    Recalculates and updates all statistics. frontend-db is also updated.
 
-    # initialise database and scraper.
-    my_database = Database()
-
-    # reset statistics
-    my_database.initialise_stats_collection()
-
-    # fetch new jobs from website
-    new_jobs = my_database.get_sample_dataframe().to_dict('records')
-
-    if (len(new_jobs) == 0):
-        return
-
-    # get data to be analysed in a list
-    job_details_list = [job['job_details'] for job in new_jobs]
-    salary_list = [job['salary'] for job in new_jobs]
-    location_list = [job['location'] for job in new_jobs]
-
-    analyseAndUpdate(my_database, job_details_list, location_list, salary_list)
-
-
-def rebaseStatsCollection():
-    """Call this function when an error occurred the last time `main()` was
-    called. This function will ensure that all stored statistics are valid.
+    This function ensures data integrity but heavily impacts read and
+    write quotas.
     """
-    # initialise database.
-    my_database = Database()
-    my_database.initialise_stats_collection()
+    # load main database.
+    my_database = Database(get_service_account_key(True))
 
-    my_database.recalculate_size_counter()
-
-    # fetch all jobs from website
+    # get all jobs stored in database
     new_jobs = my_database.get_dataframe().to_dict('records')
 
+    # update size of database
+    my_database.update_size_counter(len(new_jobs))
+
     if (len(new_jobs) == 0):
         return
 
@@ -80,19 +59,34 @@ def rebaseStatsCollection():
     salary_list = [job['salary'] for job in new_jobs]
     location_list = [job['location'] for job in new_jobs]
 
-    # extract statistics from newly scraped data and update
-    # statistics collection
+    print("Unique salaries", set(salary_list))
+
+    print("Unique locations", set(location_list))
+
+    # process data and updates statistics
     analyseAndUpdate(my_database, job_details_list, location_list, salary_list)
+
+
+def transfer_statistics(main_db: Database):
+    """
+    Clones statistics found in main_db to frontend_db
+
+    Args:
+        main_db (Database): database containing scraped data
+    """
+    frontend_db = Database(get_service_account_key(), "frontend_db")
+    x = main_db.export_collection(main_db.stats_collection_ref)
+    frontend_db.import_collection(frontend_db.stats_collection_ref, x)
 
 
 def main():
 
-    # initialise database and scraper.
-    my_database = Database()
-    my_scraper = Scraper(my_database.get_recent_urls())
+    # setup database and scraper.
+    my_database = Database(get_service_account_key(True))
+    my_scraper = JobScraper(my_database.get_recent_urls())
 
     # fetch new jobs from website
-    new_jobs = my_scraper.get_new_jobs()
+    new_jobs = my_scraper.scrape()
 
     # if no new jobs found return
     if (len(new_jobs) == 0):
@@ -101,12 +95,16 @@ def main():
     # print some info about new jobs found
     job_title_list = [job['job_title'] for job in new_jobs]
     print(len(new_jobs), ' new jobs found!')
-    print(job_title_list)
+    print(job_title_list[:5])
+
+    # update database size
+    current_db_size = my_database.get_size()
+    current_db_size += len(new_jobs)
+    my_database.update_size_counter(current_db_size)
 
     # save new jobs to database
     for job in new_jobs:
         my_database.add_job(job)
-        my_database.increment_size_counter()
 
     # get data to be analysed in a list
     job_details_list = [job['job_details'] for job in new_jobs]
@@ -117,11 +115,11 @@ def main():
     # statistics collection
     analyseAndUpdate(my_database, job_details_list, location_list, salary_list)
 
-    # update data visualisations
-    createVisualisations(my_database)
+    # send statistics to frontend db
+    transfer_statistics(my_database)
 
     # update job count in readme
-    updateJobBadge(my_database.get_size())
+    update_readme_job_badge(current_db_size)
 
 
 if __name__ == "__main__":
