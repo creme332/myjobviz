@@ -3,11 +3,12 @@ import { createStyles, Text, rem } from "@mantine/core";
 const useStyles = createStyles((theme) => ({
   root: {
     display: "flex",
-    // backgroundImage: `linear-gradient(-60deg, ${
-    //   theme.colors[theme.primaryColor][4]
-    // } 0%, ${theme.colors[theme.primaryColor][7]} 100%)`,
     padding: `calc(${theme.spacing.xl} * 1.5)`,
     borderRadius: theme.radius.md,
+    color:
+      theme.colorScheme === "dark"
+        ? theme.colors.gray[5]
+        : theme.colors.gray[8],
 
     [theme.fn.smallerThan("sm")]: {
       flexDirection: "column",
@@ -15,14 +16,12 @@ const useStyles = createStyles((theme) => ({
   },
 
   title: {
-    color: theme.white,
     textTransform: "uppercase",
     fontWeight: 700,
     fontSize: theme.fontSizes.sm,
   },
 
   count: {
-    color: theme.white,
     fontSize: rem(32),
     lineHeight: 1,
     fontWeight: 700,
@@ -31,7 +30,6 @@ const useStyles = createStyles((theme) => ({
   },
 
   description: {
-    color: theme.colors[theme.primaryColor][0],
     fontSize: theme.fontSizes.sm,
     marginTop: rem(5),
   },
@@ -42,7 +40,7 @@ const useStyles = createStyles((theme) => ({
     "& + &": {
       paddingLeft: theme.spacing.xl,
       marginLeft: theme.spacing.xl,
-      borderLeft: `${rem(1)} solid ${theme.colors[theme.primaryColor][3]}`,
+      borderLeft: `${rem(1.5)} solid ${theme.colors.gray[5]}`,
 
       [theme.fn.smallerThan("sm")]: {
         paddingLeft: 0,
@@ -50,7 +48,7 @@ const useStyles = createStyles((theme) => ({
         borderLeft: 0,
         paddingTop: theme.spacing.xl,
         marginTop: theme.spacing.xl,
-        borderTop: `${rem(1)} solid ${theme.colors[theme.primaryColor][3]}`,
+        borderTop: `${rem(1.5)} solid ${theme.colors.gray[5]}`,
       },
     },
   },
