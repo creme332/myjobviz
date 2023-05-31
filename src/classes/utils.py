@@ -4,12 +4,26 @@ import json
 import base64
 
 
-def get_service_account_key() -> dict:
+def get_service_account_key(forMainDB: bool = False) -> dict:
     """
     Returns service account key for firestore
+
+    Args:
+        forMainDB (bool, optional): If false, service account key for database
+        containing only statistics is returned. If true, service account
+        key for database containing all jobs is returned. Defaults to False.
+
+    Returns:
+        dict: Service account key
     """
     load_dotenv(find_dotenv())
-    encoded_key = os.getenv("SERVICE_ACCOUNT_KEY")
+    var_name = ""
+    if forMainDB:
+        var_name = 'SAK_MAIN_DB'
+    else:
+        var_name = 'SAK_STATS_DB'
+
+    encoded_key = os.getenv(var_name)
 
     # https://stackoverflow.com/questions/50693871/error-in-json-loads-for-data-that-has-base64-decoding-applied
     dic = base64.b64decode(str(encoded_key)[2:-1]).decode('utf-8')
