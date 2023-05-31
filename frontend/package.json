@@ -8,6 +8,7 @@
     "@mantine/hooks": "^6.0.11",
     "@tabler/icons-react": "^2.20.0",
     "chart.js": "^4.3.0",
+    "firebase": "^9.22.1",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
