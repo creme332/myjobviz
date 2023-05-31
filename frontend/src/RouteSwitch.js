@@ -5,6 +5,7 @@ import HeaderWithTabs from "./components/HeaderWithTabs";
 import { MantineProvider, ColorSchemeProvider } from "@mantine/core";
 import FooterSocial from "./components/FooterSocial";
 import Results from "./pages/Results";
+
 const RouteSwitch = () => {
   const tabs = [
     { tabName: "Home", pathname: "/", id: "home-tab" },
@@ -25,7 +26,10 @@ const RouteSwitch = () => {
       toggleColorScheme={toggleColorScheme}
     >
       <MantineProvider
-        theme={{ colorScheme }}
+        theme={{
+          colorScheme,
+          primaryColor: "red",
+        }}
         withGlobalStyles
         withNormalizeCSS
       >

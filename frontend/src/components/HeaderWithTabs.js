@@ -145,7 +145,7 @@ export default function HeaderWithTabs({ links }) {
           {items}
           <ActionIcon
             variant="outline"
-            color={dark ? "yellow" : "blue"}
+            color={dark ? "yellow" : "red"}
             onClick={() => toggleColorScheme()}
             title="Toggle color scheme"
           >
