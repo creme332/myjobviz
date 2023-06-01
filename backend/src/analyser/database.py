@@ -6,6 +6,7 @@ from analyser.dictionaryUtils import (toIntegerValues, merge_dicts,
 
 
 def db_count(job_details_list):
+    # create a dictionary of databases to be analysed
     count = {
         "MySQL": 0, "PostgreSQL": 0, "SQLite": 0, "MongoDB": 0,
         "Microsoft SQL Server": 0, "Redis": 0, "MariaDB": 0,

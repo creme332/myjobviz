@@ -24,7 +24,7 @@ def location_count(location_list):
             JobCountPerDistrict[location] += 1
 
     # Rename Plaine Wilhems to Plaines Wilhems
-    # (myjob.my incorrectly wrote "Plaine Wilhems")
+    # (myjob.mu incorrectly wrote "Plaine Wilhems")
     JobCountPerDistrict['Plaines Wilhems'] = JobCountPerDistrict.pop(
         'Plaine Wilhems')
     if (len(skipped_locations) > 0):

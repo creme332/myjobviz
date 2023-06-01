@@ -18,13 +18,12 @@ def update_readme_job_badge(new_job_count):
                  '/badge/Total%20jobs%20scraped'
                  f'-{new_job_count}-{badge_color})\n')
     new_file_content = ''
-    print(f'new job count = {new_job_count}')
     with open(file_path, 'r', encoding='utf-8') as f:
 
         # get all lines in readme
         lines = [line for line in f]
 
-        # replace old badge with new badge
+        # place new badge on third line
         lines[2] = new_badge
 
         # concatenate lines
