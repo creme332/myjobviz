@@ -28,45 +28,96 @@ export default function Results() {
     },
   ];
 
+  const chartTitle = {
+    cloud_data: "Cloud platforms",
+    db_data: "Databases",
+    lang_data: "Programming, scripting, and markup languages",
+    lib_data: "Other frameworks and libraries",
+    loc_data: "Job locations",
+    os_data: "Operating systems",
+    salary_data: "Job salary",
+    tools_data: "Other tools",
+    web_data: "Web frameworks and technologies",
+  };
+
   async function fetchData() {
     const result = await FireStoreManager().getAllDocs();
     setAllData(result);
-    console.log(allData);
-    console.log(split(result.web_data));
+    // console.log(allData);
+    // console.log(split(result.web_data));
   }
 
   useEffect(() => {
     fetchData();
   }, []);
 
-  function split(dict) {
-    const labelsArray = Object.keys(dict);
-    const dataArray = labelsArray.map((k) => dict[k]);
-    return { labelsArray, dataArray };
+  function sort_object(dict) {
+    const labelsArr = Object.keys(dict);
+    const dataArr = labelsArr.map((k) => dict[k]);
+
+    const arrayOfObj = labelsArr.map((d, i) => {
+      return {
+        label: d,
+        data: parseInt(dataArr[i]) || 0,
+      };
+    });
+
+    const sortedArrayOfObj = arrayOfObj.sort(function (a, b) {
+      return b.data - a.data;
+    });
+
+    const newLabelsArray = [];
+    const newDataArray = [];
+
+    sortedArrayOfObj.forEach(function (d) {
+      newLabelsArray.push(d.label);
+      newDataArray.push(d.data);
+    });
+
+    return [newLabelsArray, newDataArray];
   }
 
-  function getCharts() {
-    if (allData) {
-      const allKeys = Object.keys(allData);
-      console.log(allKeys);
-      return allKeys.map((k, index) => {
-        return (
-          <HorizontalBarChart
-            key={`horizontal-barchart-${k}`}
-            dataArray={split(allData[k]).dataArray}
-            labelsArray={split(allData[k]).labelsArray}
-            dataLabel="Count"
-            titleName="Web frameworks"
-            themeIndex={index}
-          />
-        );
-      });
-    }
+  function getHorizontalBarcharts() {
+    if (!allData) return;
+    // console.log(allData);
+    const horizonalBarChartKeys = [
+      "cloud_data",
+      "db_data",
+      "lang_data",
+      "lib_data",
+      "loc_data",
+      "os_data",
+      "salary_data",
+      "tools_data",
+      "web_data",
+    ];
+
+    const validKeys = Object.keys(allData).filter((k) =>
+      horizonalBarChartKeys.includes(k)
+    );
+
+    return validKeys.map((k, index) => {
+      const data = allData[k];
+      const [labelsArray, dataArray] = sort_object(data);
+      console.log(labelsArray, dataArray);
+
+      return (
+        <HorizontalBarChart
+          key={`horizontal-barchart-${k}`}
+          dataArray={dataArray}
+          labelsArray={labelsArray}
+          dataLabel="Frequency"
+          titleName={chartTitle[k]}
+          themeIndex={index}
+        />
+      );
+    });
   }
+
   return (
     <Container>
       <StatsGrid data={data} />
-      {getCharts()}
+      {getHorizontalBarcharts()}
       <AreaChart />
       <Container w={500}>
         <PieChart />
@@ -74,7 +125,6 @@ export default function Results() {
       <Alert icon={<IconAlertCircle size="1rem" />} title="Note" color="red">
         Only 2% of jobs disclosed a salary range.
       </Alert>
-      <HorizontalBarChart themeIndex={2} />
       <Alert icon={<IconAlertCircle size="1rem" />} title="Note" color="green">
         The percentage represents the percentage jobs mentioning an operating
         system. Not all jobs mention OS.
