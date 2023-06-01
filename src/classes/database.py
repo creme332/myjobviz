@@ -12,7 +12,7 @@ class Database:
     Manages the Firestore database
     """
 
-    def __init__(self, service_key: dict):
+    def __init__(self, service_key: dict, appName: str = ""):
         """
         Initialises firestore client
 
@@ -21,8 +21,14 @@ class Database:
         """
 
         cred = credentials.Certificate(service_key)
-        firebase_admin.initialize_app(cred)
-        self.db = firestore.client()
+        app = None
+        if appName == "":
+            app = firebase_admin.initialize_app(cred)  # DEFAULT app
+        else:
+            app = firebase_admin.initialize_app(cred, name=appName)
+
+        # print(app.name)
+        self.db = firestore.client(app)
 
         # save reference to collection for saving scraped jobs
         self.job_collection_ref = self.db.collection(u'jobs_collection')
@@ -33,7 +39,7 @@ class Database:
 
         # initialise references to documents in stats_collection
         self.db_size_ref = self.stats_collection_ref.document(
-            u'database_size')
+            u'database_size')  # stores number of docs in jobs_collection
         self.cloud_data_ref = self.stats_collection_ref.document(u'cloud_data')
         self.db_data_ref = self.stats_collection_ref.document(u'db_data')
         self.lang_data_ref = self.stats_collection_ref.document(u'lang_data')
@@ -46,9 +52,8 @@ class Database:
         self.web_data_ref = self.stats_collection_ref.document(u'web_data')
 
         # create documents if missing from database
-        self.create_doc_if_missing(self.db_size_ref)
-
-        # ! what if database size is non-zero initially
+        if self.create_doc_if_missing(self.db_size_ref):
+            self.recalculate_size_counter()
         self.create_doc_if_missing(self.cloud_data_ref)
         self.create_doc_if_missing(self.db_data_ref)
         self.create_doc_if_missing(self.lang_data_ref)
@@ -73,26 +78,6 @@ class Database:
         jobs = self.job_collection_ref.stream()
         jobs_dict = list(map(lambda x: x.to_dict(), jobs))
         return pd.DataFrame(jobs_dict)
-
-    def get_sample_dataframe(self) -> pd.DataFrame:
-        """
-        Get a sample dataframe containing scraped data for testing purposes.
-
-        Returns:
-            dataframe: A 2D panda dataframe
-        """
-
-        data_source_filename = 'data/sample-raw.csv'
-        df = pd.read_csv(data_source_filename, header=0)
-
-        # parse dates and sort df
-        df['date_posted'] = pd.to_datetime(
-            df['date_posted'], format="%d/%m/%Y")
-        df['closing_date'] = pd.to_datetime(
-            df['closing_date'], format="%d/%m/%Y")
-        df.sort_values('date_posted', ascending=False, inplace=True)
-
-        return df
 
     def get_recent_urls(self, LIMIT: int = 500) -> list[str]:
         """
@@ -166,13 +151,16 @@ class Database:
         """
         return int(self.db_size_ref.get().to_dict()['size'])
 
-    def increment_size_counter(self) -> None:
+    def update_size_counter(self, new_size: int) -> None:
         """
-        Increments the counter by 1 which keeps tracks of the
-        number of jobs in database.
+        Updates the value of `size` in the `database_size` document
+        in `statistics` collection
+
+        Args:
+            new_size(int): Number of documents in jobs_collection
         """
-        new_size = self.get_size() + 1
-        self.db_size_ref.update({'size': new_size})
+        if new_size >= 0:
+            self.db_size_ref.update({'size': new_size})
 
     def recalculate_size_counter(self) -> None:
         """
@@ -185,26 +173,11 @@ class Database:
         new_size = len(self.get_dataframe())
         self.db_size_ref.update({'size': new_size})
 
-    def doc_exists(self, collectionRef, docName: str) -> None:
-        """
-        Given a valid reference to a collection, check if a particular document
-        is present in it.
-
-        Args:
-            docName(_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        doc_ref = collectionRef.document(docName)
-        return doc_ref.get().exists
-
     def sanitize_dict(self, dict: dict) -> dict:
-        # !update docstring
         """
         Dictionary key names containing characters other than
         letters, numbers, and underscores must be sanitized
-        before uploading to firestore.
+        before using it.
 
         https://cloud.google.com/python/docs/reference/firestore/latest/field_path
         """
@@ -215,10 +188,9 @@ class Database:
 
     def update_stats(self, incrementDict: dict,
                      document_ref) -> None:
-        # ! rethink
         """
-        Updates a particular document in the statistics collection on
-        Firestore.
+        Increments the dictionary of a document in the statistics collection
+        by a certain amount.
 
         Args:
             incrementDict(dict): The dictionary which must be added to
@@ -246,7 +218,7 @@ class Database:
         # save changes
         document_ref.update(resultDict)
 
-    def create_doc_if_missing(self, document_ref, initial_val={}) -> None:
+    def create_doc_if_missing(self, document_ref, initial_val={}) -> bool:
         """
         Checks if a document exists and creates it if not.
 
@@ -254,11 +226,18 @@ class Database:
             document_ref (firestore.documentReference): _description_
             initial_val (dict, optional): Default value stored in document.
             Defaults to {}.
+        Returns:
+            bool: True if document was missing. False otherwise.
         """
         if (not document_ref.get().exists):
             document_ref.set(initial_val)
+            return True
+        return False
 
-    def get_doc_data(self, document_ref, header) -> pd.DataFrame:
+    def get_doc(self, document_ref) -> dict:
+        return document_ref.get().to_dict()
+
+    def get_doc_as_df(self, document_ref, header) -> pd.DataFrame:
         """
         Returns data from a document in `statistics` collection.
 
@@ -270,8 +249,38 @@ class Database:
         Returns:
             pd.DataFrame: Data from document in a table with 2 columns.
         """
-        dict = document_ref.get().to_dict()
+        dict = self.get_doc(document_ref)
         df = pd.DataFrame.from_dict(dict, orient='index')
         df = df.reset_index()
         df.columns = [header, 'Frequency']
         return df
+
+    def add_doc(self, collection_ref, doc_id,  doc_data: dict) -> None:
+        doc_ref = collection_ref.document(doc_id)
+        if (doc_ref.get().exists):
+            doc_ref.set(doc_data)
+
+    def export_collection(self, collection_ref):
+        """
+        Exports a collection. Use this function together with
+        `import_collection`
+
+        Args:
+            collection_ref (_type_): Reference to firestore collection
+
+        Returns:
+            _type_: _description_
+        """
+        return collection_ref.stream()
+
+    def import_collection(self, collection_ref, collection_stream) -> None:
+        """
+        Imports a collection to database. Use this function
+        together with `export_collection`
+
+        Args:
+            collection_ref (_type_): _description_
+            collection_stream (_type_): _description_
+        """
+        for doc in collection_stream:
+            self.add_doc(collection_ref, doc.id, doc.to_dict())
