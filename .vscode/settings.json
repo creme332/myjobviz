@@ -1,13 +1,4 @@
 {
-  "folders": [
-    {
-      "path": "."
-    }
-  ],
-  "settings": {
-    "python.terminal.activateEnvInCurrentTerminal": true,
-    "python.defaultInterpreterPath": "/home/mcl/githubrepos/mauritius-tech-job-statistics/venv/bin/python3"
-  },
   "python.linting.flake8Enabled": true,
   "python.linting.enabled": true,
   "python.analysis.typeCheckingMode": "basic"
