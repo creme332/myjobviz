@@ -1,4 +1,3 @@
-#!venv/bin/python3
 import unittest
 import pandas as pd
 from analyser.dictionaryUtils import (toIntegerValues, merge_dicts,

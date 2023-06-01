@@ -1,4 +1,3 @@
-#!venv/bin/python3
 import unittest
 import re
 import pandas as pd

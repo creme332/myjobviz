@@ -1,4 +1,4 @@
-#!venv/bin/python3
+from __future__ import annotations
 import unittest
 import re
 from analyser.dictionaryUtils import (toIntegerValues, merge_dicts,
@@ -20,7 +20,7 @@ def db_count(job_details_list):
     return count
 
 
-def database_check(job_details):
+def database_check(job_details: str) -> list[str]:
     """Returns a list of databases present in `job_details`
 
     Args:
@@ -31,7 +31,7 @@ def database_check(job_details):
     """
     job_details = job_details.lower()
 
-    # list of words but without special characters
+    # list of words but without special characters such as ,.;:
     words = re.findall(r'\w+', job_details)
 
     is_present = {
@@ -40,7 +40,7 @@ def database_check(job_details):
         "Firebase": False, "Elasticsearch": False, "Oracle": False,
         "DynamoDB": False, "Cassandra": False, "IBM DB2": False,
         "Couchbase": False, "NoSQL": False
-    }
+    }  # ! TAKE AS PARAMETER
     # print(is_present.keys())
     # print(','.join(is_present.keys()))
 
@@ -60,6 +60,7 @@ def database_check(job_details):
         is_present["IBM DB2"] = True
 
     # corner case for oracle database
+    # do not confuse with oracle cloud
     foundOracle = False
     for i in range(0, len(words)):
         current_word = words[i]

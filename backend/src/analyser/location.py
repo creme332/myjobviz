@@ -1,4 +1,3 @@
-#!venv/bin/python3
 import unittest
 from analyser.dictionaryUtils import filter_dict
 

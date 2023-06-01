@@ -1,4 +1,3 @@
-#!venv/bin/python3
 from analyser.cloudplatforms import cp_count
 from analyser.database import db_count
 from analyser.language import lang_count
