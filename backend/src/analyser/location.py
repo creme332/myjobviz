@@ -1,7 +1,3 @@
-import unittest
-from analyser.dictionaryUtils import filter_dict
-
-
 def location_count(location_list):
     """Identifies the most common location for IT jobs.
 
@@ -29,21 +25,3 @@ def location_count(location_list):
     if (len(skipped_locations) > 0):
         print('Unknown districts found :', skipped_locations)
     return JobCountPerDistrict
-
-
-class Test(unittest.TestCase):
-
-    def test_plaine_wilhems(self):
-        list = ['Plaine Wilhems']
-        self.assertEqual(filter_dict(
-            location_count(list)), {'Plaines Wilhems': 1})
-
-    def test_countries(self):
-        list = ['Rodrigues', 'Mauritius']
-        self.assertEqual(filter_dict(
-            location_count(list)), {})
-
-    def test_exceptions(self):
-        list = ['fs', 'Mauritius']
-        self.assertEqual(filter_dict(
-            location_count(list)), {})

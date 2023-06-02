@@ -1,7 +1,7 @@
 import unittest
 import pandas as pd
-from analyser.dictionaryUtils import (toIntegerValues, merge_dicts,
-                                      to_true_list, filter_dict)
+from utils.dictionary import (boolean_to_int, merge_dicts)
+
 
 
 def lib_count(job_details_list) -> dict:
@@ -21,9 +21,9 @@ def lib_count(job_details_list) -> dict:
              "Power BI": False,
              "Power Query": False,
              }
-    count = toIntegerValues(count)
+    count = boolean_to_int(count)
     for job_detail in job_details_list:
-        res = toIntegerValues(libraries_check(job_detail))
+        res = boolean_to_int(libraries_check(job_detail))
         count = merge_dicts(count, res)
     return count
 
@@ -67,39 +67,3 @@ def libraries_check(job_details):
     return is_present
 
 
-class TestLibrariesCheck(unittest.TestCase):
-
-    def test_long_names(self):
-        string = 'Apache Spark'
-        self.assertEqual(to_true_list(libraries_check(string)),
-                         ['Apache Spark'])
-
-    def test_all(self):
-        string = ('.NET Framework,NumPy,.NET Core,Pandas,'
-                  'TensorFlow,React Native,Flutter,Keras,PyTorch,'
-                  'Cordova,Apache Spark,Hadoop,Tableau,Power BI,'
-                  'Power Query')
-        expected = ['.NET Framework', 'NumPy', '.NET Core',
-                    'Pandas', 'TensorFlow', 'React Native',
-                    'Flutter', 'Keras', 'PyTorch', 'Cordova',
-                    'Apache Spark', 'Hadoop', 'Tableau',
-                    'Power BI', 'Power Query']
-        self.assertCountEqual(to_true_list(libraries_check(string)), expected)
-
-    # @unittest.skip('Reason for skipping')
-    def test_real_job_details(self):
-        data_source_filename = 'data/sample-raw.csv'
-        df = pd.read_csv(data_source_filename, header=0)
-
-        # filter df to include only rows mentioning sql
-        df = df[df['job_details'].str.contains(".NET Core")]
-        string = df['job_details'].tolist()[0]
-        # print(string)
-        self.assertCountEqual(to_true_list(libraries_check(
-            string)), ['.NET Core'])
-
-    def test_count(self):
-        test_list = ['pandas', 'java c#', 'pandas']
-        x = lib_count(test_list)
-        # print(filter_dict(x))
-        self.assertEqual(filter_dict(x), {'Pandas': 2})

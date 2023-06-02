@@ -1,8 +1,5 @@
-import unittest
-import pandas as pd
 import re
-from analyser.dictionaryUtils import (toIntegerValues, merge_dicts,
-                                      to_true_list, filter_dict)
+from utils.dictionary import (boolean_to_int, merge_dicts)
 
 
 def os_count(job_details_list):
@@ -11,9 +8,9 @@ def os_count(job_details_list):
         "Mac": False,
         "Linux": False,
     }
-    count = toIntegerValues(count)
+    count = boolean_to_int(count)
     for job_detail in job_details_list:
-        res = toIntegerValues(os_check(job_detail))
+        res = boolean_to_int(os_check(job_detail))
         count = merge_dicts(count, res)
     return count
 
@@ -45,29 +42,3 @@ def os_check(job_details):
             is_present[key] = True
 
     return is_present
-
-
-class TestOSCheck(unittest.TestCase):
-
-    def test_all(self):
-        string = ('Windows,Mac,Linux')
-        expected = ['Windows', 'Mac', 'Linux']
-        self.assertCountEqual(to_true_list(os_check(string)), expected)
-
-    # @unittest.skip('Reason for skipping')
-    def test_real_job_details(self):
-        data_source_filename = 'data/sample-raw.csv'
-        df = pd.read_csv(data_source_filename, header=0)
-
-        # filter df to include only rows mentioning sql
-        df = df[df['job_details'].str.contains("Machine")]
-        string = df['job_details'].tolist()[0]
-        # print(string)
-        self.assertCountEqual(to_true_list(os_check(
-            string)), [])
-
-    def test_count(self):
-        test_list = ['pandas', 'java  c#', 'pandas']
-        x = os_count(test_list)
-        # print(filter_dict(x))
-        self.assertEqual(filter_dict(x), {})

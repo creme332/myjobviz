@@ -1,7 +1,6 @@
-#!venv/bin/python3
 from classes.database import Database
 from miner import JobScraper
-from anal import analyseAndUpdate
+from backend.src.analysis import analyseAndUpdate
 from classes.utils import get_service_account_key
 
 
@@ -122,4 +121,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    print(JobScraper([], 1).scrape())

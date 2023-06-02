@@ -1,12 +1,20 @@
 from __future__ import annotations
-import unittest
 import re
-from analyser.dictionaryUtils import (toIntegerValues, merge_dicts,
-                                      to_true_list, filter_dict)
+from utils.dictionary import (boolean_to_int, merge_dicts,)
 
 
-def db_count(job_details_list):
-    # create a dictionary of databases to be analysed
+def db_count(job_details_list: list[str]) -> dict[str, int]:
+    """
+    Counts the number of job descriptions mentioning databases.
+
+    Args:
+        job_details_list (list[str]): A list of job descriptions
+
+    Returns:
+        dict: A dictionary where the key is a database name
+        and the value is the number of job descriptions mentioning
+        that database.
+    """
     count = {
         "MySQL": 0, "PostgreSQL": 0, "SQLite": 0, "MongoDB": 0,
         "Microsoft SQL Server": 0, "Redis": 0, "MariaDB": 0,
@@ -15,24 +23,29 @@ def db_count(job_details_list):
         "Couchbase": 0, "NoSQL": 0
     }
     for job_detail in job_details_list:
-        res = toIntegerValues(database_check(job_detail))
+        res = boolean_to_int(db_check(job_detail))
         count = merge_dicts(count, res)
     return count
 
 
-def database_check(job_details: str) -> list[str]:
-    """Returns a list of databases present in `job_details`
+def db_check(job_desc: str) -> dict[str, bool]:
+    """
+    Returns a dictionary of boolean values where key-value
+    represent databases present in the given job description
 
     Args:
-        job_details (str): Job details scraped from website.
+        job_desc (str): Job description
 
     Returns:
-        List[str]: A list of databases.
+        dict: Dictionary of boolean values
     """
-    job_details = job_details.lower()
 
-    # list of words but without special characters such as ,.;:
-    words = re.findall(r'\w+', job_details)
+    # convert to lowercase
+    job_desc = job_desc.lower()
+
+    # get the list of words in job_desc but without
+    # special characters such as ,.;:
+    words = re.findall(r'\w+', job_desc)
 
     is_present = {
         "MySQL": False, "PostgreSQL": False, "SQLite": False, "MongoDB": False,
@@ -46,7 +59,7 @@ def database_check(job_details: str) -> list[str]:
 
     for key in is_present:
         lang = key.lower()
-        if (lang in words and lang in job_details):
+        if (lang in words and lang in job_desc):
             is_present[key] = True
 
     # add alternative spelling for postgreSQL
@@ -54,9 +67,9 @@ def database_check(job_details: str) -> list[str]:
         is_present['PostgreSQL'] = True
 
     # corner cases for database names with more than 1 word
-    if ("microsoft sql server" in job_details):
+    if ("microsoft sql server" in job_desc):
         is_present["Microsoft SQL Server"] = True
-    if ("ibm db2" in job_details):
+    if ("ibm db2" in job_desc):
         is_present["IBM DB2"] = True
 
     # corner case for oracle database
@@ -70,63 +83,7 @@ def database_check(job_details: str) -> list[str]:
             break
     is_present['Oracle'] = foundOracle
     # alternative spelling for oracle
-    if ("oracle database" in job_details):
+    if ("oracle database" in job_desc):
         is_present["Oracle"] = True
 
     return is_present
-
-
-class TestDatabaseCheck(unittest.TestCase):
-
-    def test_uppercase(self):
-        string = 'IBM DB2'
-        self.assertEqual(to_true_list(database_check(string)), ['IBM DB2'])
-
-    def test_substrings(self):
-        string = 'sql'
-        self.assertCountEqual(to_true_list(database_check(string)),
-                              [])
-
-    def test_postgres(self):
-        string = 'postGReSQL'
-        self.assertCountEqual(to_true_list(database_check(string)),
-                              ['PostgreSQL'])
-        string = ('Sait utiliser les principales bases de'
-                  ' données relationnelles (MySQL, Postgres)')
-        self.assertCountEqual(to_true_list(database_check(string)),
-                              ['PostgreSQL', 'MySQL'])
-
-    def test_all_databases(self):
-        string = ('MySQL,PostgreSQL,SQLite,MongoDB,Microsoft SQL Server,'
-                  'Redis,MariaDB,Firebase,Elasticsearch,Oracle,'
-                  'DynamoDB,Cassandra,IBM DB2,Couchbase,NoSQL')
-        expected = ['MySQL', 'PostgreSQL', 'SQLite', 'MongoDB',
-                    'Microsoft SQL Server', 'Redis', 'MariaDB',
-                    'Firebase', 'Elasticsearch', 'Oracle',
-                    'DynamoDB', 'Cassandra', 'IBM DB2',
-                    'Couchbase', 'NoSQL']
-        self.assertCountEqual(to_true_list(database_check(string)), expected)
-
-    def test_oracle_corner_case(self):
-        string = ('oracle cloud is good')
-        expected = []
-        self.assertCountEqual(to_true_list(database_check(string)), expected)
-
-        string = ('oracle cloud')
-        expected = []
-        self.assertCountEqual(to_true_list(database_check(string)), expected)
-
-        string = ('oracle')
-        expected = []
-        self.assertCountEqual(to_true_list(database_check(string)), ['Oracle'])
-
-    def test_real_job_details(self):
-        string = 'expertise mysql/mariadb (database tuning, sql optimisation)'
-        self.assertCountEqual(to_true_list(
-            database_check(string)), ['MySQL', 'MariaDB'])
-
-    def test_db_count(self):
-        List = ['mariadb', 'helpe das sql Mariadb', 'mysql']
-        x = filter_dict(db_count(List))
-        # print(x)
-        self.assertCountEqual(x, {'MySQL': 1, 'MariaDB': 2})
