@@ -4,7 +4,7 @@ from src.analyser.os import os_check, os_count
 import pandas as pd
 
 
-class TestOSCheck(unittest.TestCase):
+class TestOS(unittest.TestCase):
 
     def test_all(self):
         string = ('Windows,Mac,Linux')

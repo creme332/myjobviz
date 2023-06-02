@@ -3,7 +3,7 @@ from src.utils.dictionary import (filter_dict)
 from src.analyser.location import location_count
 
 
-class Test(unittest.TestCase):
+class TestLocations(unittest.TestCase):
 
     def test_plaine_wilhems(self):
         list = ['Plaine Wilhems']

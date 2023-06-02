@@ -1,11 +1,10 @@
-
 import unittest
 from src.utils.dictionary import (get_true_keys, filter_dict)
 from src.analyser.libraries import libraries_check, lib_count
 import pandas as pd
 
 
-class TestLibrariesCheck(unittest.TestCase):
+class TestLibraries(unittest.TestCase):
 
     def test_long_names(self):
         string = 'Apache Spark'

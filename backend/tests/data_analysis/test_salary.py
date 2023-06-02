@@ -2,7 +2,7 @@ import unittest
 from src.analyser.salary import salary_count
 
 
-class Test(unittest.TestCase):
+class TestSalary(unittest.TestCase):
 
     def test_valid_salaries(self):
         list = ['10,000 - 20,000', '51,000 - 75,000', '76,000 - 100,000']

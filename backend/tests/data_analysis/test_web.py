@@ -4,7 +4,7 @@ from src.analyser.webframework import web_framework_check, web_count
 import pandas as pd
 
 
-class TestWebFrameworkCheck(unittest.TestCase):
+class TestWebFramework(unittest.TestCase):
 
     def test_uppercase(self):
         string = 'i love SVELTE'

@@ -3,7 +3,7 @@ from src.analyser.database import db_check, db_count
 from src.utils.dictionary import (get_true_keys, filter_dict)
 
 
-class TestDatabaseCheck(unittest.TestCase):
+class TestDatabase(unittest.TestCase):
 
     def test_uppercase(self):
         string = 'IBM DB2'

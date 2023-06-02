@@ -5,7 +5,7 @@ from src.analyser.tools import tools_check, tools_count
 import pandas as pd
 
 
-class TestToolsCheck(unittest.TestCase):
+class TestTools(unittest.TestCase):
 
     def test_long_names(self):
         string = 'Unreal Engine'

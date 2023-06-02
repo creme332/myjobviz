@@ -4,7 +4,7 @@ from src.analyser.language import lang_count, language_check
 from src.utils.dictionary import (get_true_keys, filter_dict)
 
 
-class TestLanguageCheck(unittest.TestCase):
+class TestLanguage(unittest.TestCase):
 
     def test_uppercase(self):
         string = 'JAVA is cool... HTML5'
