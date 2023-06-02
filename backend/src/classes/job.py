@@ -1,4 +1,3 @@
-#!venv/bin/python3
 from datetime import datetime
 from firebase_admin import firestore
 from typing import Optional

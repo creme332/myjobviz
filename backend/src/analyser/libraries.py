@@ -1,7 +1,4 @@
-import unittest
-import pandas as pd
 from utils.dictionary import (boolean_to_int, merge_dicts)
-
 
 
 def lib_count(job_details_list) -> dict:
@@ -65,5 +62,3 @@ def libraries_check(job_details):
             is_present[key] = True
 
     return is_present
-
-

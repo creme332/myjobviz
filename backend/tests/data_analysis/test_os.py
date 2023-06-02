@@ -1,5 +1,5 @@
 import unittest
-from utils.dictionary import (get_true_keys, filter_dict)
+from src.utils.dictionary import (get_true_keys, filter_dict)
 from src.analyser.os import os_check, os_count
 import pandas as pd
 

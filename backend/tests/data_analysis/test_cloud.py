@@ -1,6 +1,6 @@
 import unittest
 import pandas as pd
-from utils.dictionary import (get_true_keys, filter_dict)
+from src.utils.dictionary import (get_true_keys, filter_dict)
 from src.analyser.cloudplatforms import cloud_platforms_check, cp_count
 
 

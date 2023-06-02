@@ -1,5 +1,5 @@
 import unittest
-from utils.dictionary import (filter_dict)
+from src.utils.dictionary import (filter_dict)
 from src.analyser.location import location_count
 
 

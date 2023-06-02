@@ -1,7 +1,7 @@
 import unittest
 import pandas as pd
 from src.analyser.language import lang_count, language_check
-from utils.dictionary import (get_true_keys, filter_dict)
+from src.utils.dictionary import (get_true_keys, filter_dict)
 
 
 class TestLanguageCheck(unittest.TestCase):

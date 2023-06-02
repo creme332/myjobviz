@@ -1,5 +1,5 @@
 import re
-from utils.dictionary import (get_true_keys, filter_dict)
+from utils.dictionary import (boolean_to_int, merge_dicts)
 
 
 def cp_count(job_details_list: list[str]) -> dict[str, int]:

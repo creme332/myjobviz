@@ -1,7 +1,7 @@
 from classes.database import Database
 from miner import JobScraper
-from backend.src.analysis import analyseAndUpdate
-from classes.utils import get_service_account_key
+from analysis import analyseAndUpdate
+from utils.service_key import get_service_account_key
 
 
 def update_readme_job_badge(new_job_count):

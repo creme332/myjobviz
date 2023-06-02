@@ -1,10 +1,9 @@
-#!venv/bin/python3
 from __future__ import annotations
 import firebase_admin
 from firebase_admin import firestore
 from firebase_admin import credentials
 import pandas as pd
-from analyser.dictionaryUtils import merge_dicts
+from utils.dictionary import merge_dicts
 
 
 class Database:

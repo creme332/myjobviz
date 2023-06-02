@@ -1,6 +1,6 @@
 
 import unittest
-from utils.dictionary import (get_true_keys, filter_dict)
+from src.utils.dictionary import (get_true_keys, filter_dict)
 from src.analyser.tools import tools_check, tools_count
 import pandas as pd
 

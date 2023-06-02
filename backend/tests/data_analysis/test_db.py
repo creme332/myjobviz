@@ -1,6 +1,6 @@
 import unittest
 from src.analyser.database import db_check, db_count
-from utils.dictionary import (get_true_keys, filter_dict)
+from src.utils.dictionary import (get_true_keys, filter_dict)
 
 
 class TestDatabaseCheck(unittest.TestCase):

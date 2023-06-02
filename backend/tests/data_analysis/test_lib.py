@@ -1,6 +1,6 @@
 
 import unittest
-from utils.dictionary import (get_true_keys, filter_dict)
+from src.utils.dictionary import (get_true_keys, filter_dict)
 from src.analyser.libraries import libraries_check, lib_count
 import pandas as pd
 
