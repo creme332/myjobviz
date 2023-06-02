@@ -1,22 +1,10 @@
 import re
 from utils.dictionary import (boolean_to_int, merge_dicts)
+from utils.constants import TOOLS
 
 
 def tools_count(job_details_list):
-    count = {
-        "Git": False,
-        "Terraform": False,
-        "Kubernetes": False,
-        "Node.js": False,
-        "Docker": False,
-        "Ansible": False,
-        "Yarn": False,
-        "Unreal Engine": False,
-        "Unity 3D": False,
-        "Github": False,
-        "Gitlab": False,
-    }
-    count = boolean_to_int(count)
+    count = {TOOLS[i]: 0 for i in range(0, len(TOOLS))}
     for job_detail in job_details_list:
         res = boolean_to_int(tools_check(job_detail))
         count = merge_dicts(count, res)

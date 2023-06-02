@@ -1,34 +1,17 @@
 import re
 from utils.dictionary import (boolean_to_int, merge_dicts)
+from utils.constants import WEB_FRAMEWORKS
 
 
 def web_count(job_details_list):
-    count = {"Svelte": False,
-             "ASP.NET": False,
-             "FastAPI": False,
-             "React": False,
-             "Vue.js": False,  # or Vue if  english job description
-             "Express": False,
-             "Spring": False,
-             "Ruby on Rails": False,
-             "Django": False,
-             "Laravel": False,
-             "Flask": False,
-             "Gatsby": False,
-             "Symfony": False,
-             "jQuery": False,
-             "Drupal": False,
-             "Angular.js": False,
-             "Angular": False
-             }
-    count = boolean_to_int(count)
+    count = {WEB_FRAMEWORKS[i]: 0 for i in range(0, len(WEB_FRAMEWORKS))}
     for job_detail in job_details_list:
         res = boolean_to_int(web_framework_check(job_detail))
         count = merge_dicts(count, res)
     return count
 
 
-def web_framework_check(job_details):
+def web_framework_check(job_details: str) -> dict[str, bool]:
     """Returns a list of web frameworks present in `job_details`
 
     Args:
@@ -45,26 +28,8 @@ def web_framework_check(job_details):
 
     # list of words but without special characters
     words = re.findall(r'\w+', job_details)
-    is_present = {"Svelte": False,
-                  "ASP.NET": False,
-                  "FastAPI": False,
-                  "React": False,
-                  "Vue.js": False,  # or Vue if  english job description
-                  "Express": False,
-                  "Spring": False,
-                  "Ruby on Rails": False,
-                  "Django": False,
-                  "Laravel": False,
-                  "Flask": False,
-                  "Gatsby": False,
-                  "Symfony": False,
-                  "jQuery": False,
-                  "Drupal": False,
-                  "Angular.js": False,
-                  "Angular": False
-                  }
-    # print(is_present.keys())
-    # print(','.join(is_present.keys()))
+    is_present = {WEB_FRAMEWORKS[i]: False for i in range(0,
+                                                          len(WEB_FRAMEWORKS))}
 
     for key in is_present:
         lang = key.lower()

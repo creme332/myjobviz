@@ -1,18 +1,10 @@
 import re
 from utils.dictionary import (boolean_to_int, merge_dicts)
+from utils.constants import LANGUAGES
 
 
 def lang_count(job_details_list) -> dict:
-    count = {
-        "C++": False, "Java": False, "Python": False,
-        "Javascript": False, "PHP": False,
-        "HTML": False, "CSS": False, "Clojure": False,
-        "C#": False, "Bash": False, "Shell": False,
-        "PowerShell": False, "Kotlin": False,
-        "Rust": False, "Typescript": False, "SQL": False,
-        "Ruby": False, "Dart": False
-    }
-    count = boolean_to_int(count)
+    count = {LANGUAGES[i]: 0 for i in range(0, len(LANGUAGES))}
     for job_detail in job_details_list:
         res = boolean_to_int(language_check(job_detail))
         count = merge_dicts(count, res)
@@ -33,15 +25,7 @@ def language_check(job_details):
     # list of words but without special characters
     words = re.findall(r'\w+', job_details)
 
-    is_present = {
-        "C++": False, "Java": False, "Python": False,
-        "Javascript": False, "PHP": False,
-        "HTML": False, "CSS": False, "Clojure": False,
-        "C#": False, "Bash": False, "Shell": False,
-        "PowerShell": False, "Kotlin": False,
-        "Rust": False, "Typescript": False, "SQL": False,
-        "Ruby": False, "Dart": False
-    }
+    is_present = {LANGUAGES[i]: False for i in range(0, len(LANGUAGES))}
 
     # corner cases for languages containing special characters
     if ('c++' in job_details):

@@ -1,20 +1,21 @@
 import unittest
 import pandas as pd
 from src.utils.dictionary import (get_true_keys, filter_dict)
-from src.analyser.cloudplatforms import cloud_platforms_check, cp_count
+from src.analyser.cloudplatforms import cp_check, cp_count
+from src.utils.constants import CLOUD_PLATFORMS
 
 
-class TestCloudPlatformsCheck(unittest.TestCase):
+class TestCloudPlatforms(unittest.TestCase):
     def test_uppercase(self):
         string = 'i love WATSON'
-        x = cloud_platforms_check(string)
+        x = cp_check(string)
         self.assertEqual(
             get_true_keys(x),
             ['Watson'])
 
     def test_long_names(self):
         string = 'Google Cloud; Oracle Cloud Infrastructure'
-        self.assertEqual(get_true_keys(cloud_platforms_check(string)),
+        self.assertEqual(get_true_keys(cp_check(string)),
                          ['Google Cloud',
                           'Oracle Cloud Infrastructure'])
 
@@ -23,22 +24,20 @@ class TestCloudPlatformsCheck(unittest.TestCase):
         string = ('laws are good')
         expected = []
         self.assertCountEqual(get_true_keys(
-            cloud_platforms_check(string)), expected)
+            cp_check(string)), expected)
 
     def test_all(self):
         string = ('AWS,Google Cloud,Azure,Heroku,'
                   'DigitalOcean,Watson,Oracle'
                   ' Cloud Infrastructure')
-        expected = ['AWS', 'Google Cloud', 'Azure', 'Heroku',
-                    'DigitalOcean', 'Watson', 'Oracle Cloud Infrastructure']
-        self.assertCountEqual(cloud_platforms_check(string), expected)
+        self.assertCountEqual(get_true_keys(cp_check(string)), CLOUD_PLATFORMS)
 
     @unittest.skip('Missing sample data')
     def test_real_job_details(self):
         data_source_filename = 'data/sample-raw.csv'
         df = pd.read_csv(data_source_filename, header=0)
         string = df['job_details'].tolist()[0]
-        self.assertCountEqual(get_true_keys(cloud_platforms_check(string)), [])
+        self.assertCountEqual(get_true_keys(cp_check(string)), [])
 
     def test_getCount(self):
         test_list = ['unbuntu', 'azue azure', 'watson']

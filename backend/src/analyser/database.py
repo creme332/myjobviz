@@ -1,6 +1,7 @@
 from __future__ import annotations
 import re
 from utils.dictionary import (boolean_to_int, merge_dicts,)
+from utils.constants import DATABASES
 
 
 def db_count(job_details_list: list[str]) -> dict[str, int]:
@@ -15,13 +16,9 @@ def db_count(job_details_list: list[str]) -> dict[str, int]:
         and the value is the number of job descriptions mentioning
         that database.
     """
-    count = {
-        "MySQL": 0, "PostgreSQL": 0, "SQLite": 0, "MongoDB": 0,
-        "Microsoft SQL Server": 0, "Redis": 0, "MariaDB": 0,
-        "Firebase": 0, "Elasticsearch": 0, "Oracle": 0,
-        "DynamoDB": 0, "Cassandra": 0, "IBM DB2": 0,
-        "Couchbase": 0, "NoSQL": 0
-    }
+    # create a dictionary from list
+    count = {DATABASES[i]: 0 for i in range(0, len(DATABASES))}
+
     for job_detail in job_details_list:
         res = boolean_to_int(db_check(job_detail))
         count = merge_dicts(count, res)
@@ -47,15 +44,7 @@ def db_check(job_desc: str) -> dict[str, bool]:
     # special characters such as ,.;:
     words = re.findall(r'\w+', job_desc)
 
-    is_present = {
-        "MySQL": False, "PostgreSQL": False, "SQLite": False, "MongoDB": False,
-        "Microsoft SQL Server": False, "Redis": False, "MariaDB": False,
-        "Firebase": False, "Elasticsearch": False, "Oracle": False,
-        "DynamoDB": False, "Cassandra": False, "IBM DB2": False,
-        "Couchbase": False, "NoSQL": False
-    }  # ! TAKE AS PARAMETER
-    # print(is_present.keys())
-    # print(','.join(is_present.keys()))
+    is_present = {DATABASES[i]: False for i in range(0, len(DATABASES))}
 
     for key in is_present:
         lang = key.lower()
