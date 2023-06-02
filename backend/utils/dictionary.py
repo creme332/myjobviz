@@ -19,7 +19,7 @@ def merge_dicts(a: dict, b: dict) -> dict:
     return c
 
 
-def filter_dict(dict: dict) -> dict:
+def filter_dict(dict: dict[str, int]) -> dict[str, int]:
     """
     Given a dictionary, remove all key-values pair where
     where value=0
@@ -33,7 +33,7 @@ def filter_dict(dict: dict) -> dict:
     return {x: y for x, y in dict.items() if y != 0}
 
 
-def get_true_keys(booleanDict: dict) -> list[str]:
+def get_true_keys(booleanDict: dict[str, bool]) -> list[str]:
     """
     Given a dictionary with boolean values, return
     a list of keys whose values are True
@@ -48,7 +48,7 @@ def get_true_keys(booleanDict: dict) -> list[str]:
     return [key for key in booleanDict if booleanDict[key]]
 
 
-def boolean_to_int(dict: dict) -> dict:
+def boolean_to_int(dict: dict[str, bool]) -> dict[str, int]:
     """
     Given a dictionary with boolean values,
     return a dictionary where true is 1 and false is 0.
@@ -59,6 +59,7 @@ def boolean_to_int(dict: dict) -> dict:
     Returns:
         dict: Final dictionary where boolean values are integers
     """
+    new_dict = {}
     for key, val in dict.items():
-        dict[key] = 1 if val else 0
-    return dict
+        new_dict[key] = 1 if val else 0
+    return new_dict
