@@ -1,15 +1,23 @@
-def salary_count(salary_list):
-    count = {'10,000 - 20,000': 0, '21,000 - 30,000': 0,
-             '31,000 - 40,000': 0, '41,000 - 50,000': 0,
-             '51,000 - 75,000': 0, '76,000 - 100,000': 0,
-             'More Than 100,000': 0
-             }
-    invalid_salaries = ['Not disclosed', 'Negotiable', 'See description']
+def salary_count(salary_list: list[str]) -> dict[str, int]:
+    """
+    Count the number of times each salary occur in list
 
-    for salary in salary_list:
-        if (salary not in invalid_salaries):
-            if (salary not in count.keys()):
-                print('Unknown salary ranges found: ', salary)  # ! throw error
-            else:
-                count[salary] += 1
-    return count
+    NOTE: Not all jobs give salary ranges. Some "invalid" ranges
+    such as `See description` and `Negotiable` will be present.
+
+    Args:
+        salary_list (list[str]): A list of salaries
+
+    Returns:
+        dict[str, int]: Count of each salary
+    """
+    # ? myjob.mu website has a consistent spelling of salaries so
+    # ? there are no corner cases
+    salary_count = dict()
+    for location in salary_list:
+        # remove special characters
+        sanitized_location = location.replace('\r\n', '',).strip()
+        # update count
+        salary_count[sanitized_location] = salary_count.get(
+            sanitized_location, 0) + 1
+    return salary_count
