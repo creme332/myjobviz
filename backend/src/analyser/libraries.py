@@ -1,14 +1,4 @@
-from utils.dictionary import (boolean_to_int, merge_dicts)
 from utils.constants import LIBRARIES
-
-
-def lib_count(job_details_list: list[str]) -> dict[str, int]:
-    count = {LIBRARIES[i]: 0 for i in range(0, len(LIBRARIES))}
-
-    for job_detail in job_details_list:
-        res = boolean_to_int(libraries_check(job_detail))
-        count = merge_dicts(count, res)
-    return count
 
 
 def libraries_check(job_details: str) -> dict[str, bool]:

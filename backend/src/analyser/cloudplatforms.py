@@ -1,33 +1,10 @@
 import re
-from utils.dictionary import (boolean_to_int, merge_dicts)
 from utils.constants import CLOUD_PLATFORMS
-
-
-def cp_count(job_desc_list: list[str]) -> dict[str, int]:
-    """
-    Counts the number of job descriptions mentioning cloud platforms.
-
-    Args:
-        job_desc_list (list[str]): A list of job descriptions
-
-    Returns:
-        dict[str, int]: A dictionary where the key is a database name
-        and the value is the number of job descriptions mentioning
-        that database.
-    """
-
-    # create a dictionary from list
-    count = {CLOUD_PLATFORMS[i]: 0 for i in range(0, len(CLOUD_PLATFORMS))}
-
-    for job_detail in job_desc_list:
-        res = boolean_to_int(cp_check(job_detail))
-        count = merge_dicts(count, res)
-    return count
 
 
 def cp_check(job_desc: str) -> dict[str, bool]:
     """
-    Returns a dictionary indicating which cloud platform is present in
+    Returns a dictionary indicating which cloud platform is present/absent in
     given job description.
 
     Args:

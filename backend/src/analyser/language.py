@@ -1,14 +1,5 @@
 import re
-from utils.dictionary import (boolean_to_int, merge_dicts)
 from utils.constants import LANGUAGES
-
-
-def lang_count(job_details_list) -> dict:
-    count = {LANGUAGES[i]: 0 for i in range(0, len(LANGUAGES))}
-    for job_detail in job_details_list:
-        res = boolean_to_int(language_check(job_detail))
-        count = merge_dicts(count, res)
-    return count
 
 
 def language_check(job_details: str) -> dict[str, bool]:

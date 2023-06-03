@@ -1,7 +1,8 @@
 import unittest
 from src.utils.dictionary import (get_true_keys, filter_dict)
-from src.analyser.webframework import web_framework_check, web_count
+from src.analyser.webframework import web_framework_check
 from src.utils.constants import WEB_FRAMEWORKS
+from src.analysis import count_occurences
 
 
 class TestWebFramework(unittest.TestCase):
@@ -13,7 +14,6 @@ class TestWebFramework(unittest.TestCase):
         self.assertEqual(set(result), {'Svelte'})
 
     def test_react(self):
-        # should not detect react
         string = ' i am reactive to danger . '
         result = get_true_keys(web_framework_check(string))
         self.assertEqual(len(result), 0)
@@ -42,7 +42,7 @@ class TestWebFramework(unittest.TestCase):
             web_framework_check(string))
         self.assertCountEqual(set(result), set(WEB_FRAMEWORKS))
 
-    def test_getCount(self):
-        test_list = {'unbuntu', 'azue azure', 'watson'}
-        x = web_count(test_list)
+    def test_count_occurences(self):
+        test_list = ['unbuntu', 'azue azure', 'watson']
+        x = count_occurences(test_list, WEB_FRAMEWORKS, web_framework_check)
         self.assertEqual(filter_dict(x), {})

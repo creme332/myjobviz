@@ -1,14 +1,5 @@
 import re
-from utils.dictionary import (boolean_to_int, merge_dicts)
 from utils.constants import TOOLS
-
-
-def tools_count(job_details_list):
-    count = {TOOLS[i]: 0 for i in range(0, len(TOOLS))}
-    for job_detail in job_details_list:
-        res = boolean_to_int(tools_check(job_detail))
-        count = merge_dicts(count, res)
-    return count
 
 
 def tools_check(job_details: str) -> dict[str, bool]:
@@ -25,21 +16,8 @@ def tools_check(job_details: str) -> dict[str, bool]:
     job_details = job_details.lower()
     words = re.findall(r'\w+', job_details)
 
-    is_present = {
-        "Git": False,
-        "Terraform": False,
-        "Kubernetes": False,
-        "Node.js": False,
-        "Docker": False,
-        "Ansible": False,
-        "Yarn": False,
-        "Unreal Engine": False,
-        "Unity 3D": False,
-        "Github": False,
-        "Gitlab": False,
-    }
-    # print(is_present.keys())
-    # print(','.join(is_present.keys()))
+    is_present = {TOOLS[i]: False for i in range(
+        0, len(TOOLS))}
 
     for key in is_present:
         lang = key.lower()

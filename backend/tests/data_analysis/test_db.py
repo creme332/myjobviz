@@ -1,7 +1,8 @@
 import unittest
-from src.analyser.database import db_check, db_count
+from src.analyser.database import db_check
 from src.utils.dictionary import (get_true_keys, filter_dict)
 from src.utils.constants import DATABASES
+from src.analysis import count_occurences
 
 
 class TestDatabase(unittest.TestCase):
@@ -52,5 +53,5 @@ class TestDatabase(unittest.TestCase):
 
     def test_db_count(self):
         List = ['mariadb', 'helpe das sql Mariadb', 'mysql']
-        x = filter_dict(db_count(List))
+        x = filter_dict(count_occurences(List, DATABASES, db_check))
         self.assertCountEqual(x, {'MySQL': 1, 'MariaDB': 2})

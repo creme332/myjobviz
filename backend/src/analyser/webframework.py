@@ -1,14 +1,5 @@
 import re
-from utils.dictionary import (boolean_to_int, merge_dicts)
 from utils.constants import WEB_FRAMEWORKS
-
-
-def web_count(job_details_list):
-    count = {WEB_FRAMEWORKS[i]: 0 for i in range(0, len(WEB_FRAMEWORKS))}
-    for job_detail in job_details_list:
-        res = boolean_to_int(web_framework_check(job_detail))
-        count = merge_dicts(count, res)
-    return count
 
 
 def web_framework_check(job_details: str) -> dict[str, bool]:

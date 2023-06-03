@@ -1,28 +1,6 @@
 from __future__ import annotations
 import re
-from utils.dictionary import (boolean_to_int, merge_dicts,)
 from utils.constants import DATABASES
-
-
-def db_count(job_details_list: list[str]) -> dict[str, int]:
-    """
-    Counts the number of job descriptions mentioning databases.
-
-    Args:
-        job_details_list (list[str]): A list of job descriptions
-
-    Returns:
-        dict[str, int]: A dictionary where the key is a database name
-        and the value is the number of job descriptions mentioning
-        that database.
-    """
-    # create a dictionary from list
-    count = {DATABASES[i]: 0 for i in range(0, len(DATABASES))}
-
-    for job_detail in job_details_list:
-        res = boolean_to_int(db_check(job_detail))
-        count = merge_dicts(count, res)
-    return count
 
 
 def db_check(job_desc: str) -> dict[str, bool]:

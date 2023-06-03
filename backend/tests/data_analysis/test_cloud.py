@@ -1,7 +1,8 @@
 import unittest
 import pandas as pd
 from src.utils.dictionary import (get_true_keys, filter_dict)
-from src.analyser.cloudplatforms import cp_check, cp_count
+from src.analyser.cloudplatforms import cp_check
+from src.analysis import count_occurences
 from src.utils.constants import CLOUD_PLATFORMS
 
 
@@ -43,6 +44,6 @@ class TestCloudPlatforms(unittest.TestCase):
 
     def test_getCount(self):
         test_list = ['unbuntu', 'azue azure', 'watson']
-        x = cp_count(test_list)
+        x = count_occurences(test_list, CLOUD_PLATFORMS, cp_check)
         self.assertEqual(filter_dict(x), {'Azure': 1,
                                           'Watson': 1})

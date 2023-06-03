@@ -1,9 +1,10 @@
 
 import unittest
 from src.utils.dictionary import (get_true_keys, filter_dict)
-from src.analyser.tools import tools_check, tools_count
+from src.analyser.tools import tools_check
 from src.utils.constants import TOOLS
 import pandas as pd
+from src.analysis import count_occurences
 
 
 class TestTools(unittest.TestCase):
@@ -44,5 +45,5 @@ class TestTools(unittest.TestCase):
 
     def test_count(self):
         test_list = ['pandas', 'java  c#', 'pandas']
-        x = tools_count(test_list)
+        x = count_occurences(test_list, TOOLS, tools_check)
         self.assertEqual(filter_dict(x), {})

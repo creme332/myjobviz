@@ -1,8 +1,9 @@
 import unittest
 from src.utils.dictionary import (get_true_keys, filter_dict)
-from src.analyser.libraries import libraries_check, lib_count
+from src.analyser.libraries import libraries_check
 from src.utils.constants import LIBRARIES
 import pandas as pd
+from src.analysis import count_occurences
 
 
 class TestLibraries(unittest.TestCase):
@@ -30,5 +31,5 @@ class TestLibraries(unittest.TestCase):
 
     def test_count(self):
         test_list = ['pandas', 'java c#', 'pandas']
-        x = lib_count(test_list)
+        x = count_occurences(test_list, LIBRARIES, libraries_check)
         self.assertEqual(filter_dict(x), {'Pandas': 2})

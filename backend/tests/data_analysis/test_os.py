@@ -1,15 +1,17 @@
 import unittest
 from src.utils.dictionary import (get_true_keys, filter_dict)
-from src.analyser.os import os_check, os_count
+from src.analyser.os import os_check
 import pandas as pd
+from src.utils.constants import OPERATING_SYSTEMS
+from src.analysis import count_occurences
 
 
 class TestOS(unittest.TestCase):
 
     def test_all(self):
-        string = ('Windows,Mac,Linux')
-        expected = ['Windows', 'Mac', 'Linux']
-        self.assertCountEqual(get_true_keys(os_check(string)), expected)
+        string = ','.join(OPERATING_SYSTEMS)
+        result = get_true_keys(os_check(string))
+        self.assertCountEqual(set(result), set(OPERATING_SYSTEMS))
 
     @unittest.skip('Missing sample data')
     def test_real_job_details(self):
@@ -24,5 +26,5 @@ class TestOS(unittest.TestCase):
 
     def test_count(self):
         test_list = ['pandas', 'java  c#', 'pandas']
-        x = os_count(test_list)
+        x = count_occurences(test_list, OPERATING_SYSTEMS, os_check)
         self.assertEqual(filter_dict(x), {})

@@ -1,8 +1,9 @@
 import unittest
 import pandas as pd
-from src.analyser.language import lang_count, language_check
+from src.analyser.language import language_check
 from src.utils.dictionary import (get_true_keys, filter_dict)
 from src.utils.constants import LANGUAGES
+from src.analysis import count_occurences
 
 
 class TestLanguage(unittest.TestCase):
@@ -89,5 +90,5 @@ class TestLanguage(unittest.TestCase):
 
     def test_lang_count(self):
         test_list = ['c# java', 'java c#', 'watson']
-        x = lang_count(test_list)
+        x = count_occurences(test_list, LANGUAGES, language_check)
         self.assertEqual(filter_dict(x), {'Java': 2, 'C#': 2})
