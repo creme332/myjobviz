@@ -1,27 +1,29 @@
-def location_count(location_list):
-    """Identifies the most common location for IT jobs.
+def location_count(location_list: list[str]) -> dict[str, int]:
+    """
+    Returns a dictionary where keys are locations and values are
+    frequency.
+
+    NOTE: Not all locations are district names. Some other possible values
+    of locations are: `Mauritius`, `Rodrigues`, `Overseas`.
 
     Args:
-        destination_filename (str): path where statistics will be saved.
+        location_list (list[str]): List of job locations
+
+    Returns:
+        dict[str, int]: Dictionary
     """
-    JobCountPerDistrict = {'Black River': 0, 'Flacq': 0,
-                           'Grand Port': 0, 'Moka': 0, 'Pamplemousses': 0,
-                           'Plaine Wilhems': 0, 'Port Louis': 0,
-                           'Riviere du Rempart': 0, 'Savanne': 0}
-    skipped_locations = []
-
+    # ? myjob.mu website has a consistent spelling of job locations so
+    # ? there is no need to check cases
+    location_count = dict()
     for location in location_list:
-        location = location.replace('\r\n', '',).strip()
-        if location != "Mauritius" and location != "Rodrigues":
-            if (location not in JobCountPerDistrict.keys()):
-                skipped_locations.append(location)
-                continue
-            JobCountPerDistrict[location] += 1
+        # remove special characters from location
+        sanitized_location = location.replace('\r\n', '',).strip()
+        # update count
+        location_count[sanitized_location] = location_count.get(
+            sanitized_location, 0) + 1
 
+    # ? myjob.mu website incorrectly writes "Plaine Wilhems"
     # Rename Plaine Wilhems to Plaines Wilhems
-    # (myjob.mu incorrectly wrote "Plaine Wilhems")
-    JobCountPerDistrict['Plaines Wilhems'] = JobCountPerDistrict.pop(
+    location_count['Plaines Wilhems'] = location_count.pop(
         'Plaine Wilhems')
-    if (len(skipped_locations) > 0):
-        print('Unknown districts found :', skipped_locations)
-    return JobCountPerDistrict
+    return location_count

@@ -64,16 +64,16 @@ LIBRARIES = [".NET Framework",
              "Power Query"
              ]
 
-JOB_LOCATIONS = ["Black River",
-                 "Flacq",
-                 "Grand Port",
-                 "Moka",
-                 "Pamplemousses",
-                 "Plaine Wilhems",
-                 "Port Louis",
-                 "Riviere du Rempart",
-                 "Savanne"
-                 ]
+MU_DISTRICTS = ["Black River",
+                "Flacq",
+                "Grand Port",
+                "Moka",
+                "Pamplemousses",
+                "Plaine Wilhems",
+                "Port Louis",
+                "Riviere du Rempart",
+                "Savanne"
+                ]
 
 OPERATING_SYSTEMS = ["Windows",
                      "Mac",
