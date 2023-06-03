@@ -6,7 +6,6 @@ import AreaChart from "../components/graphs/LineChart";
 import { IconAlertCircle } from "@tabler/icons-react";
 import FireStoreManager from "../utils/FireStoreManager";
 import { useState, useEffect } from "react";
-
 export default function Results() {
   const [allData, setAllData] = useState(null);
 
@@ -85,9 +84,6 @@ export default function Results() {
       "db_data",
       "lang_data",
       "lib_data",
-      "loc_data",
-      "os_data",
-      "salary_data",
       "tools_data",
       "web_data",
     ];
@@ -99,7 +95,6 @@ export default function Results() {
     return validKeys.map((k, index) => {
       const data = allData[k];
       const [labelsArray, dataArray] = sort_object(data);
-      console.log(labelsArray, dataArray);
 
       return (
         <HorizontalBarChart
@@ -114,21 +109,87 @@ export default function Results() {
     });
   }
 
+  function getPieCharts() {
+    if (!allData) return;
+    const pieChartKeys = ["loc_data", "os_data", "salary_data"];
+
+    const validKeys = Object.keys(allData).filter((k) =>
+      pieChartKeys.includes(k)
+    );
+
+    return validKeys.map((k, index) => {
+      const data = allData[k];
+      const [labelsArray, dataArray] = sort_object(data);
+
+      if (k === "os_data")
+        return (
+          <Container>
+            <PieChart
+              key={`piechart-${k}`}
+              dataArray={dataArray}
+              labelsArray={labelsArray}
+              titleName={chartTitle[k]}
+            />
+            <Alert
+              key={`piechart-alert-${k}`}
+              icon={<IconAlertCircle size="1rem" />}
+              title="Note"
+              color="green"
+            >
+              Not all jobs mention an operating system in the job description.
+            </Alert>
+          </Container>
+        );
+
+      if (k === "salary_data") {
+        // merge "See description" and "not disclosed"
+        const i = labelsArray.indexOf("See description");
+        console.log(i);
+        const newDataArray = [...dataArray];
+        const newLabelArray = [...labelsArray];
+        const SeeDescriptionCount = newDataArray.splice(i, 1)[0];
+        console.log(SeeDescriptionCount);
+        const j = labelsArray.indexOf("Not disclosed");
+        newDataArray[j] += SeeDescriptionCount;
+        newLabelArray.splice(i, 1);
+        return (
+          <Container>
+            <PieChart
+              key={`piechart-${k}`}
+              dataArray={newDataArray}
+              labelsArray={newLabelArray}
+              titleName={chartTitle[k]}
+            />
+            <Alert
+              key={`piechart-alert-${k}`}
+              icon={<IconAlertCircle size="1rem" />}
+              title="Note"
+              color="green"
+            >
+              Jobs posts which set the salary to "See description" were counted
+              in the "Not disclosed" category.
+            </Alert>
+          </Container>
+        );
+      }
+      return (
+        <PieChart
+          key={`piechart-${k}`}
+          dataArray={dataArray}
+          labelsArray={labelsArray}
+          titleName={chartTitle[k]}
+        />
+      );
+    });
+  }
+
   return (
     <Container>
       <StatsGrid data={data} />
+      <Container w={640}>{getPieCharts()}</Container>
+
       {getHorizontalBarcharts()}
       <AreaChart />
-      <Container w={500}>
-        <PieChart />
-      </Container>
-      <Alert icon={<IconAlertCircle size="1rem" />} title="Note" color="red">
-        Only 2% of jobs disclosed a salary range.
-      </Alert>
-      <Alert icon={<IconAlertCircle size="1rem" />} title="Note" color="green">
-        The percentage represents the percentage jobs mentioning an operating
-        system. Not all jobs mention OS.
-      </Alert>
     </Container>
   );
 }
