@@ -14,6 +14,19 @@ class TestLanguage(unittest.TestCase):
             language_check(string)))
         self.assertEqual(result, {'Java', 'HTML'})
 
+    def test_css(self):
+        string = 'learn SCSS'  # CSS not present here
+        result = set(get_true_keys(
+            language_check(string)))
+        self.assertCountEqual(result,
+                              {})
+        # ! False positive: tailwind css \= css
+        string = 'i love Tailwind CSS'
+        result = set(get_true_keys(
+            language_check(string)))
+        self.assertCountEqual(result,
+                              {'CSS'})
+
     def test_substrings(self):
         string = 'Javascript is cool but not powershell'
         result = set(get_true_keys(
@@ -21,12 +34,6 @@ class TestLanguage(unittest.TestCase):
         # notice there's no 'Java' and 'Shell' in expected answer
         self.assertCountEqual(result,
                               {'Javascript', 'PowerShell'})
-
-        string = 'learn SCSS'  # CSS not present here
-        result = set(get_true_keys(
-            language_check(string)))
-        self.assertCountEqual(result,
-                              {})
 
     def test_special_characters(self):
         string = '[c++, c#]'
