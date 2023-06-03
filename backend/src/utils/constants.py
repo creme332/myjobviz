@@ -119,5 +119,6 @@ WEB_FRAMEWORKS = ["Svelte",
                   "jQuery",
                   "Drupal",
                   "Angular.js",
-                  "Angular"
+                  "Angular",
+                  "Next.js"
                   ]
