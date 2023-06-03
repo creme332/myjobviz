@@ -1,6 +1,7 @@
 import unittest
 from src.analyser.database import db_check, db_count
 from src.utils.dictionary import (get_true_keys, filter_dict)
+from src.utils.constants import DATABASES
 
 
 class TestDatabase(unittest.TestCase):
@@ -20,19 +21,14 @@ class TestDatabase(unittest.TestCase):
                               ['PostgreSQL'])
         string = ('Sait utiliser les principales bases de'
                   ' données relationnelles (MySQL, Postgres)')
-        self.assertCountEqual(get_true_keys(db_check(string)),
-                              ['PostgreSQL', 'MySQL'])
+        result = get_true_keys(db_check(string))
+        self.assertCountEqual(set(result),
+                              {'PostgreSQL', 'MySQL'})
 
     def test_all_databases(self):
-        string = ('MySQL,PostgreSQL,SQLite,MongoDB,Microsoft SQL Server,'
-                  'Redis,MariaDB,Firebase,Elasticsearch,Oracle,'
-                  'DynamoDB,Cassandra,IBM DB2,Couchbase,NoSQL')
-        expected = ['MySQL', 'PostgreSQL', 'SQLite', 'MongoDB',
-                    'Microsoft SQL Server', 'Redis', 'MariaDB',
-                    'Firebase', 'Elasticsearch', 'Oracle',
-                    'DynamoDB', 'Cassandra', 'IBM DB2',
-                    'Couchbase', 'NoSQL']
-        self.assertCountEqual(get_true_keys(db_check(string)), expected)
+        string = ','.join(DATABASES)
+        result = get_true_keys(db_check(string))
+        self.assertCountEqual(set(result), set(DATABASES))
 
     def test_oracle_corner_case(self):
         string = ('oracle cloud is good')
@@ -50,11 +46,11 @@ class TestDatabase(unittest.TestCase):
 
     def test_real_job_details(self):
         string = 'expertise mysql/mariadb (database tuning, sql optimisation)'
-        self.assertCountEqual(get_true_keys(
-            db_check(string)), ['MySQL', 'MariaDB'])
+        result = get_true_keys(db_check(string))
+
+        self.assertCountEqual(result, {'MySQL', 'MariaDB'})
 
     def test_db_count(self):
         List = ['mariadb', 'helpe das sql Mariadb', 'mysql']
         x = filter_dict(db_count(List))
-        # print(x)
         self.assertCountEqual(x, {'MySQL': 1, 'MariaDB': 2})

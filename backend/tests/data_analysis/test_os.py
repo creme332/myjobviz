@@ -19,12 +19,10 @@ class TestOS(unittest.TestCase):
         # filter df to include only rows mentioning sql
         df = df[df['job_details'].str.contains("Machine")]
         string = df['job_details'].tolist()[0]
-        # print(string)
         self.assertCountEqual(get_true_keys(os_check(
             string)), [])
 
     def test_count(self):
         test_list = ['pandas', 'java  c#', 'pandas']
         x = os_count(test_list)
-        # print(filter_dict(x))
         self.assertEqual(filter_dict(x), {})
