@@ -6,7 +6,6 @@ import {
   BarElement,
   Title,
   Tooltip,
-  Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 
@@ -16,7 +15,6 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  Legend
 );
 
 export default function HorizontalBarChart({
@@ -52,6 +50,7 @@ export default function HorizontalBarChart({
       backgroundColor: "rgba(255, 159, 64, 0.2)",
     },
   ];
+
   const options = {
     indexAxis: "y",
     elements: {
@@ -61,9 +60,6 @@ export default function HorizontalBarChart({
     },
     responsive: true,
     plugins: {
-      legend: {
-        position: "right",
-      },
       title: {
         display: true,
         text: titleName,
