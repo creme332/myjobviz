@@ -74,7 +74,7 @@ class Database:
         Returns:
             pd.DataFrame: All scraped jobs
         """
-        jobs = self.job_collection_ref.stream()
+        jobs = self.export_collection(self.job_collection_ref)
         jobs_dict = list(map(lambda x: x.to_dict(), jobs))
         return pd.DataFrame(jobs_dict)
 
@@ -265,10 +265,11 @@ class Database:
         `import_collection`
 
         Args:
-            collection_ref (_type_): Reference to firestore collection
+            collection_ref (firestore collection reference): Reference to
+            firestore collection
 
         Returns:
-            _type_: _description_
+            _type_: Stream of collection
         """
         return collection_ref.stream()
 

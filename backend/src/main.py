@@ -77,11 +77,19 @@ def transfer_statistics(main_db: Database):
     frontend_db.import_collection(frontend_db.stats_collection_ref, x)
 
 
+def backup_to_drive():
+    """
+    Saves all jobs in main database to google drive in json format.
+    """
+    main_db = Database(get_service_account_key(True))
+    df = main_db.get_dataframe()
+    df.to_json('sample_jobs.json', orient='records')
+
 def main():
 
     # setup database and scraper.
-    my_database = Database(get_service_account_key(True))
-    my_scraper = JobScraper(my_database.get_recent_urls())
+    main_db = Database(get_service_account_key(True))
+    my_scraper = JobScraper(main_db.get_recent_urls())
 
     # fetch new jobs from website
     new_jobs = my_scraper.scrape()
@@ -96,13 +104,13 @@ def main():
     print(job_title_list[:5])
 
     # update database size
-    current_db_size = my_database.get_size()
+    current_db_size = main_db.get_size()
     current_db_size += len(new_jobs)
-    my_database.update_size_counter(current_db_size)
+    main_db.update_size_counter(current_db_size)
 
     # save new jobs to database
     for job in new_jobs:
-        my_database.add_job(job)
+        main_db.add_job(job)
 
     # get data to be analysed in a list
     job_details_list = [job['job_details'] for job in new_jobs]
@@ -111,15 +119,17 @@ def main():
 
     # extract statistics from newly scraped data and update
     # statistics collection
-    analyseAndUpdate(my_database, job_details_list, location_list, salary_list)
+    analyseAndUpdate(main_db, job_details_list, location_list, salary_list)
 
     # send statistics to frontend db
-    transfer_statistics(my_database)
+    transfer_statistics(main_db)
 
     # update job count in readme
     update_readme_job_badge(current_db_size)
 
 
 if __name__ == "__main__":
+
+
     # main()
-    print(JobScraper([], 1).scrape())
+    # print(JobScraper([], 1).scrape())
