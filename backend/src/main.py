@@ -1,10 +1,10 @@
 from classes.database import Database
 from miner import JobScraper
-from analysis import analyseAndUpdate
+from analysis import update_analytics
 from utils.service_key import get_service_account_key
 
 
-def update_readme_job_badge(new_job_count):
+def update_readme_job_badge(new_job_count: int) -> None:
     """Updates the job badge found in the README.
 
     Args:
@@ -33,9 +33,11 @@ def update_readme_job_badge(new_job_count):
         f.write(new_file_content)
 
 
-def rebase_statistics():
+def rebase_statistics() -> None:
     """
-    Recalculates and updates all statistics. frontend-db is also updated.
+    After DELETING the `statistics` collection in main database manually,
+    call this function to recalculate all statistics.
+    frontend-db is also updated.
 
     This function ensures data integrity but heavily impacts read and
     write quotas.
@@ -44,25 +46,21 @@ def rebase_statistics():
     my_database = Database(get_service_account_key(True))
 
     # get all jobs stored in database
-    new_jobs = my_database.get_dataframe().to_dict('records')
+    all_jobs = my_database.get_dataframe().to_dict('records')
 
     # update size of database
-    my_database.update_size_counter(len(new_jobs))
+    my_database.update_size_counter(len(all_jobs))
 
-    if (len(new_jobs) == 0):
+    if (len(all_jobs) == 0):
         return
 
     # get data to be analysed in a list
-    job_details_list = [job['job_details'] for job in new_jobs]
-    salary_list = [job['salary'] for job in new_jobs]
-    location_list = [job['location'] for job in new_jobs]
-
-    print("Unique salaries", set(salary_list))
-
-    print("Unique locations", set(location_list))
+    job_details_list = [job['job_details'] for job in all_jobs]
+    salary_list = [job['salary'] for job in all_jobs]
+    location_list = [job['location'] for job in all_jobs]
 
     # process data and updates statistics
-    analyseAndUpdate(my_database, job_details_list, location_list, salary_list)
+    update_analytics(my_database, job_details_list, location_list, salary_list)
 
 
 def transfer_statistics(main_db: Database):
@@ -84,6 +82,7 @@ def backup_to_drive():
     main_db = Database(get_service_account_key(True))
     df = main_db.get_dataframe()
     df.to_json('sample_jobs.json', orient='records')
+
 
 def main():
 
@@ -119,7 +118,7 @@ def main():
 
     # extract statistics from newly scraped data and update
     # statistics collection
-    analyseAndUpdate(main_db, job_details_list, location_list, salary_list)
+    update_analytics(main_db, job_details_list, location_list, salary_list)
 
     # send statistics to frontend db
     transfer_statistics(main_db)
@@ -129,7 +128,6 @@ def main():
 
 
 if __name__ == "__main__":
-
-
     # main()
     # print(JobScraper([], 1).scrape())
+    rebase_statistics()
