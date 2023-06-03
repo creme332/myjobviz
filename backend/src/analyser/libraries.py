@@ -11,14 +11,16 @@ def lib_count(job_details_list: list[str]) -> dict[str, int]:
     return count
 
 
-def libraries_check(job_details):
-    """Returns a list of libraries present in `job_details`
+def libraries_check(job_details: str) -> dict[str, bool]:
+    """
+    Returns a dictionary indicating which libs
+    are present/missing from `job_details`
 
     Args:
-        job_details (str): Job details scraped from website.
+        job_details (str): _description_
 
     Returns:
-        List[str]: A list of libraries.
+        dict[str, bool]: _description_
     """
 
     job_details = job_details.lower()

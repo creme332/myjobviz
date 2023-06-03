@@ -11,14 +11,16 @@ def lang_count(job_details_list) -> dict:
     return count
 
 
-def language_check(job_details):
-    """Returns a list of programming languages present in `job_details`
+def language_check(job_details: str) -> dict[str, bool]:
+    """
+    Returns a dictionary indicating which languages
+    are present/missing from `job_details`
 
     Args:
-        job_details (str): Job details scraped from website.
+        job_details (str): _description_
 
     Returns:
-        List[str]: A list of programming languages.
+        dict[str, bool]: _description_
     """
     job_details = job_details.lower()
 

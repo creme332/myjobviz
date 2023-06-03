@@ -11,7 +11,7 @@ def cp_count(job_desc_list: list[str]) -> dict[str, int]:
         job_desc_list (list[str]): A list of job descriptions
 
     Returns:
-        dict: A dictionary where the key is a database name
+        dict[str, int]: A dictionary where the key is a database name
         and the value is the number of job descriptions mentioning
         that database.
     """

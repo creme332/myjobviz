@@ -12,13 +12,15 @@ def web_count(job_details_list):
 
 
 def web_framework_check(job_details: str) -> dict[str, bool]:
-    """Returns a list of web frameworks present in `job_details`
+    """
+    Returns a dictionary indicating which web frameworks
+    are present/missing from `job_details`
 
     Args:
-        job_details (str): Job details scraped from website.
+        job_details (str): _description_
 
     Returns:
-        List[str]: A list of web frameworks.
+        dict[str, bool]: _description_
     """
 
     # ! LIMITATION : Cannot distinguish between the verb react
@@ -33,10 +35,10 @@ def web_framework_check(job_details: str) -> dict[str, bool]:
 
     for key in is_present:
         lang = key.lower()
-        if (lang in words and lang in job_details):
+        if (lang in words):
             is_present[key] = True
 
-    # corner case for angular
+    # corner case for angular /= angularjs
     foundAngular = False
     for i in range(0, len(words)):
         current_word = words[i]
@@ -49,6 +51,9 @@ def web_framework_check(job_details: str) -> dict[str, bool]:
     # alternate spellings
     if ('angular.js' in job_details or 'angularjs' in job_details):
         is_present['Angular.js'] = True
+
+    if ('next.js' in job_details or 'nextjs' in job_details):
+        is_present['Next.js'] = True
 
     if ('asp.net' in job_details):
         is_present['ASP.NET'] = True
