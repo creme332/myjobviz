@@ -26,7 +26,7 @@ class Database:
         else:
             app = firebase_admin.initialize_app(cred, name=appName)
 
-        # print(app.name)
+        print(f'Connected to {app.name}')
         self.db = firestore.client(app)
 
         # save reference to collection for saving scraped jobs
@@ -229,6 +229,7 @@ class Database:
             bool: True if document was missing. False otherwise.
         """
         if (not document_ref.get().exists):
+            print("Created a new document", document_ref)
             document_ref.set(initial_val)
             return True
         return False
