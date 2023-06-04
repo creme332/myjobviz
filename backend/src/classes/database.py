@@ -4,6 +4,7 @@ from firebase_admin import firestore
 from firebase_admin import credentials
 import pandas as pd
 from utils.dictionary import merge_dicts
+from datetime import datetime
 
 
 class Database:
@@ -37,8 +38,8 @@ class Database:
         self.stats_collection_ref = self.db.collection(u'statistics')
 
         # initialise references to documents in stats_collection
-        self.db_size_ref = self.stats_collection_ref.document(
-            u'database_size')  # stores number of docs in jobs_collection
+        self.metadata_ref = self.stats_collection_ref.document(
+            u'metadata')  # stores general statistics about jobs collection
         self.cloud_data_ref = self.stats_collection_ref.document(u'cloud_data')
         self.db_data_ref = self.stats_collection_ref.document(u'db_data')
         self.lang_data_ref = self.stats_collection_ref.document(u'lang_data')
@@ -51,7 +52,7 @@ class Database:
         self.web_data_ref = self.stats_collection_ref.document(u'web_data')
 
         # create documents if missing from database
-        if self.create_doc_if_missing(self.db_size_ref):
+        if self.create_doc_if_missing(self.metadata_ref):
             self.recalculate_size_counter()
         self.create_doc_if_missing(self.cloud_data_ref)
         self.create_doc_if_missing(self.db_data_ref)
@@ -148,18 +149,55 @@ class Database:
         Returns:
             int: The number of jobs stored in `job_collection`
         """
-        return int(self.db_size_ref.get().to_dict()['size'])
+        return int(self.metadata_ref.get().to_dict()['size'])
 
-    def update_size_counter(self, new_size: int) -> None:
+    def get_last_update_date(self):
         """
-        Updates the value of `size` in the `database_size` document
-        in `statistics` collection
+        Returns timestamp of the most recent job scraped
+
+        Returns:
+            timestamp : timestamp of the most recent job scraped
+        """
+        query = self.job_collection_ref.order_by('timestamp').limit_to_last(1)
+        # Get the last document (most recently added document) from the results
+        docs = query.get()
+        first_doc = list(docs)[0]
+        return first_doc.to_dict()['timestamp']
+
+    def get_month_job_count(self) -> int:
+        """
+        Counts the number of jobs scraped for current month
+
+        Returns:
+            int: Number of jobs scraped for current month
+        """
+        # set start date to the first day of the current month
+        start_date = datetime(datetime.now().year, datetime.now().month, 1)
+
+        # set end date to the last day of the current month
+        end_date = start_date + pd.offsets.MonthEnd(1)
+
+        # get all jobs within this range of dates
+        query = self.job_collection_ref.where(
+            'timestamp', '>=', start_date).where('timestamp', '<=', end_date)
+
+        # return number of docs found
+        return len(list(query.stream()))
+
+    def update_metadata(self, new_db_size: int):
+        """
+        Updates metadata for job collection. 
+        Size of job collection, date of last scraped job, 
+        number of jobs scraped for current month are updated.
 
         Args:
-            new_size(int): Number of documents in jobs_collection
+            new_db_size (int): new size of jobs collection
         """
-        if new_size >= 0:
-            self.db_size_ref.update({'size': new_size})
+        self.metadata_ref.update(
+            {'last_update': self.get_last_update_date(),
+             'job_count_this_month': self.get_month_job_count(),
+             'size': new_db_size
+             })
 
     def recalculate_size_counter(self) -> None:
         """
@@ -170,7 +208,7 @@ class Database:
         heavily impact the quota usage for number of reads.
         """
         new_size = len(self.get_dataframe())
-        self.db_size_ref.update({'size': new_size})
+        self.metadata_ref.update({'size': new_size})
 
     def sanitize_dict(self, dict: dict) -> dict:
         """
