@@ -33,14 +33,16 @@ def update_readme_job_badge(new_job_count: int) -> None:
         f.write(new_file_content)
 
 
-def rebase_statistics() -> None:
+def rebase_stats() -> None:
     """
     After DELETING the `statistics` collection in main database manually,
-    call this function to recalculate all statistics.
-    frontend-db is also updated.
+    call this function to recalculate all statistics and sync with
+    `frontend-db`.
 
-    This function ensures data integrity but heavily impacts read and
-    write quotas.
+    No scraping takes place when this function is called. Statistics are
+    calculated from existing scraped jobs.
+
+    WARNING: This function heavily impacts read and write quotas.
     """
     # load main database.
     my_database = Database(get_service_account_key(True))
@@ -48,10 +50,11 @@ def rebase_statistics() -> None:
     # get all jobs stored in database
     all_jobs = my_database.get_dataframe().to_dict('records')
 
-    # update size of database
-    my_database.update_size_counter(len(all_jobs))
+    # update general stats
+    my_database.update_metadata(len(all_jobs))
 
     if (len(all_jobs) == 0):
+        sync_stats(my_database)
         return
 
     # get data to be analysed in a list
@@ -62,10 +65,12 @@ def rebase_statistics() -> None:
     # process data and updates statistics
     update_analytics(my_database, job_details_list, location_list, salary_list)
 
+    sync_stats(my_database)
 
-def transfer_statistics(main_db: Database):
+
+def sync_stats(main_db: Database):
     """
-    Clones statistics found in main_db to frontend_db
+    Clones statistics found in `main_db` to `frontend_db`
 
     Args:
         main_db (Database): database containing scraped data
@@ -90,44 +95,43 @@ def main():
     main_db = Database(get_service_account_key(True))
     my_scraper = JobScraper(main_db.get_recent_urls())
 
-    # fetch new jobs from website
+    # fetch new jobs from myjob.mu
     new_jobs = my_scraper.scrape()
 
-    # if no new jobs found return
+    # if no new jobs found exit
     if (len(new_jobs) == 0):
         return
-
-    # print some info about new jobs found
-    job_title_list = [job['job_title'] for job in new_jobs]
-    print(len(new_jobs), ' new jobs found!')
-    print(job_title_list[:5])
-
-    # update database size
-    current_db_size = main_db.get_size()
-    current_db_size += len(new_jobs)
-    main_db.update_size_counter(current_db_size)
-
-    # save new jobs to database
-    for job in new_jobs:
-        main_db.add_job(job)
 
     # get data to be analysed in a list
     job_details_list = [job['job_details'] for job in new_jobs]
     salary_list = [job['salary'] for job in new_jobs]
     location_list = [job['location'] for job in new_jobs]
+    job_title_list = [job['job_title'] for job in new_jobs]
+
+    # print some info about new jobs found
+    print(len(new_jobs), ' new jobs found!')
+    print(job_title_list[:5])
+
+    # update database general stats such as size and last update dates
+    new_db_size = main_db.get_size() + len(new_jobs)
+    main_db.update_metadata(new_db_size)
+
+    # save new jobs to database
+    for job in new_jobs:
+        main_db.add_job(job)
 
     # extract statistics from newly scraped data and update
     # statistics collection
     update_analytics(main_db, job_details_list, location_list, salary_list)
 
-    # send statistics to frontend db
-    transfer_statistics(main_db)
+    # send updated statistics to frontend db
+    sync_stats(main_db)
 
     # update job count in readme
-    update_readme_job_badge(current_db_size)
+    update_readme_job_badge(new_db_size)
 
 
 if __name__ == "__main__":
     # main()
     # print(JobScraper([], 1).scrape())
-    rebase_statistics()
+    rebase_stats()
