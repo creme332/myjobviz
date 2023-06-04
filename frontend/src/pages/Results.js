@@ -9,20 +9,22 @@ import { useState, useEffect } from "react";
 export default function Results() {
   const [allData, setAllData] = useState(null);
 
-  const data = [
+  const stats_grid_data = [
     {
       title: "Jobs scraped this month",
-      stats: "112",
-      description: "24% more than in the same month last year",
+      stats: allData ? allData.metadata.job_count_this_month : 0,
+      description: "Number of jobs scraped since start of current month",
     },
     {
       title: "Last update",
-      stats: "16 hours ago",
+      stats: allData
+        ? date_diff_days(allData.metadata.last_update.toDate(), new Date())
+        : "16 hours ago",
       description: "myjob.mu website is scraped on a daily basis",
     },
     {
       title: "Total jobs scraped",
-      stats: allData ? allData.database_size.size : "2553",
+      stats: allData ? allData.metadata.size : "2553",
       description: "Total number of jobs scraped from myjob.mu",
     },
   ];
@@ -42,13 +44,16 @@ export default function Results() {
   async function fetchData() {
     const result = await FireStoreManager().getAllDocs();
     setAllData(result);
-    // console.log(allData);
-    // console.log(split(result.web_data));
   }
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  function date_diff_days(date1, date2) {
+    const hours = parseInt(Math.abs(date1 - date2) / 36e5, 10);
+    return `${hours} hours ago`;
+  }
 
   function sort_object(dict) {
     const labelsArr = Object.keys(dict);
@@ -78,7 +83,6 @@ export default function Results() {
 
   function getHorizontalBarcharts() {
     if (!allData) return;
-    // console.log(allData);
     const horizonalBarChartKeys = [
       "cloud_data",
       "db_data",
@@ -144,11 +148,9 @@ export default function Results() {
       if (k === "salary_data") {
         // merge "See description" and "not disclosed"
         const i = labelsArray.indexOf("See description");
-        console.log(i);
         const newDataArray = [...dataArray];
         const newLabelArray = [...labelsArray];
         const SeeDescriptionCount = newDataArray.splice(i, 1)[0];
-        console.log(SeeDescriptionCount);
         const j = labelsArray.indexOf("Not disclosed");
         newDataArray[j] += SeeDescriptionCount;
         newLabelArray.splice(i, 1);
@@ -185,7 +187,7 @@ export default function Results() {
 
   return (
     <Container>
-      <StatsGrid data={data} />
+      <StatsGrid data={stats_grid_data} />
       <Container w={640}>{getPieCharts()}</Container>
 
       {getHorizontalBarcharts()}
