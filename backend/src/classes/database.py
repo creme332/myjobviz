@@ -186,8 +186,8 @@ class Database:
 
     def update_metadata(self, new_db_size: int):
         """
-        Updates metadata for job collection. 
-        Size of job collection, date of last scraped job, 
+        Updates metadata for job collection.
+        Size of job collection, date of last scraped job,
         number of jobs scraped for current month are updated.
 
         Args:
@@ -294,6 +294,16 @@ class Database:
         return df
 
     def add_doc(self, collection_ref, doc_id,  doc_data: dict) -> None:
+        """
+        Add a document to a collection.
+
+        Args:
+            collection_ref (_type_): Collection reference
+            doc_id (_type_): ID of document.
+            No other documents in that collection should have this ID
+            otherwise it will be overwritten.
+            doc_data (dict): Data in document
+        """
         doc_ref = collection_ref.document(doc_id)
         if (doc_ref.get().exists):
             doc_ref.set(doc_data)
