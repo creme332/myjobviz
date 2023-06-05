@@ -121,21 +121,19 @@ export default function Results() {
       pieChartKeys.includes(k)
     );
 
-    return validKeys.map((k, index) => {
+    return validKeys.map((k) => {
       const data = allData[k];
       const [labelsArray, dataArray] = sort_object(data);
 
       if (k === "os_data")
         return (
-          <Container>
+          <Container key={`piechart-container-${k}`}>
             <PieChart
-              key={`piechart-${k}`}
               dataArray={dataArray}
               labelsArray={labelsArray}
               titleName={chartTitle[k]}
             />
             <Alert
-              key={`piechart-alert-${k}`}
               icon={<IconAlertCircle size="1rem" />}
               title="Note"
               color="green"
@@ -155,15 +153,13 @@ export default function Results() {
         newDataArray[j] += SeeDescriptionCount;
         newLabelArray.splice(i, 1);
         return (
-          <Container>
+          <Container key={`piechart-container-${k}`}>
             <PieChart
-              key={`piechart-${k}`}
               dataArray={newDataArray}
               labelsArray={newLabelArray}
               titleName={chartTitle[k]}
             />
             <Alert
-              key={`piechart-alert-${k}`}
               icon={<IconAlertCircle size="1rem" />}
               title="Note"
               color="green"
