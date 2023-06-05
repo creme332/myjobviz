@@ -164,15 +164,12 @@ class Database:
         first_doc = list(docs)[0]
         return first_doc.to_dict()['timestamp']
 
-    def get_month_job_count(self) -> int:
+    def get_job_count_in(self, year: int, month: int) -> int:
         """
-        Counts the number of jobs scraped for current month
 
-        Returns:
-            int: Number of jobs scraped for current month
         """
         # set start date to the first day of the current month
-        start_date = datetime(datetime.now().year, datetime.now().month, 1)
+        start_date = datetime(year, month, 1)
 
         # set end date to the last day of the current month
         end_date = start_date + pd.offsets.MonthEnd(1)
@@ -184,6 +181,31 @@ class Database:
         # return number of docs found
         return len(list(query.stream()))
 
+    def update_job_count_trend(self) -> dict[str, int]:
+        start_year = datetime.now().year  # current year
+        start_month = datetime.now().month  # current month
+
+        MONTH_INTERVAL = 6
+        job_counter = dict()
+
+        # generate month and year for last 6 months including current month
+        for i in range(0, MONTH_INTERVAL):
+            # get job count at that particular time
+            count = self.get_job_count_in(start_year, start_month)
+
+            # update counter
+            job_counter[f'{start_year}-{start_month}-x'] = count
+
+            # go 1 month back in time
+            start_month -= 1
+            if start_month == 0:
+                start_month = 12
+                start_year -= 1
+
+        self.add_doc(self.stats_collection_ref,
+                     "job_trend_by_month", job_counter)
+        return job_counter
+
     def update_metadata(self, new_db_size: int):
         """
         Updates metadata for job collection.
@@ -193,9 +215,12 @@ class Database:
         Args:
             new_db_size (int): new size of jobs collection
         """
+        start_year = datetime.now().year  # current year
+        start_month = datetime.now().month  # current month
         self.metadata_ref.update(
             {'last_update': self.get_last_update_date(),
-             'job_count_this_month': self.get_month_job_count(),
+             'job_count_this_month': self.get_job_count_in(start_year,
+                                                           start_month),
              'size': new_db_size
              })
 
@@ -295,7 +320,7 @@ class Database:
 
     def add_doc(self, collection_ref, doc_id,  doc_data: dict) -> None:
         """
-        Add a document to a collection.
+        Adds a new document to an existing collection.
 
         Args:
             collection_ref (_type_): Collection reference
@@ -305,8 +330,7 @@ class Database:
             doc_data (dict): Data in document
         """
         doc_ref = collection_ref.document(doc_id)
-        if (doc_ref.get().exists):
-            doc_ref.set(doc_data)
+        doc_ref.set(doc_data)
 
     def export_collection(self, collection_ref):
         """
