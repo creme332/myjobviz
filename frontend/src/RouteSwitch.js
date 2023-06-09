@@ -16,7 +16,7 @@ const RouteSwitch = () => {
       id: "methodology-tab",
     },
   ];
-  const [colorScheme, setColorScheme] = useState("dark");
+  const [colorScheme, setColorScheme] = useState("light");
   const toggleColorScheme = (value) =>
     setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
 
