@@ -2,7 +2,7 @@ import { Container, Alert } from "@mantine/core";
 import StatsGrid from "../components/graphs/StatsGrid";
 import HorizontalBarChart from "../components/graphs/HorizontalBarChart";
 import PieChart from "../components/graphs/PieChart";
-import AreaChart from "../components/graphs/LineChart";
+import LineChart from "../components/graphs/LineChart";
 import { IconAlertCircle } from "@tabler/icons-react";
 import FireStoreManager from "../utils/FireStoreManager";
 import { useState, useEffect } from "react";
@@ -39,6 +39,7 @@ export default function Results() {
     salary_data: "Job salary",
     tools_data: "Other tools",
     web_data: "Web frameworks and technologies",
+    job_trend_by_month: "Number of jobs scraped during last 6 months",
   };
 
   async function fetchData() {
@@ -53,6 +54,50 @@ export default function Results() {
   function date_diff_days(date1, date2) {
     const hours = parseInt(Math.abs(date1 - date2) / 36e5, 10);
     return `${hours} hours ago`;
+  }
+
+  function getLineChart() {
+    if (!allData) return;
+
+    /**
+     * labelsArray must already be sorted by date. Smallest date first.
+     * @param {list[str]} labelsArray A list of strings with format YYYY-M-x.
+     * @returns A list of strings with year and month. Eg June 2023
+     */
+    function parseDate(labelsArray) {
+      const allMonths = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+      return labelsArray.map((el) => {
+        const year = el.split("-")[0];
+        const monthIndex = el.split("-")[1];
+        return `${allMonths[monthIndex]} ${year}`;
+      });
+    }
+
+    const data = allData.job_trend_by_month;
+    // console.log(data);
+    const [labelsArray, dataArray] = sort_object(data);
+    // console.log(labelsArray, dataArray);
+
+    return (
+      <LineChart
+        title={chartTitle.job_trend_by_month}
+        labelsArray={parseDate(labelsArray)}
+        dataArray={dataArray}
+      />
+    );
   }
 
   function sort_object(dict) {
@@ -184,10 +229,10 @@ export default function Results() {
   return (
     <Container>
       <StatsGrid data={stats_grid_data} />
+      {getLineChart()}
       <Container w={640}>{getPieCharts()}</Container>
 
       {getHorizontalBarcharts()}
-      <AreaChart />
     </Container>
   );
 }
