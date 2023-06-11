@@ -53,7 +53,7 @@ class JobScraper:
 
     def get_jobs_on_page(self, pageNumber: int) -> int:
         """
-        Extracts all job data on current page and saves this
+        Extracts all job data on a page and saves this
         data to `new_jobs`.
 
         Args:
@@ -92,17 +92,22 @@ class JobScraper:
 
             # extract job title
             jobObj.job_title = job_module.find_element(
-                By.CSS_SELECTOR, 'div.job-result-title h2').text.lower()
+                By.CSS_SELECTOR,
+                'div.job-result-title h2').text.strip()
 
             # extract company name
+            # * Some job posts have `Hidden Company` as their company name
+            # * and in this case, the required element is missing.
             try:
                 element = job_module.find_element(
                     By.CSS_SELECTOR,
                     'a[itemprop="hiringOrganization"]')
             except NoSuchElementException:
-                print(f'hiring organization missing for {jobObj.url}')
+                print(f'\nCould not find hiring organization '
+                      f'for {jobObj.url} on page {pageNumber}')
+                jobObj.company = "Unknown"
             else:
-                jobObj.company = element.text
+                jobObj.company = element.text.strip()
 
             # extract date posted and closing date
             date_posted = job_module.find_element(
@@ -123,13 +128,12 @@ class JobScraper:
             element = job_module.find_element(
                 By.CSS_SELECTOR,
                 'li[itemprop=\'jobLocation\']')
-            jobObj.location = element.text if element else 'Unknown'
+            jobObj.location = element.text.strip()
 
             # extract salary
             element = job_module.find_element(
                 By.CSS_SELECTOR, 'li[itemprop=\'baseSalary\']')
-            jobObj.salary = (element.text
-                             if element else 'Unknown')
+            jobObj.salary = element.text.strip()
 
             # save job to list of scraped jobs
             self.new_jobs.append(jobObj)
@@ -139,7 +143,7 @@ class JobScraper:
 
         return jobs_added_count
 
-    def wait(self, time_in_seconds: int):
+    def wait(self, time_in_seconds: int) -> None:
         time.sleep(time_in_seconds)  # wait for loading page to be over
 
     def get_page_count(self) -> int:
@@ -157,14 +161,14 @@ class JobScraper:
         # get page buttons found at bottom of page
         pageButtons = self.driver.find_elements(
             By.CSS_SELECTOR, '#pagination li')
-        # the last page button is the navigation button
-        # the before last page button contains the number of pages
+        # the last page button is the navigation button.
+        # the before-last page button contains the number of pages
         last_page = int(pageButtons[-2].text)
         return last_page
 
     def scrape(self) -> list[dict]:
         """
-        Start scraping
+        Start scraping from first page.
 
 
         Raises:
@@ -202,12 +206,12 @@ class JobScraper:
             # Extract job description from Show More option
             element = self.driver.find_element(By.CSS_SELECTOR,
                                                'div.job-details')
-            jobObj.job_details = element.text if element else 'Unknown'
+            jobObj.job_details = element.text.strip()
 
             # extract employment type
             element = self.driver.find_element(
                 By.CSS_SELECTOR, 'li.employment-type')
-            jobObj.employment_type = element.text if element else 'Unknown'
+            jobObj.employment_type = element.text.strip()
 
         self.driver.quit()
 
@@ -215,7 +219,7 @@ class JobScraper:
 
 
 if __name__ == "__main__":
-    x = JobScraper([], -1)
+    x = JobScraper([], 1)
     jobs = x.scrape()
     print(len(jobs))
     print(jobs[0])
