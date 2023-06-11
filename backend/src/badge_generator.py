@@ -40,7 +40,6 @@ def update_job_count_badge(new_job_count: int) -> None:
         # update badge and line
         all_badges[badge_num] = new_badge
         lines[line_num] = ' '.join(all_badges)
-        print(lines[line_num])
 
         # concatenate lines
         new_file_content = ''.join(lines)
