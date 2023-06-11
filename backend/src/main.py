@@ -2,35 +2,7 @@ from classes.database import Database
 from miner import JobScraper
 from analysis import update_analytics
 from utils.service_key import get_service_account_key
-
-
-def update_readme_job_badge(new_job_count: int) -> None:
-    """Updates the job badge found in the README.
-
-    Args:
-        new_job_count (int): new job count
-    """
-    badge_color = 'orange'
-    file_path = "README.md"
-    new_badge = ('![Badge storing the total number of jobs'
-                 ' scraped](https://img.shields.io'
-                 '/badge/Total%20jobs%20scraped'
-                 f'-{new_job_count}-{badge_color})\n')
-    new_file_content = ''
-    with open(file_path, 'r', encoding='utf-8') as f:
-
-        # get all lines in readme
-        lines = [line for line in f]
-
-        # place new badge on third line
-        lines[2] = new_badge
-
-        # concatenate lines
-        new_file_content = ''.join(lines)
-
-    # update file
-    with open(file_path, 'w', encoding='utf-8') as f:
-        f.write(new_file_content)
+from badge_generator import update_job_count_badge
 
 
 def rebase_stats() -> None:
@@ -128,10 +100,12 @@ def main():
     sync_stats(main_db)
 
     # update job count in readme
-    update_readme_job_badge(new_db_size)
+    update_job_count_badge(new_db_size)
 
 
 if __name__ == "__main__":
-    # main()
+    main()
     # print(JobScraper([], 1).scrape())
-    rebase_stats()
+    # rebase_stats()
+    # my_database = Database(get_service_account_key(True))
+    # print(my_database.update_job_count_trend())
