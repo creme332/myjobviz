@@ -65,7 +65,7 @@ class JobScraper:
 
         # go to page
         self.driver.get(self.default_url+str(pageNumber))
-        self.wait(self.load_duration)
+        self.wait()
 
         # get all job modules on current page
         job_modules = self.driver.find_elements(
@@ -143,8 +143,11 @@ class JobScraper:
 
         return jobs_added_count
 
-    def wait(self, time_in_seconds: int) -> None:
-        time.sleep(time_in_seconds)  # wait for loading page to be over
+    def wait(self) -> None:
+        """
+        Wait for page to stop loading.
+        """
+        time.sleep(self.load_duration)
 
     def get_page_count(self) -> int:
         """
@@ -156,7 +159,7 @@ class JobScraper:
             int: number of pages containing IT jobs
         """
         self.driver.get(self.default_url+'1')  # go to first page of results
-        self.wait(self.load_duration)
+        self.wait()
 
         # get page buttons found at bottom of page
         pageButtons = self.driver.find_elements(
@@ -201,7 +204,7 @@ class JobScraper:
         for jobObj in tqdm(self.new_jobs):
             # go to specific job module page
             self.driver.get(jobObj.url)
-            self.wait(self.load_duration)  # wait for page to load
+            self.wait()  # wait for page to load
 
             # Extract job description from Show More option
             element = self.driver.find_element(By.CSS_SELECTOR,
