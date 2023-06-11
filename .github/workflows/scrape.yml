@@ -30,7 +30,8 @@ jobs:
 
       - name: execute py script
         env:
-          SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
+          SAK_MAIN_DB: ${{ secrets.SAK_MAIN_DB  }}
+          SAK_STATS_DB: ${{ secrets.SAK_STATS_DB  }}
         run: python src/main.py
 
       - name: update website
