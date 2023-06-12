@@ -1,4 +1,4 @@
-import { Container, Alert } from "@mantine/core";
+import { Container, Alert, Title, Flex } from "@mantine/core";
 import StatsGrid from "../components/graphs/StatsGrid";
 import HorizontalBarChart from "../components/graphs/HorizontalBarChart";
 import PieChart from "../components/graphs/PieChart";
@@ -6,6 +6,8 @@ import LineChart from "../components/graphs/LineChart";
 import { IconAlertCircle } from "@tabler/icons-react";
 import FireStoreManager from "../utils/FireStoreManager";
 import { useState, useEffect } from "react";
+import WordCloud from "../components/graphs/WordCloud";
+
 export default function Results() {
   const [allData, setAllData] = useState(null);
 
@@ -126,6 +128,23 @@ export default function Results() {
     return [newLabelsArray, newDataArray];
   }
 
+  function getWordCloud() {
+    if (!allData) return;
+    const data = allData.job_title_data;
+    const keys = Object.keys(data);
+    const words = [];
+    for (const key of keys) {
+      words.push({ text: key, value: data[key] });
+    }
+
+    return (
+      <Container>
+        <Title order={1}>Keywords in job titles</Title>
+        <WordCloud words={words} />
+      </Container>
+    );
+  }
+
   function getHorizontalBarcharts() {
     if (!allData) return;
     const horizonalBarChartKeys = [
@@ -229,10 +248,23 @@ export default function Results() {
   return (
     <Container>
       <StatsGrid data={stats_grid_data} />
+      <Alert
+        icon={<IconAlertCircle size="1rem" />}
+        title="Disclaimer"
+        color="orange"
+      >
+        Please be aware that while efforts have been made to ensure accurate
+        representation and meaningful interpretations, there is a possibility of
+        misinterpretations or errors in the analysis. The conclusions drawn from
+        the data should be approached with caution.
+      </Alert>
+
       {getLineChart()}
+
       <Container w={640}>{getPieCharts()}</Container>
 
       {getHorizontalBarcharts()}
+      {getWordCloud()}
     </Container>
   );
 }
