@@ -1,3 +1,6 @@
+import os.path
+
+
 def update_job_count_badge(new_job_count: int) -> None:
     """
     Updates the job badge found in the README.
@@ -9,7 +12,9 @@ def update_job_count_badge(new_job_count: int) -> None:
     """
     badge_id = "job-count-1"
     badge_color = 'orange'
-    file_path = "README.md"
+
+    # ! location of README in root directory relative to main.py
+    file_path = os.path.dirname(__file__) + '/../../README.md'
 
     # ! badge_url and new_badge should not contain any spaces
     badge_url = ('https://img.shields.io'
@@ -47,6 +52,3 @@ def update_job_count_badge(new_job_count: int) -> None:
     # update file
     with open(file_path, 'w', encoding='utf-8') as f:
         f.write(new_file_content)
-
-
-update_job_count_badge(1)
