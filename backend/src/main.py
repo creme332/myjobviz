@@ -33,11 +33,17 @@ def rebase_stats() -> None:
     job_details_list = [job['job_details'] for job in all_jobs]
     salary_list = [job['salary'] for job in all_jobs]
     location_list = [job['location'] for job in all_jobs]
+    job_title_list = [job['job_title'] for job in all_jobs]
 
     # process data and updates statistics
-    update_analytics(my_database, job_details_list, location_list, salary_list)
+    update_analytics(my_database, job_title_list,
+                     job_details_list, location_list, salary_list)
 
+    # serve stats to frontend
     sync_stats(my_database)
+
+    # update job count in readme
+    # update_job_count_badge(len(all_jobs))
 
 
 def sync_stats(main_db: Database):
@@ -94,7 +100,8 @@ def main():
 
     # extract statistics from newly scraped data and update
     # statistics collection
-    update_analytics(main_db, job_details_list, location_list, salary_list)
+    update_analytics(main_db, job_title_list,
+                     job_details_list, location_list, salary_list)
 
     # send updated statistics to frontend db
     sync_stats(main_db)
@@ -104,8 +111,11 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # main()
     # print(JobScraper([], 1).scrape())
     # rebase_stats()
     # my_database = Database(get_service_account_key(True))
-    # print(my_database.update_job_count_trend())
+    # all_jobs = my_database.get_dataframe().to_dict('records')
+    # job_title_list = list(set([job['job_title'] for job in all_jobs]))
+    # print('\n'.join(job_title_list))
+    rebase_stats()

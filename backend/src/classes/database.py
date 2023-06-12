@@ -50,8 +50,11 @@ class Database:
             u'salary_data')
         self.tools_data_ref = self.stats_collection_ref.document(u'tools_data')
         self.web_data_ref = self.stats_collection_ref.document(u'web_data')
+        self.job_title_data_ref = self.stats_collection_ref.document(
+            u'job_title_data')
 
         # create documents if missing from database
+        self.create_doc_if_missing(self.job_title_data_ref)
         if self.create_doc_if_missing(self.metadata_ref):
             self.recalculate_size_counter()
         self.create_doc_if_missing(self.cloud_data_ref)
