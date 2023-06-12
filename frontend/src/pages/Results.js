@@ -55,7 +55,7 @@ export default function Results() {
 
   function date_diff_days(date1, date2) {
     const hours = parseInt(Math.abs(date1 - date2) / 36e5, 10);
-    return `${hours} hours ago`;
+    return `${hours} ${hours > 1 ? "hours" : "hour"} ago`;
   }
 
   function getLineChart() {
