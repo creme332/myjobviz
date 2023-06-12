@@ -19,20 +19,16 @@ jobs:
           python-version: "3.9"
           cache: "pip" # caching pip dependencies
 
-      - name: navigate to backend folder
-        run: cd backend
-
       - name: install any new python dependencies
-        run: pip install -r requirements.txt
-
-      - name: install  web dependencies for creating website
-        run: npm install
+        run: |
+          cd backend
+          pip install -r requirements.txt
 
       - name: execute py script
         env:
           SAK_MAIN_DB: ${{ secrets.SAK_MAIN_DB  }}
           SAK_STATS_DB: ${{ secrets.SAK_STATS_DB  }}
-        run: python src/main.py
+        run: python backend/src/main.py
 
       - name: commit files
         run: |
