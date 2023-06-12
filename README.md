@@ -31,30 +31,4 @@ Please be aware that while efforts have been made to ensure accurate representat
 * [ ] Generate charts on backend
 # Acknowledgements
 
-## Before deploying
-
-* [ ] Update service account key on Github
-* [ ] Update social preview
-* [ ] Deploy only frontend on firebase 
-* [ ] Disable github pages
-* [ ] Update repo tags
-# Release notes v1.0.0
-
-## Changes
-
-* Repository name changed from `mauritius-tech-job-statistics` to `myjobviz`.
-* A complete rewrite of the the previous code.
-  + Restructured entire project
-  + Added type checking and docstrings to backend code
-  + Reduced the number of dependencies for scraper. `beautifulsoup` is no longer required.
-  + Improved tests
-* Improved documentation.
-* Project requires two databases instead of one.
-* New website
-  + Replaced old charts with interactive ones.
-  + Responsive website
-  + Added dark mode
-  + Added new data visualizations
-  + Hosted on Firestore instead of Github Pages
-* Discontinued choropleth map visualisation temporarily. 
-* Backup - data scraped is backed up to Google Drive in csv/json format automatically every month
+Project was inspired by the [Stack Overflow Developer survey](https://insights.stackoverflow.com/survey).
