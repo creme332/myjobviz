@@ -1,12 +1,12 @@
 # myjobviz  
 
-![Build status of workflow](https://github.com/creme332/mauritius-tech-job-statistics/actions/workflows/scrape.yml/badge.svg) ![job-count-1](https://img.shields.io/badge/Total%20jobs%20scraped-1-orange) ![Badge for test workflow](https://github.com/creme332/mauritius-tech-job-statistics/actions/workflows/test.yml/badge.svg)
+![Build status of workflow](https://github.com/creme332/mauritius-tech-job-statistics/actions/workflows/scrape.yml/badge.svg) ![job-count-1](https://img.shields.io/badge/Total%20jobs%20scraped-2496-orange) ![Badge for test workflow](https://github.com/creme332/mauritius-tech-job-statistics/actions/workflows/test.yml/badge.svg)
 
 Visualize the latest job trends in the IT job market in Mauritius. 
 
-![GIF of visualised data](archive/website-v1.gif)
+![GIF of visualised data](archive/website-v2.gif)
 
-[▶ Live preview](https://creme332.github.io/mauritius-tech-job-statistics/dist/)
+[▶ Live preview](myjobviz.web.app)
 
 # How it works
 1. A selenium web scraper fetches new jobs from myjob.mu on a daily basis.
@@ -16,68 +16,46 @@ Visualize the latest job trends in the IT job market in Mauritius.
 
 View instructions on how to setup the project locally [here](docs/setup.md).
 
-# To-do 
-* [ ] All x_count functions are duplicates
-* [ ] Set merge true when updating
-* [ ] Use test data in tests
-* [ ] Create choropleth map
-* [ ] Add project maintenance in github
+# Disclaimer
 
-* [ ] non-disclosed and negotiable salaries should be valid
-* [ ] possible bug with react: you need to react quick
-* [ ] add type hinting in each anaylyser files 
-* [ ] reinforce tests
-* [ ] Add statistics about job title. (for example : count most common jobs)
+Please be aware that while efforts have been made to ensure accurate representation and meaningful interpretations, there is a possibility of misinterpretations or errors in the analysis. The conclusions drawn from the data should be approached with caution.
+
+# To-do 
+* [ ] make pie charts responsive
+* [ ] Add a workflow to backup database (and maybe release a public version).
+* [ ] Add more tests using test sample data.
 * [ ] Automatically check for duplicates.
 * [ ] Frontend
   + [ ] Add a choropleth map
-  + [ ] Add offline support: https://firebase.google.com/docs/firestore/manage-data/enable-offline#web-modular-api
+  + [ ] Add [offline support](https://firebase.google.com/docs/firestore/manage-data/enable-offline#web-modular-api)
 * [ ] Use typescript on frontend
 * [ ] Generate charts on backend
+# Acknowledgements
 
-## Statistics
-
-Stat  | Data needed | Available
---|--|--
-Total jobs scraped | Number of documents in job collection| ✅
-Last update of website | Timestamp of last document inserted| ✅
-Number of jobs scraped current month | Count of all documents posted in current month| ❌
-Number of jobs scraped current month last year | Count of all documents posted in last year| ❌
-Number of jobs disclosing salary| Count of all documents posted in last year| ❌
-Variation of job count with time| | ❌
-Most common job titles| | ❌
-Least common job titles (AI, game dev)| | ❌
-Relationship between job count and district| | ✅
-Frequency of cloud platforms | |✅
-Frequency of databases | |✅
-Frequency of programming languages| |✅
-Frequency of libraries| |✅
-Frequency of operating systems| |✅
-Frequency of salary| |✅
-Frequency of tools| |✅
-Frequency of web frameworks| |✅
-
-## After deploying
+## Before deploying
 
 * [ ] Update service account key on Github
-* [ ] Update github workflows
-* [ ] update requirements.txt
-* [ ] Update repo tags
+* [ ] Update social preview
+* [ ] Deploy only frontend on firebase 
 * [ ] Disable github pages
-* [ ] Generate charts on backend
-* [ ] Use typescript on frontend
-* [ ] update structure of scraped data in readme
-# Release notes
+* [ ] Update repo tags
+# Release notes v1.0.0
 
 ## Changes
 
 * Repository name changed from `mauritius-tech-job-statistics` to `myjobviz`.
 * A complete rewrite of the the previous code.
   + Restructured entire project
-  + Added type checking and docstrings to python code
-  + Reduced dependencies in backend (removed bs4)
+  + Added type checking and docstrings to backend code
+  + Reduced the number of dependencies for scraper. `beautifulsoup` is no longer required.
   + Improved tests
+* Improved documentation.
 * Project requires two databases instead of one.
-* New responsive website with interactive charts.
-* New charts(timeseries, boxplot) and more data analysis (job titles, 
+* New website
+  + Replaced old charts with interactive ones.
+  + Responsive website
+  + Added dark mode
+  + Added new data visualizations
+  + Hosted on Firestore instead of Github Pages
+* Discontinued choropleth map visualisation temporarily. 
 * Backup - data scraped is backed up to Google Drive in csv/json format automatically every month
