@@ -21,10 +21,9 @@ View instructions on how to setup the project locally [here](docs/setup.md).
 Please be aware that while efforts have been made to ensure accurate representation and meaningful interpretations, there is a possibility of misinterpretations or errors in the analysis. The conclusions drawn from the data should be approached with caution.
 
 # To-do 
-* [ ] make pie charts responsive
 * [ ] Add a workflow to backup database (and maybe release a public version).
 * [ ] Add more tests using test sample data.
-* [ ] Automatically check for duplicates.
+* [ ] Add workflow to check for duplicates.
 * [ ] Frontend
   + [ ] Add a choropleth map
   + [ ] Add [offline support](https://firebase.google.com/docs/firestore/manage-data/enable-offline#web-modular-api)
