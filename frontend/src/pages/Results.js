@@ -282,7 +282,7 @@ export default function Results() {
 
       {getLineChart()}
 
-      <Container w={640}>{getPieCharts()}</Container>
+      <Container size="sm">{getPieCharts()}</Container>
 
       {getHorizontalBarcharts()}
       {getWordCloud()}
