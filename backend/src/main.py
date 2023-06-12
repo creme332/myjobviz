@@ -7,26 +7,27 @@ from badge_generator import update_job_count_badge
 
 def rebase_stats() -> None:
     """
-    After DELETING the `statistics` collection in main database manually,
-    call this function to recalculate all statistics and sync with
-    `frontend-db`.
+    After DELETING the `statistics` collection in main database and frontend
+    database manually, call this function to recalculate all statistics
+    and sync with `frontend-db`.
 
     No scraping takes place when this function is called. Statistics are
     calculated from existing scraped jobs.
 
-    WARNING: This function heavily impacts read and write quotas.
+    ! DO NOT CALL THIS FUNCTION AT THE SAME TIME AS main()
+    ! WARNING: This function heavily impacts read and write quotas.
     """
     # load main database.
-    my_database = Database(get_service_account_key(True))
+    main_db = Database(get_service_account_key(True))
 
     # get all jobs stored in database
-    all_jobs = my_database.get_dataframe().to_dict('records')
+    all_jobs = main_db.get_dataframe().to_dict('records')
 
     # update general stats
-    my_database.update_metadata(len(all_jobs))
+    main_db.update_metadata(len(all_jobs))
 
     if (len(all_jobs) == 0):
-        sync_stats(my_database)
+        sync_stats(main_db)
         return
 
     # get data to be analysed in a list
@@ -36,14 +37,15 @@ def rebase_stats() -> None:
     job_title_list = [job['job_title'] for job in all_jobs]
 
     # process data and updates statistics
-    update_analytics(my_database, job_title_list,
+    update_analytics(main_db, job_title_list,
                      job_details_list, location_list, salary_list)
+    main_db.update_job_count_trend()
 
     # serve stats to frontend
-    sync_stats(my_database)
+    sync_stats(main_db)
 
     # update job count in readme
-    # update_job_count_badge(len(all_jobs))
+    update_job_count_badge(len(all_jobs))
 
 
 def sync_stats(main_db: Database):
@@ -62,13 +64,19 @@ def backup_to_drive():
     """
     Saves all jobs in main database to google drive in json format.
     """
+    # TODO: complete function
     main_db = Database(get_service_account_key(True))
     df = main_db.get_dataframe()
     df.to_json('sample_jobs.json', orient='records')
 
 
 def main():
+    """
+    Driver code.
 
+    ! Do not call this function together with rebase_stats in
+    ! the same program.
+    """
     # setup database and scraper.
     main_db = Database(get_service_account_key(True))
     my_scraper = JobScraper(main_db.get_recent_urls())
@@ -102,6 +110,7 @@ def main():
     # statistics collection
     update_analytics(main_db, job_title_list,
                      job_details_list, location_list, salary_list)
+    main_db.update_job_count_trend()
 
     # send updated statistics to frontend db
     sync_stats(main_db)
@@ -111,11 +120,4 @@ def main():
 
 
 if __name__ == "__main__":
-    # main()
-    # print(JobScraper([], 1).scrape())
-    # rebase_stats()
-    # my_database = Database(get_service_account_key(True))
-    # all_jobs = my_database.get_dataframe().to_dict('records')
-    # job_title_list = list(set([job['job_title'] for job in all_jobs]))
-    # print('\n'.join(job_title_list))
-    rebase_stats()
+    main()
