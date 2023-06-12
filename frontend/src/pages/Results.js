@@ -1,4 +1,4 @@
-import { Container, Alert, Title, Flex } from "@mantine/core";
+import { Container, Alert, Title } from "@mantine/core";
 import StatsGrid from "../components/graphs/StatsGrid";
 import HorizontalBarChart from "../components/graphs/HorizontalBarChart";
 import PieChart from "../components/graphs/PieChart";
@@ -84,14 +84,14 @@ export default function Results() {
       return labelsArray.map((el) => {
         const year = el.split("-")[0];
         const monthIndex = el.split("-")[1];
-        return `${allMonths[monthIndex]} ${year}`;
+        return `${allMonths[monthIndex - 1]} ${year}`;
       });
     }
 
     const data = allData.job_trend_by_month;
-    // console.log(data);
-    const [labelsArray, dataArray] = sort_object(data);
-    // console.log(labelsArray, dataArray);
+    console.log(data);
+    const [labelsArray, dataArray] = splitIntoArray(data, false, true);
+    console.log(labelsArray, dataArray);
 
     return (
       <LineChart
@@ -102,9 +102,20 @@ export default function Results() {
     );
   }
 
-  function sort_object(dict) {
+  /**
+   * Returns the keys and values of a dictionary as 2 separate arrays
+   * @param {dict} dict Dictionary
+   * @param {Boolean} sortByValue Whether to sort dictionary by value assuming value is integer
+   * @param {Boolean} sortByKey Whether to sort dictionary by key assuming key is a string
+   * @returns {[labelsArray, dataArray]}
+   */
+  function splitIntoArray(dict, sortByValue = true, sortByKey = false) {
     const labelsArr = Object.keys(dict);
     const dataArr = labelsArr.map((k) => dict[k]);
+
+    if (!sortByValue && !sortByKey) {
+      return [labelsArr, dataArr];
+    }
 
     const arrayOfObj = labelsArr.map((d, i) => {
       return {
@@ -113,9 +124,19 @@ export default function Results() {
       };
     });
 
-    const sortedArrayOfObj = arrayOfObj.sort(function (a, b) {
-      return b.data - a.data;
-    });
+    let sortedArrayOfObj;
+    if (sortByKey) {
+      sortedArrayOfObj = arrayOfObj.sort(function (a, b) {
+        if (a.label < b.label) return -1;
+        if (a.label > b.label) return 1;
+        return 0;
+      });
+    }
+    if (sortByValue) {
+      sortedArrayOfObj = arrayOfObj.sort(function (a, b) {
+        return b.data - a.data;
+      });
+    }
 
     const newLabelsArray = [];
     const newDataArray = [];
@@ -162,7 +183,7 @@ export default function Results() {
 
     return validKeys.map((k, index) => {
       const data = allData[k];
-      const [labelsArray, dataArray] = sort_object(data);
+      const [labelsArray, dataArray] = splitIntoArray(data);
 
       return (
         <HorizontalBarChart
@@ -187,7 +208,7 @@ export default function Results() {
 
     return validKeys.map((k) => {
       const data = allData[k];
-      const [labelsArray, dataArray] = sort_object(data);
+      const [labelsArray, dataArray] = splitIntoArray(data);
 
       if (k === "os_data")
         return (
