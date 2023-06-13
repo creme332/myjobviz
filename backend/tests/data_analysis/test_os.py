@@ -3,7 +3,7 @@ from src.utils.dictionary import (get_true_keys, filter_dict)
 from src.analyser.os import os_check
 import pandas as pd
 from src.utils.constants import OPERATING_SYSTEMS
-from src.analysis import count_occurences
+from src.analyser.runner import count_occurences
 
 
 class TestOS(unittest.TestCase):

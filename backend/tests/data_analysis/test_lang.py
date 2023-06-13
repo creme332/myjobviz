@@ -3,7 +3,7 @@ import pandas as pd
 from src.analyser.language import language_check
 from src.utils.dictionary import (get_true_keys, filter_dict)
 from src.utils.constants import LANGUAGES
-from src.analysis import count_occurences
+from src.analyser.runner import count_occurences
 
 
 class TestLanguage(unittest.TestCase):

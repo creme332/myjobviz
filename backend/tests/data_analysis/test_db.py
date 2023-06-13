@@ -2,7 +2,7 @@ import unittest
 from src.analyser.database import db_check
 from src.utils.dictionary import (get_true_keys, filter_dict)
 from src.utils.constants import DATABASES
-from src.analysis import count_occurences
+from src.analyser.runner import count_occurences
 
 
 class TestDatabase(unittest.TestCase):

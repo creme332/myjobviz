@@ -2,7 +2,7 @@ import unittest
 import pandas as pd
 from src.utils.dictionary import (get_true_keys, filter_dict)
 from src.analyser.cloudplatforms import cp_check
-from src.analysis import count_occurences
+from src.analyser.runner import count_occurences
 from src.utils.constants import CLOUD_PLATFORMS
 
 

@@ -2,7 +2,7 @@ import unittest
 from src.utils.dictionary import (get_true_keys, filter_dict)
 from src.analyser.webframework import web_framework_check
 from src.utils.constants import WEB_FRAMEWORKS
-from src.analysis import count_occurences
+from src.analyser.runner import count_occurences
 
 
 class TestWebFramework(unittest.TestCase):

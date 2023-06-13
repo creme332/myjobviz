@@ -4,7 +4,7 @@ from src.utils.dictionary import (get_true_keys, filter_dict)
 from src.analyser.tools import tools_check
 from src.utils.constants import TOOLS
 import pandas as pd
-from src.analysis import count_occurences
+from src.analyser.runner import count_occurences
 
 
 class TestTools(unittest.TestCase):
