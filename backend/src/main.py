@@ -1,6 +1,6 @@
 from classes.database import Database
 from miner import JobScraper
-from analysis import update_analytics
+from analyser.runner import update_analytics
 from utils.service_key import get_service_account_key
 from badge_generator import update_job_count_badge
 
