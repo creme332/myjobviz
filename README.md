@@ -1,6 +1,6 @@
 # myjobviz  
 
-![Build status of workflow](https://github.com/creme332/mauritius-tech-job-statistics/actions/workflows/scrape.yml/badge.svg) ![job-count-1](https://img.shields.io/badge/Total%20jobs%20scraped-2501-orange) ![Badge for test workflow](https://github.com/creme332/mauritius-tech-job-statistics/actions/workflows/test.yml/badge.svg)
+![Build status of workflow](https://github.com/creme332/mauritius-tech-job-statistics/actions/workflows/scrape.yml/badge.svg) ![job-count-1](https://img.shields.io/badge/Total%20jobs%20scraped-2506-orange) ![Badge for test workflow](https://github.com/creme332/mauritius-tech-job-statistics/actions/workflows/test.yml/badge.svg)
 
 Visualize the latest job trends in the IT job market in Mauritius. 
 
@@ -24,9 +24,13 @@ Please be aware that while efforts have been made to ensure accurate representat
 
 ## To-do 
 
-* [ ] Add a workflow to backup database (and maybe release a public version).
+* [ ] Add more workflows
+  * [ ]  backup database.
+  * [ ]  check for duplicates.
+* [ ] Add error handling on frontend if data missing from database.
+* [ ] Update `rebase_stats` to automatically delete all fields.
+* [ ] Find solution: `job_title_data` could exceed 20,000 fields limit.
 * [ ] Add more tests using test sample data.
-* [ ] Add workflow to check for duplicates.
 * [ ] Frontend
   + [ ] Add a choropleth map
   + [ ] Add [offline support](https://firebase.google.com/docs/firestore/manage-data/enable-offline#web-modular-api)
