@@ -4,13 +4,9 @@ import HorizontalBarChart from "../components/graphs/HorizontalBarChart";
 import PieChart from "../components/graphs/PieChart";
 import LineChart from "../components/graphs/LineChart";
 import { IconAlertCircle } from "@tabler/icons-react";
-import FireStoreManager from "../utils/FireStoreManager";
-import { useState, useEffect } from "react";
 import WordCloud from "../components/graphs/WordCloud";
 
-export default function Results() {
-  const [allData, setAllData] = useState(null);
-
+export default function Results({ allData }) {
   const stats_grid_data = [
     {
       title: "Jobs scraped this month",
@@ -43,15 +39,6 @@ export default function Results() {
     web_data: "Web frameworks and technologies",
     job_trend_by_month: "Number of jobs scraped during last 6 months",
   };
-
-  async function fetchData() {
-    const result = await FireStoreManager().getAllDocs();
-    setAllData(result);
-  }
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   function date_diff_days(date1, date2) {
     const hours = parseInt(Math.abs(date1 - date2) / 36e5, 10);
@@ -89,9 +76,7 @@ export default function Results() {
     }
 
     const data = allData.job_trend_by_month;
-    console.log(data);
     const [labelsArray, dataArray] = splitIntoArray(data, false, true);
-    console.log(labelsArray, dataArray);
 
     return (
       <LineChart

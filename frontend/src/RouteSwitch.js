@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import HeaderWithTabs from "./components/HeaderWithTabs";
@@ -6,6 +6,7 @@ import { MantineProvider, ColorSchemeProvider } from "@mantine/core";
 import FooterSocial from "./components/FooterSocial";
 import Results from "./pages/Results";
 import Methodology from "./pages/Methodology";
+import FireStoreManager from "./utils/FireStoreManager";
 
 const RouteSwitch = () => {
   const tabs = [
@@ -20,6 +21,17 @@ const RouteSwitch = () => {
   const [colorScheme, setColorScheme] = useState("light");
   const toggleColorScheme = (value) =>
     setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
+
+  const [allData, setAllData] = useState(null); // data from firestore
+  async function fetchData() {
+    const result = await FireStoreManager().getAllDocs();
+    setAllData(result);
+    console.log("Fetched data");
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <ColorSchemeProvider
@@ -38,7 +50,7 @@ const RouteSwitch = () => {
           <HeaderWithTabs links={tabs} />
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/results" element={<Results />} />
+            <Route path="/results" element={<Results allData={allData} />} />
             <Route path="/methodology" element={<Methodology />} />
           </Routes>
           <FooterSocial />
