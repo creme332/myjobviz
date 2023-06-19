@@ -23,7 +23,8 @@ def location_count(location_list: list[str]) -> dict[str, int]:
             sanitized_location, 0) + 1
 
     # ? myjob.mu website incorrectly writes "Plaine Wilhems"
-    # Rename Plaine Wilhems to Plaines Wilhems
-    location_count['Plaines Wilhems'] = location_count.pop(
-        'Plaine Wilhems')
+    if "Plaine Wilhems" in location_count:
+        # Rename Plaine Wilhems to Plaines Wilhems
+        location_count['Plaines Wilhems'] = location_count.pop(
+            'Plaine Wilhems')
     return location_count
