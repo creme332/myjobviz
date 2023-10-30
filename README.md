@@ -25,8 +25,9 @@ Please be aware that while efforts have been made to ensure accurate representat
 ## To-do 
 
 * [ ] Add more workflows
-  * [ ]  backup database.
-  * [ ]  check for duplicates.
+  * [ ] backup database.
+  * [ ] check for duplicates.
+  * [ ] Connect firebase to github for automatic deploy
 * [ ] Add error handling on frontend if data missing from database.
 * [ ] Update `rebase_stats` to automatically delete all fields.
 * [ ] Find solution: `job_title_data` could exceed 20,000 fields limit.
@@ -35,6 +36,7 @@ Please be aware that while efforts have been made to ensure accurate representat
   + [ ] Add a choropleth map
   + [ ] Add [offline support](https://firebase.google.com/docs/firestore/manage-data/enable-offline#web-modular-api)
 * [ ] Use typescript on frontend
+* [ ] Improve website performance
 * [ ] Generate charts on backend
 
 ## Acknowledgements
