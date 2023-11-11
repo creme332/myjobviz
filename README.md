@@ -6,7 +6,7 @@ Visualize the latest job trends in the IT job market in Mauritius.
 
 ![GIF of visualised data](archive/website-v2.gif)
 
-[▶ Live preview](myjobviz.web.app)
+[▶ Live preview](https://myjobviz.web.app/)
 
 ## How it works
 
