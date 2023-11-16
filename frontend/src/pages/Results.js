@@ -50,7 +50,7 @@ export default function Results({ allData }) {
 
     /**
      * labelsArray must already be sorted by date. Smallest date first.
-     * @param {list[str]} labelsArray A list of strings with format YYYY-M-x.
+     * @param {string[]} labelsArray A list of strings with format YYYY-M-x or YYYY-MM-x
      * @returns A list of strings with year and month. Eg June 2023
      */
     function parseDate(labelsArray) {
@@ -76,7 +76,7 @@ export default function Results({ allData }) {
     }
 
     const data = allData.job_trend_by_month;
-    const [labelsArray, dataArray] = splitIntoArray(data, false, true);
+    const [labelsArray, dataArray] = dictToArray(data, false, true);
 
     return (
       <LineChart
@@ -90,44 +90,42 @@ export default function Results({ allData }) {
   /**
    * Returns the keys and values of a dictionary as 2 separate arrays
    * @param {dict} dict Dictionary
-   * @param {Boolean} sortByValue Whether to sort dictionary by value assuming value is integer
-   * @param {Boolean} sortByKey Whether to sort dictionary by key assuming key is a string
+   * @param {Boolean} sortByValue If true, arrays are sorted in ascending order of key value. If false, arrays are sorted in descending order of
    * @returns {[labelsArray, dataArray]}
    */
-  function splitIntoArray(dict, sortByValue = true, sortByKey = false) {
+  function dictToArray(dict, sortByValue = true) {
     const labelsArr = Object.keys(dict);
     const dataArr = labelsArr.map((k) => dict[k]);
 
-    if (!sortByValue && !sortByKey) {
-      return [labelsArr, dataArr];
-    }
-
-    const arrayOfObj = labelsArr.map((d, i) => {
+    // convert dict to an array of dictionaries where each array element
+    // represents a key-value pair
+    const arrayOfDict = labelsArr.map((d, i) => {
       return {
-        label: d,
+        key: d,
         data: parseInt(dataArr[i]) || 0,
       };
     });
 
-    let sortedArrayOfObj;
-    if (sortByKey) {
-      sortedArrayOfObj = arrayOfObj.sort(function (a, b) {
-        if (a.label < b.label) return -1;
-        if (a.label > b.label) return 1;
-        return 0;
-      });
-    }
+    // sort array
+    let sortedArrayOfDict;
     if (sortByValue) {
-      sortedArrayOfObj = arrayOfObj.sort(function (a, b) {
+      // sort in descending order of values
+      sortedArrayOfDict = arrayOfDict.sort(function (a, b) {
         return b.data - a.data;
+      });
+    } else {
+      // sort in ascending order of keys
+      sortedArrayOfDict = arrayOfDict.sort(function (a, b) {
+        return a.key.localeCompare(b.key);
       });
     }
 
+    // convert sorted array of dictionaries back to arrays
     const newLabelsArray = [];
     const newDataArray = [];
 
-    sortedArrayOfObj.forEach(function (d) {
-      newLabelsArray.push(d.label);
+    sortedArrayOfDict.forEach(function (d) {
+      newLabelsArray.push(d.key);
       newDataArray.push(d.data);
     });
 
@@ -135,7 +133,7 @@ export default function Results({ allData }) {
   }
 
   function getWordCloud() {
-    if (!allData) return;
+    if (!allData) return null;
     const data = allData.job_title_data;
     const keys = Object.keys(data);
     const words = [];
@@ -152,7 +150,7 @@ export default function Results({ allData }) {
   }
 
   function getHorizontalBarcharts() {
-    if (!allData) return;
+    if (!allData) return null;
     const horizonalBarChartKeys = [
       "cloud_data",
       "db_data",
@@ -168,7 +166,7 @@ export default function Results({ allData }) {
 
     return validKeys.map((k, index) => {
       const data = allData[k];
-      const [labelsArray, dataArray] = splitIntoArray(data);
+      const [labelsArray, dataArray] = dictToArray(data);
 
       return (
         <HorizontalBarChart
@@ -184,7 +182,7 @@ export default function Results({ allData }) {
   }
 
   function getPieCharts() {
-    if (!allData) return;
+    if (!allData) return null;
     const pieChartKeys = ["loc_data", "os_data", "salary_data"];
 
     const validKeys = Object.keys(allData).filter((k) =>
@@ -193,7 +191,7 @@ export default function Results({ allData }) {
 
     return validKeys.map((k) => {
       const data = allData[k];
-      const [labelsArray, dataArray] = splitIntoArray(data);
+      const [labelsArray, dataArray] = dictToArray(data);
 
       if (k === "os_data")
         return (
