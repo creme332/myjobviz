@@ -34,7 +34,7 @@ Example of scraped data in JSON:
 
 More examples of scraped data can be found in `backend/tests/data/sample_jobs.json`
 
-# Notes
+## Notes
 * The URLs scraped may not work as `myjob.mu` takes down a job post after a certain time. 
 * The job URL was assumed to be a "primary key" during scraping to avoid duplicate entries.
 * `job_title` and `job_details` can be in French or English. 
