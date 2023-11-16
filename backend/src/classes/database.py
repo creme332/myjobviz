@@ -196,8 +196,13 @@ class Database:
             # get job count at that particular time
             count = self.get_job_count_in(start_year, start_month)
 
+            # generate date string in the format YYYY-MM-x
+            date_string = f'{start_year}-{start_month}-x'
+            if start_month < 10:
+                date_string = f'{start_year}-0{start_month}-x'
+
             # update counter
-            job_counter[f'{start_year}-{start_month}-x'] = count
+            job_counter[date_string] = count
 
             # go 1 month back in time
             start_month -= 1
