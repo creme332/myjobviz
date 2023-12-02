@@ -1,33 +1,38 @@
-# Setup
+# myjobviz setup
 
-## Prerequisites
-- Node.js
-- Python 3.1+
-- Firebase account
+The following instructions assumes a Linux system but the steps for a Windows system are similar.
 
 ## Installation
+
+### Prerequisites
+- Node.js
+- Git
+- Python 3.1+
+- Firebase account
 
 Clone project:
 
 ```bash
-git clone git@github.com:creme332/mauritius-tech-job-statistics.git
+git clone git@github.com:creme332/myjobviz.git
 ```
-
-Install dependencies for frontend:
+Navigate to project:
+```
+cd myjobviz
+```
+Navigate to `myjobviz/frontend` and install dependencies for frontend:
 
 ```bash
-cd frontend
 npm install
 ```
 
-Install dependencies for backend:
+Navigate to `myjobviz/backend` and install dependencies for backend:
 
 ```bash
-cd backend
 pip install -r requirements.txt
 ```
+> 🟠 **Note**: It is recommended to create and activate a virtual environment before installing backend dependencies.
 
-## Setup Firestore database 
+### Setup Firestore database 
 
 1. [Create two Firestore databases](https://firebase.google.com/docs/firestore/quickstart#create) and generate a service account key in JSON format for each one.
 
@@ -65,7 +70,7 @@ cd frontend
 npm start
 ```
 
-## Testing locally
+### Testing
 
 To run backend tests:
 
