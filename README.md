@@ -8,22 +8,18 @@ Visualize the latest job trends in the IT job market in Mauritius.
 
 [▶ Live preview](https://myjobviz.web.app/)
 
+> 🔴 **Note**: Please be aware that while efforts have been made to ensure accurate representation and meaningful interpretations, there is a possibility of misinterpretations or errors in the analysis. The conclusions drawn from the data should be approached with caution.
 ## How it works
 
-1. A selenium web scraper fetches new jobs from myjob.mu on a daily basis.
+1. A selenium web scraper fetches new jobs from `myjob.mu` on a daily basis.
 2. Scraped data is processed and saved to Firestore database.
 3. `myjobviz` website fetches processed data from Firestore and creates charts.
 
-## Usage
+## Installation
 
 View instructions on how to setup the project locally [here](docs/setup.md).
 
-## Disclaimer
-
-Please be aware that while efforts have been made to ensure accurate representation and meaningful interpretations, there is a possibility of misinterpretations or errors in the analysis. The conclusions drawn from the data should be approached with caution.
-
 ## To-do 
-
 * [ ] Add more workflows
   * [ ] backup database.
   * [ ] check for duplicates.
@@ -34,9 +30,10 @@ Please be aware that while efforts have been made to ensure accurate representat
 * [ ] Add more tests using test sample data.
 * [ ] Frontend
   + [ ] Add a choropleth map
-  + [ ] Add [offline support](https://firebase.google.com/docs/firestore/manage-data/enable-offline#web-modular-api)
+  + [ ] Add PWA support
 * [ ] Use typescript on frontend
-* [ ] Improve website performance
+* [ ] Generate a weekly report and send by email
+* [ ] Improve website performance & SEO
 * [ ] Generate charts on backend
 
 ## Acknowledgements
