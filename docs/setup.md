@@ -22,8 +22,9 @@ cd myjobviz
 Navigate to `myjobviz/frontend` and install dependencies for frontend:
 
 ```bash
-npm install
+npm install --legacy-peer-deps
 ```
+> 🟠 **Note**: The `--legacy-peer-deps` flag is required because the project uses a version of `react-wordcloud` which is not compatible with React 18.
 
 Navigate to `myjobviz/backend` and install dependencies for backend:
 
