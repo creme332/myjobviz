@@ -1,2 +1,9 @@
+# *
 User-agent: *
-Disallow:
+Allow: /
+
+# Host
+Host: https://myjobviz.web.app
+
+# Sitemaps
+Sitemap: https://myjobviz.web.app/sitemap.xml
