@@ -12,7 +12,7 @@ class Database:
     Manages the Firestore database
     """
 
-    def __init__(self, service_key: dict, appName: str = ""):
+    def __init__(self, service_key: dict, app_name: str = ""):
         """
         Initialises firestore client
 
@@ -22,10 +22,10 @@ class Database:
 
         cred = credentials.Certificate(service_key)
         app = None
-        if appName == "":
+        if app_name == "":
             app = firebase_admin.initialize_app(cred)  # DEFAULT app
         else:
-            app = firebase_admin.initialize_app(cred, name=appName)
+            app = firebase_admin.initialize_app(cred, name=app_name)
 
         print(f'Connected to {app.name}')
         self.db = firestore.client(app)
@@ -82,15 +82,15 @@ class Database:
         jobs_dict = list(map(lambda x: x.to_dict(), jobs))
         return pd.DataFrame(jobs_dict)
 
-    def get_recent_urls(self, LIMIT: int = 500) -> list[str]:
+    def get_recent_urls(self, limit: int = 500) -> list[str]:
         """
         Returns a list of the urls of recently scraped jobs. This function
         can be used to preventing adding duplicates when scraping.
 
-        - Keep 5 < `LIMIT` < 1000 to avoid exceeding read quotas.
+        - Keep 5 < `limit` < 1000 to avoid exceeding read quotas.
 
         Args:
-            LIMIT(int, optional): Maximum number of urls to be
+            limit(int, optional): Maximum number of urls to be
             returned. Defaults to 500.
 
         Returns:
@@ -101,7 +101,7 @@ class Database:
 
                 .order_by("timestamp",
                           direction=firestore.Query.DESCENDING)  # type: ignore
-                .limit(LIMIT)
+                .limit(limit)
                 .stream())
 
         # convert to a list of dictionaries
@@ -112,7 +112,7 @@ class Database:
             return pd.DataFrame(jobs_list)['url'].values.tolist()
         return []
 
-    def add_job(self, jobDictionary: dict) -> None:
+    def add_job(self, job_dictionary: dict) -> None:
         """
         Add job to database.
 
@@ -121,7 +121,7 @@ class Database:
             `job_title`, `date_posted`, `closing_date`, `url`, `location`,
             `employment_type`, `company`, `salary`, `job_details`, `timestamp`
         """
-        update_time, job_ref = self.job_collection_ref.add(jobDictionary)
+        update_time, job_ref = self.job_collection_ref.add(job_dictionary)
         # print(f'Added document with id {job_ref.id} at: {update_time}')
 
     def duplicates_exist(self) -> bool:
@@ -192,7 +192,7 @@ class Database:
         job_counter = dict()
 
         # generate month and year for last 6 months including current month
-        for i in range(0, MONTH_INTERVAL):
+        for _ in range(0, MONTH_INTERVAL):
             # get job count at that particular time
             count = self.get_job_count_in(start_year, start_month)
 
@@ -256,14 +256,14 @@ class Database:
             new_dict[self.db.field_path(key)] = dict[key]
         return new_dict
 
-    def update_stats(self, incrementDict: dict,
+    def update_stats(self, increment_dict: dict,
                      document_ref) -> None:
         """
         Increments the dictionary of a document in the statistics collection
         by a certain amount.
 
         Args:
-            incrementDict(dict): The dictionary which must be added to
+            increment_dict(dict): The dictionary which must be added to
             the currently stored dictionary.
             documentName(dict): Name of document in the `statistics`
             collection containing a dictionary.
@@ -272,21 +272,20 @@ class Database:
         current_doc = document_ref.get()
 
         if (not current_doc.exists):
-            raise Exception(f"{document_ref}"
-                            "is missing")
+            raise FileNotFoundError(f"{document_ref}" "is missing")
 
         current_dict = self.sanitize_dict(current_doc.to_dict())
 
         # combine dictionaries by adding values
-        resultDict = merge_dicts(
-            current_dict, self.sanitize_dict(incrementDict))
+        result_dict = merge_dicts(
+            current_dict, self.sanitize_dict(increment_dict))
 
         # if there's no change do nothing
-        if (resultDict == current_dict):
+        if (result_dict == current_dict):
             return
 
         # save changes
-        document_ref.update(resultDict)
+        document_ref.update(result_dict)
 
     def create_doc_if_missing(self, document_ref, initial_val={}) -> bool:
         """
@@ -320,8 +319,8 @@ class Database:
         Returns:
             pd.DataFrame: Data from document in a table with 2 columns.
         """
-        dict = self.get_doc(document_ref)
-        df = pd.DataFrame.from_dict(dict, orient='index')
+        fetched_dict = self.get_doc(document_ref)
+        df = pd.DataFrame.from_dict(fetched_dict, orient='index')
         df = df.reset_index()
         df.columns = [header, 'Frequency']
         return df
