@@ -359,7 +359,7 @@ export default function HeroSection() {
   const heroStats = [
     {
       icon: IconChartLine,
-      value: "10,000+",
+      value: "8,000+",
       label: "IT Jobs Analyzed",
       color: "blue",
     },
