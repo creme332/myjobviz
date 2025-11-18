@@ -2,39 +2,61 @@
 
 ![Build status of workflow](https://github.com/creme332/mauritius-tech-job-statistics/actions/workflows/scrape.yml/badge.svg) ![job-count-1](https://img.shields.io/badge/Total%20jobs%20scraped-8552-orange) ![Badge for test workflow](https://github.com/creme332/mauritius-tech-job-statistics/actions/workflows/test.yml/badge.svg)
 
-Visualize the latest job trends in the IT job market in Mauritius. 
+myjobviz is a data visualization platform that analyzes and presents trends from IT job postings in Mauritius. The application automatically scrapes job data, processes it to extract meaningful statistics, and presents insights through interactive charts and graphs.
 
-![GIF of visualised data](archive/website-v2.gif)
+![GIF of website](archive/website-v2.gif)
 
-[▶ Live preview](https://myjobviz.web.app/)
+[🌐 Live Demo](https://myjobviz.web.app/) | [📖 Setup Guide](docs/setup.md)
 
-> 🔴 **Note**: Please be aware that while efforts have been made to ensure accurate representation and meaningful interpretations, there is a possibility of misinterpretations or errors in the analysis. The conclusions drawn from the data should be approached with caution.
+## Features
+
+- **Automated Data Collection**: Daily scraping of IT job postings from myjob.mu
+- **Comprehensive Analytics**: Track trends in technologies, job locations, salary ranges, and more
+- **Interactive Visualizations**:
+  - Line charts for historical job trends
+  - Pie charts for job locations and salary distributions
+  - Horizontal bar charts for technology stack analysis
+  - Word clouds for job title keywords
+- **Dark Mode Support**: Toggle between light and dark themes
+- **Responsive Design**: Optimized for desktop and mobile devices
+
 ## How it works
 
-1. A selenium web scraper fetches new jobs from `myjob.mu` on a daily basis.
-2. Scraped data is processed and saved to Firestore database.
-3. `myjobviz` website fetches processed data from Firestore and creates charts.
+```
+┌─────────────────┐
+│  myjob.mu       │
+│  (Job Source)   │
+└────────┬────────┘
+         │
+         │ Daily Scraping (Selenium)
+         ▼
+┌─────────────────┐
+│  Data Processing│
+│  & Statistics   │
+└────────┬────────┘
+         │
+         │ Store Results
+         ▼
+┌─────────────────┐
+│  Firestore DB   │
+└────────┬────────┘
+         │
+         │ Fetch Data
+         ▼
+┌─────────────────┐
+│  myjobviz UI    │
+│  (React App)    │
+└─────────────────┘
+```
 
-## Installation
+1. **Scraping**: A Selenium-based web scraper runs daily via GitHub Actions to fetch new job postings
+2. **Processing**: Job data is analyzed to extract key statistics (technologies, locations, salaries, etc.)
+3. **Storage**: Processed data is saved to a Firestore database
+4. **Visualization**: The React frontend fetches data from Firestore and renders interactive charts
 
-View instructions on how to setup the project locally [here](docs/setup.md).
+## Disclaimer
 
-## To-do 
-* [ ] Add more workflows
-  * [ ] backup database.
-  * [ ] check for duplicates.
-  * [ ] Connect firebase to github for automatic deploy
-* [ ] Add error handling on frontend if data missing from database.
-* [ ] Update `rebase_stats` to automatically delete all fields.
-* [ ] Find solution: `job_title_data` could exceed 20,000 fields limit.
-* [ ] Add more tests using test sample data.
-* [ ] Frontend
-  + [ ] Add a choropleth map
-  + [ ] Add PWA support
-* [ ] Use typescript on frontend
-* [ ] Generate a weekly report and send by email
-* [ ] Improve website performance & SEO
-* [ ] Generate charts on backend
+While efforts have been made to ensure accurate representation and meaningful interpretations, there is a possibility of misinterpretations or errors in the analysis. The data reflects job postings from a single source (myjob.mu) and may not represent the complete IT job market in Mauritius. Conclusions drawn from the data should be approached with caution.
 
 ## Acknowledgements
 
