@@ -10,29 +10,34 @@ import {
   ActionIcon,
   useMantineColorScheme,
   rem,
+  Text,
+  Box,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import {  IconMoonStars, IconSun } from "@tabler/icons-react";
+import { IconMoonStars, IconSun } from "@tabler/icons-react";
 import { Link, useLocation } from "react-router-dom";
 import Logo from "./Logo";
-const HEADER_HEIGHT = rem(60);
+
+const HEADER_HEIGHT = rem(70);
 
 const useStyles = createStyles((theme) => ({
   root: {
-    position: "relative",
-    zIndex: 1,
+    position: "sticky",
+    top: 0,
+    zIndex: 100,
+    borderBottom: `${rem(1)} solid ${
+      theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]
+    }`,
+    backgroundColor:
+      theme.colorScheme === "dark"
+        ? theme.fn.rgba(theme.colors.dark[7], 0.95)
+        : theme.fn.rgba(theme.white, 0.95),
+    backdropFilter: "blur(10px)",
+    transition: "box-shadow 150ms ease",
   },
 
-  logo: {
-    color: theme.colorScheme === "dark" ? theme.white : theme.black,
-    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-    fontSize: rem(26),
-    lineHeight: 1.8,
-    fontWeight: 900,
-
-    [theme.fn.smallerThan("xs")]: {
-      display: "none",
-    },
+  scrolled: {
+    boxShadow: theme.shadows.sm,
   },
 
   dropdown: {
@@ -45,6 +50,8 @@ const useStyles = createStyles((theme) => ({
     borderTopLeftRadius: 0,
     borderTopWidth: 0,
     overflow: "hidden",
+    backgroundColor:
+      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
 
     [theme.fn.largerThan("sm")]: {
       display: "none",
@@ -71,10 +78,11 @@ const useStyles = createStyles((theme) => ({
   },
 
   link: {
-    display: "block",
+    display: "flex",
+    alignItems: "center",
     lineHeight: 1,
-    padding: `${rem(8)} ${rem(12)}`,
-    borderRadius: theme.radius.sm,
+    padding: `${rem(10)} ${rem(16)}`,
+    borderRadius: theme.radius.md,
     textDecoration: "none",
     color:
       theme.colorScheme === "dark"
@@ -82,37 +90,93 @@ const useStyles = createStyles((theme) => ({
         : theme.colors.gray[7],
     fontSize: theme.fontSizes.sm,
     fontWeight: 500,
+    transition: "all 150ms ease",
+    position: "relative",
 
     "&:hover": {
       backgroundColor:
         theme.colorScheme === "dark"
-          ? theme.colors.dark[6]
-          : theme.colors.gray[0],
+          ? theme.colors.dark[5]
+          : theme.colors.gray[1],
+      transform: "translateY(-1px)",
     },
 
     [theme.fn.smallerThan("sm")]: {
       borderRadius: 0,
-      padding: theme.spacing.md,
+      padding: `${rem(16)} ${theme.spacing.md}`,
+      fontSize: theme.fontSizes.md,
     },
   },
 
   linkActive: {
-    "&, &:hover": {
+    backgroundColor: theme.fn.variant({
+      variant: "light",
+      color: theme.primaryColor,
+    }).background,
+    color: theme.fn.variant({ variant: "light", color: theme.primaryColor })
+      .color,
+    fontWeight: 600,
+
+    "&:hover": {
       backgroundColor: theme.fn.variant({
         variant: "light",
         color: theme.primaryColor,
       }).background,
-      color: theme.fn.variant({ variant: "light", color: theme.primaryColor })
-        .color,
+    },
+
+    "&::after": {
+      content: '""',
+      position: "absolute",
+      bottom: 0,
+      left: "50%",
+      transform: "translateX(-50%)",
+      width: "80%",
+      height: rem(2),
+      backgroundColor: theme.fn.variant({
+        variant: "filled",
+        color: theme.primaryColor,
+      }).background,
+      borderRadius: theme.radius.xl,
+
+      [theme.fn.smallerThan("sm")]: {
+        display: "none",
+      },
+    },
+  },
+
+  themeToggle: {
+    border: `${rem(1)} solid ${
+      theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]
+    }`,
+    backgroundColor:
+      theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white,
+    transition: "all 150ms ease",
+
+    "&:hover": {
+      backgroundColor:
+        theme.colorScheme === "dark"
+          ? theme.colors.dark[5]
+          : theme.colors.gray[0],
+      transform: "rotate(15deg)",
+    },
+  },
+
+  themeLabel: {
+    fontSize: theme.fontSizes.xs,
+    fontWeight: 500,
+    marginLeft: theme.spacing.xs,
+
+    [theme.fn.smallerThan("md")]: {
+      display: "none",
     },
   },
 }));
 
 export default function HeaderWithTabs({ links }) {
   const location = useLocation();
-
   const [opened, { toggle, close }] = useDisclosure(false);
   const [active, setActive] = useState(location.pathname);
+  const [scrolled, setScrolled] = useState(false);
   const { classes, cx } = useStyles();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
@@ -120,6 +184,15 @@ export default function HeaderWithTabs({ links }) {
   useEffect(() => {
     setActive(location.pathname);
   }, [location]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const items = links.map((link) => (
     <Link
@@ -138,27 +211,54 @@ export default function HeaderWithTabs({ links }) {
   ));
 
   return (
-    <Header height={HEADER_HEIGHT} className={classes.root}>
-      <Container className={classes.header}>
-      <Logo />
-        <Group spacing={5} className={classes.links}>
+    <Header
+      height={HEADER_HEIGHT}
+      className={cx(classes.root, { [classes.scrolled]: scrolled })}
+    >
+      <Container size="xl" className={classes.header}>
+        <Logo />
+        <Group spacing={8} className={classes.links}>
           {items}
-          <ActionIcon
-            variant="outline"
-            color={dark ? "yellow" : "red"}
-            onClick={() => toggleColorScheme()}
-            title="Toggle color scheme"
+          <Box
+            sx={(theme) => ({
+              display: "flex",
+              alignItems: "center",
+              marginLeft: rem(12),
+              paddingLeft: rem(12),
+              borderLeft: `${rem(1)} solid ${
+                theme.colorScheme === "dark"
+                  ? theme.colors.dark[4]
+                  : theme.colors.gray[3]
+              }`,
+            })}
           >
-            {dark ? <IconSun size="1.1rem" /> : <IconMoonStars size="1.1rem" />}
-          </ActionIcon>{" "}
+            <ActionIcon
+              className={classes.themeToggle}
+              size="lg"
+              onClick={() => toggleColorScheme()}
+              title={`Switch to ${dark ? "light" : "dark"} mode`}
+              aria-label="Toggle color scheme"
+            >
+              {dark ? (
+                <IconSun size="1.2rem" />
+              ) : (
+                <IconMoonStars size="1.2rem" />
+              )}
+            </ActionIcon>
+            <Text className={classes.themeLabel} color="dimmed">
+              {dark ? "Light" : "Dark"}
+            </Text>
+          </Box>
         </Group>
+
         <Burger
-          aria-label="Open navigation"
+          aria-label="Toggle navigation"
           opened={opened}
           onClick={toggle}
           className={classes.burger}
           size="sm"
         />
+
         <Transition transition="pop-top-right" duration={200} mounted={opened}>
           {(styles) => (
             <Paper className={classes.dropdown} withBorder style={styles}>
