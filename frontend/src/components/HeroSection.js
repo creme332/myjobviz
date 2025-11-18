@@ -27,7 +27,7 @@ const useStyles = createStyles((theme) => ({
   hero: {
     position: "relative",
     backgroundColor:
-      theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.white,
+      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
     borderBottom: `1px solid ${
       theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[2]
     }`,
