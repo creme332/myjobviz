@@ -60,16 +60,6 @@ def sync_stats(main_db: Database):
     frontend_db.import_collection(frontend_db.stats_collection_ref, x)
 
 
-def backup_to_drive():
-    """
-    Saves all jobs in main database to google drive in json format.
-    """
-    # TODO: complete function
-    main_db = Database(get_service_account_key(True))
-    df = main_db.get_dataframe()
-    df.to_json('sample_jobs.json', orient='records')
-
-
 def main():
     """
     Driver code.
