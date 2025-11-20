@@ -6,7 +6,7 @@ import {
   Stack,
   rem,
 } from "@mantine/core";
-import { IconBrandGithub, IconMail } from "@tabler/icons-react";
+import { IconBrandGithub, IconMail, IconDatabase } from "@tabler/icons-react";
 import Logo from "./Logo";
 
 const useStyles = createStyles((theme) => ({
@@ -86,6 +86,9 @@ const useStyles = createStyles((theme) => ({
         : theme.colors.gray[6],
     textDecoration: "none",
     transition: "color 150ms ease",
+    display: "flex",
+    alignItems: "center",
+    gap: rem(6),
 
     "&:hover": {
       color:
@@ -93,6 +96,10 @@ const useStyles = createStyles((theme) => ({
           ? theme.colors.dark[0]
           : theme.colors.gray[8],
       textDecoration: "underline",
+    },
+
+    [theme.fn.smallerThan("sm")]: {
+      justifyContent: "center",
     },
   },
 
@@ -192,6 +199,11 @@ const useStyles = createStyles((theme) => ({
       display: "none",
     },
   },
+
+  datasetIcon: {
+    width: rem(14),
+    height: rem(14),
+  },
 }));
 
 function FooterSocial() {
@@ -232,6 +244,19 @@ function FooterSocial() {
           <div className={classes.section}>
             <Text className={classes.title}>Resources</Text>
             <div className={classes.links}>
+              <a
+                href="https://huggingface.co/datasets/goated69/mauritius-it-jobs"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={classes.link}
+              >
+                <IconDatabase
+                  size={14}
+                  stroke={1.5}
+                  className={classes.datasetIcon}
+                />
+                Open Dataset
+              </a>
               <a
                 href="https://myjob.mu"
                 target="_blank"

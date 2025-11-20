@@ -6,7 +6,11 @@ myjobviz is a data visualization platform that analyzes and presents trends from
 
 ![GIF of website](archive/website-v2.gif)
 
-[🌐 Live Demo](https://myjobviz.web.app/) | [📖 Setup Guide](docs/setup.md)
+[🌐 Live Demo](https://myjobviz.web.app/) | [📖 Setup Guide](docs/setup.md) | [📊 Dataset on HuggingFace](https://huggingface.co/datasets/your-username/mauritius-it-jobs)
+
+## Dataset
+
+The complete dataset of scraped IT job postings is available on HuggingFace: **[Mauritius IT Jobs Dataset](https://huggingface.co/datasets/goated69/mauritius-it-jobs)**.
 
 ## Features
 
@@ -40,19 +44,20 @@ myjobviz is a data visualization platform that analyzes and presents trends from
 ┌─────────────────┐
 │  Firestore DB   │
 └────────┬────────┘
-         │
-         │ Fetch Data
-         ▼
-┌─────────────────┐
-│  myjobviz UI    │
-│  (React App)    │
-└─────────────────┘
+         │                │
+         │ Fetch Data     │ Monthly Backup
+         ▼                ▼
+┌─────────────────┐  ┌──────────────────┐
+│  myjobviz UI    │  │  HuggingFace     │
+│  (React App)    │  │  Dataset         │
+└─────────────────┘  └──────────────────┘
 ```
 
 1. **Scraping**: A Selenium-based web scraper runs daily via GitHub Actions to fetch new job postings
 2. **Processing**: Job data is analyzed to extract key statistics (technologies, locations, salaries, etc.)
 3. **Storage**: Processed data is saved to a Firestore database
 4. **Visualization**: The React frontend fetches data from Firestore and renders interactive charts
+5. **Backup**: Dataset is automatically backed up to HuggingFace monthly for public access and research
 
 ## Disclaimer
 
