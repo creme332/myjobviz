@@ -1,0 +1,35 @@
+name: Backup dataset
+
+on:
+  schedule:
+    # Run on the 1st day of every month at 2:00 AM UTC
+    - cron: '0 2 1 * *'
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repo content
+        uses: actions/checkout@v4
+
+      - name: Setup Python with pip cache
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+          cache: "pip"
+          cache-dependency-path: 'backend/requirements.txt'
+
+      - name: Install Python dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt
+
+      - name: Run backup script
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SAK_MAIN_DB: ${{ secrets.SAK_MAIN_DB  }}
+          SAK_STATS_DB: ${{ secrets.SAK_STATS_DB  }}
+        run: |
+          python backend/src/backup.py
