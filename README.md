@@ -6,7 +6,7 @@ myjobviz is a data visualization platform that analyzes and presents trends from
 
 ![GIF of website](archive/website-v2.gif)
 
-[🌐 Live Demo](https://myjobviz.web.app/) | [📖 Setup Guide](docs/setup.md) | [📊 Dataset on HuggingFace](https://huggingface.co/datasets/your-username/mauritius-it-jobs)
+[🌐 Live Demo](https://myjobviz.web.app/) | [📖 Setup Guide](docs/setup.md) | [📊 Dataset on HuggingFace](https://huggingface.co/datasets/goated69/mauritius-it-jobs)
 
 ## Dataset
 
