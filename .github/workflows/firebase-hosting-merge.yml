@@ -3,6 +3,7 @@
 
 name: Deploy to Firebase Hosting on merge
 'on':
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -13,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: npm install
+      - run: npm install --legacy-peer-deps
         working-directory: ./frontend
       - run: npm run build
         working-directory: ./frontend
@@ -23,4 +24,4 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MYJOBVIZ }}'
           channelId: live
           projectId: myjobviz
-          
+          entryPoint: './frontend'
