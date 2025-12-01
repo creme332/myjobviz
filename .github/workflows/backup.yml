@@ -32,4 +32,5 @@ jobs:
           SAK_MAIN_DB: ${{ secrets.SAK_MAIN_DB  }}
           SAK_STATS_DB: ${{ secrets.SAK_STATS_DB  }}
         run: |
-          python backend/src/backup.py
+          cd backend
+          python src/backup.py
