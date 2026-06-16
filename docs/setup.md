@@ -6,7 +6,7 @@ The following instructions assumes a Linux system but the steps for a Windows sy
 
 - Node.js
 - Git
-- Python 3.10+
+- Python 3.11+
 - [uv](https://docs.astral.sh/uv/getting-started/installation/)
 - Firebase account
 - HuggingFace account (optional, for dataset backups)
@@ -24,7 +24,7 @@ npm install --legacy-peer-deps
 
 # Install backend dependencies
 cd ../backend
-uv venv
+uv venv --python 3.11
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 uv pip install -r requirements.txt
 ```
