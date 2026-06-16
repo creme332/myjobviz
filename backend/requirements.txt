@@ -1,7 +1,7 @@
 firebase_admin==6.0.1
 numpy==1.23.4
 pandas==1.5.1
-selenium==4.6.0
+selenium==4.45.0
 tqdm==4.66.3
 python-dotenv==0.21.0     
 nose2==0.12.0
