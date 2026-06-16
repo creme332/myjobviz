@@ -205,20 +205,26 @@ class TestJobScraper(unittest.TestCase):
     # scrape                                                               #
     # ------------------------------------------------------------------ #
 
-    def test_scrape_quits_driver_on_success(self):
-        with patch.object(JobScraper, 'collect_job_urls', return_value=[]):
-            JobScraper([]).scrape()
+    def test_close_quits_driver(self):
+        scraper = JobScraper([])
+        scraper.close()
         self.mock_driver.quit.assert_called_once()
 
-    def test_scrape_quits_driver_even_on_exception(self):
-        # regression: driver.quit() must be in a finally block
+    def test_context_manager_quits_driver_on_success(self):
+        with patch.object(JobScraper, 'collect_job_urls', return_value=[]):
+            with JobScraper([]) as scraper:
+                scraper.scrape()
+        self.mock_driver.quit.assert_called_once()
+
+    def test_context_manager_quits_driver_on_exception(self):
+        # regression: driver.quit() must be called even when scrape raises
         with patch.object(JobScraper, 'collect_job_urls',
                           return_value=['https://www.myjob.mu/job/1/foo']):
             with patch.object(JobScraper, 'scrape_job_page',
                               side_effect=RuntimeError('network error')):
-                scraper = JobScraper([])
                 with self.assertRaises(RuntimeError):
-                    scraper.scrape()
+                    with JobScraper([]) as scraper:
+                        scraper.scrape()
 
         self.mock_driver.quit.assert_called_once()
 

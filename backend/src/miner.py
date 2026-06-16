@@ -181,6 +181,16 @@ class JobScraper:
 
         return jobObj
 
+    def close(self) -> None:
+        """Quit the browser. Call this when done with the scraper."""
+        self.driver.quit()
+
+    def __enter__(self) -> 'JobScraper':
+        return self
+
+    def __exit__(self, *_) -> None:
+        self.close()
+
     def scrape(self) -> list[dict]:
         """
         Scroll the listing page to collect all job URLs, then visit each one
@@ -194,19 +204,22 @@ class JobScraper:
         if self.limit != -1:
             job_urls = job_urls[:self.limit]
 
-        try:
-            for url in tqdm(job_urls):
-                jobObj = self.scrape_job_page(url)
-                self.new_jobs.append(jobObj)
-                self.scraped_urls.append(url)
-        finally:
-            self.driver.quit()
+        for url in tqdm(job_urls):
+            jobObj = self.scrape_job_page(url)
+            self.new_jobs.append(jobObj)
+            self.scraped_urls.append(url)
 
         return [x.__dict__ for x in self.new_jobs]
 
 
 if __name__ == '__main__':
     import json
-    job_scraper = JobScraper([], 1)
-    out = job_scraper.scrape_job_page("https://www.myjob.mu/job/99534/systems-and-network-engineer")
-    print(json.dumps(out.__dict__, indent=2, default=str))
+    with JobScraper([], -1) as job_scraper:
+        # test 1: scrape list of jobs from page
+        job_list = job_scraper.scrape()
+        print(len(job_list), "jobs found")
+        # print(json.dumps(job_list, indent=2, default=str, ensure_ascii=False))
+
+        # test 2: scrape details of a single job
+        out = job_scraper.scrape_job_page("https://www.myjob.mu/job/99534/systems-and-network-engineer")
+        print(json.dumps(out.__dict__, indent=2, default=str, ensure_ascii=False))
