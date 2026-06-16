@@ -47,7 +47,7 @@ class JobScraper:
             value of -1 means there's no limit.
         """
 
-        self.scraped_urls: list[str] = scraped_urls
+        self.scraped_urls: set[str] = set(scraped_urls)
         self.limit: int = limit
         self.default_url: str = 'https://www.myjob.mu/jobs/information-technology'
 
@@ -207,7 +207,7 @@ class JobScraper:
         for url in tqdm(job_urls):
             jobObj = self.scrape_job_page(url)
             self.new_jobs.append(jobObj)
-            self.scraped_urls.append(url)
+            self.scraped_urls.add(url)
 
         return [x.__dict__ for x in self.new_jobs]
 
