@@ -4,9 +4,28 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 import time
+import re
 from tqdm import tqdm
 from datetime import datetime
 from classes.job import Job
+
+
+_DATE_FORMATS = ['%d/%m/%Y', '%Y-%m-%d', '%d %b %Y', '%b %d, %Y', '%B %d, %Y']
+_DATE_PREFIXES = ('Posted ', 'Closing ', 'Added ', 'Closes ')
+
+
+def _parse_date(text: str) -> datetime | None:
+    text = text.strip()
+    for prefix in _DATE_PREFIXES:
+        if text.startswith(prefix):
+            text = text[len(prefix):]
+            break
+    for fmt in _DATE_FORMATS:
+        try:
+            return datetime.strptime(text, fmt)
+        except ValueError:
+            continue
+    return None
 
 
 class JobScraper:
@@ -28,201 +47,151 @@ class JobScraper:
         """
 
         self.scraped_urls: list[str] = scraped_urls
-
         self.limit: int = limit
+        self.default_url: str = 'https://www.myjob.mu/jobs/information-technology'
 
-        # default url for IT jobs sorted by most recent
-        self.default_url: str = ('https://www.myjob.mu/ShowResults.aspx?'
-                                 'Keywords=&Location='
-                                 '&Category=39&Recruiter=Company&'
-                                 'SortBy=MostRecent&Page=')
-
-        # duration of loading page animation
+        # duration to wait after navigation or scroll
         self.load_duration: int = 5  # ! Avoid decreasing this value
 
-        # setup scraper
         chrome_options = Options()
         chrome_options.add_argument('--no-sandbox')
         chrome_options.add_argument('--disable-dev-shm-usage')
         chrome_options.add_argument('--headless')
-        self.driver: webdriver.Chrome = webdriver.Chrome(
-            options=chrome_options)
 
-        # store new jobs found
+        self.driver: webdriver.Chrome = webdriver.Chrome(options=chrome_options)
+
         self.new_jobs: list[Job] = []
 
-    def get_jobs_on_page(self, pageNumber: int) -> int:
-        """
-        Extracts all job data on a page and saves this
-        data to `new_jobs`.
-
-        Args:
-            pageNumber(int): Page number
-
-        Returns:
-            int: number of new jobs scraped on current page
-        """
-
-        # go to page
-        self.driver.get(self.default_url+str(pageNumber))
-        self.wait()
-
-        # get all job modules on current page
-        job_modules = self.driver.find_elements(
-            By.CSS_SELECTOR, ("div.module.job-result"))
-
-        # initialise counter for the number of new
-        # jobs found on current page
-        jobs_added_count = 0
-
-        for job_module in tqdm(job_modules):
-            jobObj = Job()
-
-            # get url of current job module
-            jobObj.url = job_module.find_element(
-                By.CSS_SELECTOR, 'a.show-more').get_attribute('href')
-
-            # ignore already scraped jobs
-            if jobObj.url in self.scraped_urls:
-                continue
-
-            # else new job found
-            jobs_added_count += 1
-            self.scraped_urls.append(jobObj.url)
-
-            # extract job title
-            jobObj.job_title = job_module.find_element(
-                By.CSS_SELECTOR,
-                'div.job-result-title h2').text.strip()
-
-            # extract company name
-            # * Some job posts have `Hidden Company` as their company name
-            # * and in this case, the required element is missing.
-            try:
-                element = job_module.find_element(
-                    By.CSS_SELECTOR,
-                    'a[itemprop="hiringOrganization"]')
-            except NoSuchElementException:
-                print(f'\nCould not find hiring organization '
-                      f'for {jobObj.url} on page {pageNumber}')
-                jobObj.company = "Unknown"
-            else:
-                jobObj.company = element.text.strip()
-
-            # extract date posted and closing date
-            date_posted = job_module.find_element(
-                By.CSS_SELECTOR,
-                'li.updated-time').text.replace('Added ', '')
-
-            closing_date = job_module.find_element(
-                By.CSS_SELECTOR,
-                'li.closed-time').text.replace('Closing ', '')
-
-            # convert string dates to correct datetime data type
-            jobObj.date_posted = datetime.strptime(
-                date_posted, '%d/%m/%Y')
-            jobObj.closing_date = datetime.strptime(
-                closing_date, '%d/%m/%Y')
-
-            # extract job location
-            element = job_module.find_element(
-                By.CSS_SELECTOR,
-                'li[itemprop=\'jobLocation\']')
-            jobObj.location = element.text.strip()
-
-            # extract salary
-            element = job_module.find_element(
-                By.CSS_SELECTOR, 'li[itemprop=\'baseSalary\']')
-            jobObj.salary = element.text.strip()
-
-            # save job to list of scraped jobs
-            self.new_jobs.append(jobObj)
-
-            if (len(self.new_jobs) == self.limit):
-                return jobs_added_count
-
-        return jobs_added_count
-
     def wait(self) -> None:
-        """
-        Wait for page to stop loading.
-        """
+        """Wait for page or scroll animation to finish."""
         time.sleep(self.load_duration)
 
-    def get_page_count(self) -> int:
-        """
-        Returns the number of pages containing IT jobs.
+    def _scroll_to_bottom(self) -> None:
+        self.driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
 
-        Each page contains around 40 jobs.
+    def collect_job_urls(self) -> list[str]:
+        """
+        Loads the IT jobs listing page and scrolls until no new jobs appear.
 
         Returns:
-            int: number of pages containing IT jobs
+            list[str]: Job URLs not already in scraped_urls.
         """
-        self.driver.get(self.default_url+'1')  # go to first page of results
+        self.driver.get(self.default_url)
         self.wait()
 
-        # get page buttons found at bottom of page
-        pageButtons = self.driver.find_elements(
-            By.CSS_SELECTOR, '#pagination li')
-        # the last page button is the navigation button.
-        # the before-last page button contains the number of pages
-        last_page = int(pageButtons[-2].text)
-        return last_page
+        job_pattern = re.compile(r'/job/\d+/')
+        seen: set[str] = set()
+
+        while True:
+            prev_count = len(seen)
+
+            for a in self.driver.find_elements(By.CSS_SELECTOR, 'a[href*="/job/"]'):
+                href = a.get_attribute('href') or ''
+                if job_pattern.search(href):
+                    seen.add(href)
+
+            # no new jobs loaded since last scroll — we've reached the end
+            if len(seen) == prev_count:
+                break
+
+            new_urls = [u for u in seen if u not in self.scraped_urls]
+            if self.limit != -1 and len(new_urls) >= self.limit:
+                break
+
+            self._scroll_to_bottom()
+            self.wait()
+
+        return [u for u in seen if u not in self.scraped_urls]
+
+    def scrape_job_page(self, url: str) -> Job:
+        """
+        Navigate to a job detail page and extract all fields.
+
+        Args:
+            url (str): Full URL of the job posting.
+
+        Returns:
+            Job: Populated Job object.
+        """
+        jobObj = Job()
+        jobObj.url = url
+
+        self.driver.get(url)
+        self.wait()
+
+        # job title
+        try:
+            jobObj.job_title = self.driver.find_element(
+                By.CSS_SELECTOR, 'h3').text.strip()
+        except NoSuchElementException:
+            pass
+
+        # company name (.text returns empty for off-screen elements in headless)
+        try:
+            el = self.driver.find_element(
+                By.CSS_SELECTOR, 'a[href*="/companies/"] span')
+            jobObj.company = self.driver.execute_script(
+                'return arguments[0].textContent', el).strip()
+        except NoSuchElementException:
+            jobObj.company = 'Unknown'
+
+        # employment type badge
+        try:
+            jobObj.employment_type = self.driver.find_element(
+                By.CSS_SELECTOR, 'span.rounded-lg').text.strip()
+        except NoSuchElementException:
+            pass
+
+        # metadata grid: location, salary, date posted, closing date (in order)
+        meta_items = self.driver.find_elements(
+            By.CSS_SELECTOR, 'ul.grid.grid-cols-2 > li')
+        if len(meta_items) >= 1:
+            jobObj.location = meta_items[0].text.strip()
+        if len(meta_items) >= 2:
+            jobObj.salary = meta_items[1].text.strip()
+        if len(meta_items) >= 3:
+            jobObj.date_posted = _parse_date(meta_items[2].text)
+        if len(meta_items) >= 4:
+            jobObj.closing_date = _parse_date(meta_items[3].text)
+
+        # job description — container starts with a "Job Description" heading
+        try:
+            desc_container = self.driver.find_element(
+                By.XPATH, '//h4[contains(., "Job Description")]/..')
+            jobObj.job_details = desc_container.text.strip()
+        except NoSuchElementException:
+            try:
+                jobObj.job_details = self.driver.find_element(
+                    By.CSS_SELECTOR, 'div.py-5').text.strip()
+            except NoSuchElementException:
+                pass
+
+        return jobObj
 
     def scrape(self) -> list[dict]:
         """
-        Start scraping from first page.
-
-
-        Raises:
-            Exception: Unable to find number of pages
+        Scroll the listing page to collect all job URLs, then visit each one
+        to extract full details.
 
         Returns:
             list[dict]: New jobs found.
         """
-        last_page = self.get_page_count()
-        if (last_page is None):
-            raise Exception("Unable to obtain number of pages")
+        job_urls = self.collect_job_urls()
 
-        # scrape each page
-        for pageNumber in tqdm(range(1, last_page+1)):
-            # extract job data
-            jobs_added_count = self.get_jobs_on_page(pageNumber)
+        if self.limit != -1:
+            job_urls = job_urls[:self.limit]
 
-            # since jobs are sorted by recent, as soon as
-            # we encounter a page which has already been visited we can stop
-            # scraping. (all pages after current page are also already visited)
-            if (jobs_added_count == 0 or jobs_added_count == self.limit):
-                break
-
-        # fetch extra information about each job
-        # TODO: Fetch this information asynchronously
-        # ! This information cannot be fetched directly inside the loop from
-        # ! get_jobs_on_page function. Navigating between pages causes stale
-        # ! element reference.
-        # ! https://stackoverflow.com/q/45002008/17627866
-        for jobObj in tqdm(self.new_jobs):
-            # go to specific job module page
-            self.driver.get(jobObj.url)
-            self.wait()  # wait for page to load
-
-            # Extract job description from Show More option
-            element = self.driver.find_element(By.CSS_SELECTOR,
-                                               'div.job-details')
-            jobObj.job_details = element.text.strip()
-
-            # extract employment type
-            element = self.driver.find_element(
-                By.CSS_SELECTOR, 'li.employment-type')
-            jobObj.employment_type = element.text.strip()
+        for url in tqdm(job_urls):
+            jobObj = self.scrape_job_page(url)
+            self.new_jobs.append(jobObj)
+            self.scraped_urls.append(url)
 
         self.driver.quit()
-
         return [x.__dict__ for x in self.new_jobs]
 
 
-if __name__ == "__main__":
-    x = JobScraper([], 1)
-    jobs = x.scrape()
-    print(len(jobs))
-    print(jobs[0])
+if __name__ == '__main__':
+    import json
+    job_scraper = JobScraper([], 1)
+    out = job_scraper.scrape_job_page("https://www.myjob.mu/job/99534/systems-and-network-engineer")
+    print(json.dumps(out.__dict__, indent=2, default=str))
