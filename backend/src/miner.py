@@ -2,8 +2,9 @@ from __future__ import annotations
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import NoSuchElementException
-import time
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import re
 from tqdm import tqdm
 from datetime import datetime
@@ -50,8 +51,8 @@ class JobScraper:
         self.limit: int = limit
         self.default_url: str = 'https://www.myjob.mu/jobs/information-technology'
 
-        # duration to wait after navigation or scroll
-        self.load_duration: int = 5  # ! Avoid decreasing this value
+        # max seconds to wait for an element or new content to appear
+        self.load_duration: int = 15  # ! Avoid decreasing this value
 
         chrome_options = Options()
         chrome_options.add_argument('--no-sandbox')
@@ -62,9 +63,20 @@ class JobScraper:
 
         self.new_jobs: list[Job] = []
 
-    def wait(self) -> None:
-        """Wait for page or scroll animation to finish."""
-        time.sleep(self.load_duration)
+    def _wait_for(self, css_selector: str) -> None:
+        """Block until an element matching css_selector is present in the DOM."""
+        WebDriverWait(self.driver, self.load_duration).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, css_selector))
+        )
+
+    def _wait_for_more_elements(self, css_selector: str, current_count: int) -> None:
+        """Block until the number of elements matching css_selector exceeds current_count, or timeout."""
+        try:
+            WebDriverWait(self.driver, self.load_duration).until(
+                lambda d: len(d.find_elements(By.CSS_SELECTOR, css_selector)) > current_count
+            )
+        except TimeoutException:
+            pass  # no new content appeared — scroll loop will detect the stall
 
     def _scroll_to_bottom(self) -> None:
         self.driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
@@ -77,13 +89,14 @@ class JobScraper:
             list[str]: Job URLs not already in scraped_urls.
         """
         self.driver.get(self.default_url)
-        self.wait()
+        self._wait_for('a[href*="/job/"]')
 
-        job_pattern = re.compile(r'/job/\d+/')
+        job_pattern = re.compile(r'/job/\d+')
         seen: set[str] = set()
 
         while True:
             prev_count = len(seen)
+            element_count = len(self.driver.find_elements(By.CSS_SELECTOR, 'a[href*="/job/"]'))
 
             for a in self.driver.find_elements(By.CSS_SELECTOR, 'a[href*="/job/"]'):
                 href = a.get_attribute('href') or ''
@@ -99,7 +112,7 @@ class JobScraper:
                 break
 
             self._scroll_to_bottom()
-            self.wait()
+            self._wait_for_more_elements('a[href*="/job/"]', element_count)
 
         return [u for u in seen if u not in self.scraped_urls]
 
@@ -117,7 +130,7 @@ class JobScraper:
         jobObj.url = url
 
         self.driver.get(url)
-        self.wait()
+        self._wait_for('h3')
 
         # job title
         try:
@@ -181,12 +194,14 @@ class JobScraper:
         if self.limit != -1:
             job_urls = job_urls[:self.limit]
 
-        for url in tqdm(job_urls):
-            jobObj = self.scrape_job_page(url)
-            self.new_jobs.append(jobObj)
-            self.scraped_urls.append(url)
+        try:
+            for url in tqdm(job_urls):
+                jobObj = self.scrape_job_page(url)
+                self.new_jobs.append(jobObj)
+                self.scraped_urls.append(url)
+        finally:
+            self.driver.quit()
 
-        self.driver.quit()
         return [x.__dict__ for x in self.new_jobs]
 
 
