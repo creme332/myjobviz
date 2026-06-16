@@ -7,7 +7,7 @@ The following instructions assumes a Linux system but the steps for a Windows sy
 - Node.js
 - Git
 - Python 3.10+
-- pip
+- [uv](https://docs.astral.sh/uv/getting-started/installation/)
 - Firebase account
 - HuggingFace account (optional, for dataset backups)
 
@@ -24,13 +24,15 @@ npm install --legacy-peer-deps
 
 # Install backend dependencies
 cd ../backend
-pip install -r requirements.txt
+uv venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+uv pip install -r requirements.txt
 ```
 
 **Note**:
 
 - The `--legacy-peer-deps` flag is required because the project uses a version of `react-wordcloud` which is not compatible with React 18.
-- It is recommended to create and activate a virtual environment before installing backend dependencies.
+- `uv venv` creates a virtual environment in `.venv/`. Remember to activate it before running any backend commands.
 
 ### Setup Firestore database 
 
