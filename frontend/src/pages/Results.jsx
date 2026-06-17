@@ -183,11 +183,10 @@ export default function Results({ allData }) {
 
   function getWordCloud() {
     const data = allData.job_title_data;
-    const keys = Object.keys(data);
-    const words = [];
-    for (const key of keys) {
-      words.push({ text: key, value: data[key] });
-    }
+    const words = Object.entries(data)
+      .map(([text, value]) => ({ text, value }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 40);
 
     return (
       <Paper shadow="sm" p="xl" radius="md" withBorder>

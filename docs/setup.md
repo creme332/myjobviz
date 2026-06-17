@@ -20,7 +20,7 @@ cd myjobviz
 
 # Install frontend dependencies
 cd frontend
-npm install --legacy-peer-deps
+npm install
 
 # Install backend dependencies
 cd ../backend
@@ -31,7 +31,6 @@ uv pip install -r requirements.txt
 
 **Note**:
 
-- The `--legacy-peer-deps` flag is required because the project uses a version of `react-wordcloud` which is not compatible with React 18.
 - `uv venv` creates a virtual environment in `.venv/`. Remember to activate it before running any backend commands.
 
 ### Setup Firestore database 
