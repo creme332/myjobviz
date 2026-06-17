@@ -24,6 +24,8 @@ def get_service_account_key(forMainDB: bool = False) -> dict:
         var_name = 'SAK_STATS_DB'
 
     encoded_key = os.getenv(var_name)
+    if not encoded_key:
+        raise ValueError(f"Environment variable '{var_name}' is not set")
 
     # https://stackoverflow.com/questions/50693871/error-in-json-loads-for-data-that-has-base64-decoding-applied
     dic = base64.b64decode(str(encoded_key)[2:-1]).decode('utf-8')

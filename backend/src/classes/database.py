@@ -160,16 +160,17 @@ class Database:
 
     def get_last_update_date(self):
         """
-        Returns timestamp of the most recent job scraped
+        Returns timestamp of the most recent job scraped, or None if the
+        collection is empty.
 
         Returns:
-            timestamp : timestamp of the most recent job scraped
+            timestamp : timestamp of the most recent job scraped, or None
         """
         query = self.job_collection_ref.order_by('timestamp').limit_to_last(1)
-        # Get the last document (most recently added document) from the results
-        docs = query.get()
-        first_doc = list(docs)[0]
-        return first_doc.to_dict()['timestamp']
+        docs = list(query.get())
+        if not docs:
+            return None
+        return docs[0].to_dict()['timestamp']
 
     def get_job_count_in(self, year: int, month: int) -> int:
         """
@@ -291,7 +292,7 @@ class Database:
         # save changes
         document_ref.update(result_dict)
 
-    def create_doc_if_missing(self, document_ref, initial_val={}) -> bool:
+    def create_doc_if_missing(self, document_ref, initial_val=None) -> bool:
         """
         Checks if a document exists and creates it if not.
 
@@ -302,6 +303,8 @@ class Database:
         Returns:
             bool: True if document was missing. False otherwise.
         """
+        if initial_val is None:
+            initial_val = {}
         if (not document_ref.get().exists):
             log.debug('Created missing document: %s', document_ref)
             document_ref.set(initial_val)

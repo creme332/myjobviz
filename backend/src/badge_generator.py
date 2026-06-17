@@ -29,7 +29,10 @@ def update_job_count_badge(new_job_count: int) -> None:
         lines = [line for line in f]
 
         # get line number of first line containing job count badge
-        line_num = [i for i in range(0, len(lines)) if badge_id in lines[i]][0]
+        line_nums = [i for i in range(0, len(lines)) if badge_id in lines[i]]
+        if not line_nums:
+            raise ValueError(f"Badge '{badge_id}' not found in README")
+        line_num = line_nums[0]
 
         # get first line in readme containing job count badge
         modify_line = lines[line_num]
@@ -39,8 +42,10 @@ def update_job_count_badge(new_job_count: int) -> None:
         all_badges = modify_line.split(' ')
 
         # get index of job count badge
-        badge_num = [i for i in range(
-            0, len(all_badges)) if badge_id in all_badges[i]][0]
+        badge_nums = [i for i in range(0, len(all_badges)) if badge_id in all_badges[i]]
+        if not badge_nums:
+            raise ValueError(f"Badge '{badge_id}' not found in README line")
+        badge_num = badge_nums[0]
 
         # update badge and line
         all_badges[badge_num] = new_badge
