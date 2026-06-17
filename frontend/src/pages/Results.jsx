@@ -25,6 +25,7 @@ import {
   IconInfoCircle,
 } from "@tabler/icons-react";
 import WordCloud from "../components/graphs/WordCloud";
+import ChoroplethMap from "../components/graphs/ChoroplethMap";
 
 export default function Results({ allData }) {
   if (!allData) {
@@ -179,6 +180,22 @@ export default function Results({ allData }) {
     });
 
     return [newLabelsArray, newDataArray];
+  }
+
+  function getChoropleth() {
+    return (
+      <Paper shadow="sm" p="xl" radius="md" withBorder>
+        <Stack spacing="md">
+          <div>
+            <Title order={3}>Job Listings by District</Title>
+            <Text size="sm" color="dimmed" mt={5}>
+              Number of job listings per administrative district
+            </Text>
+          </div>
+          <ChoroplethMap locationData={allData.loc_data} />
+        </Stack>
+      </Paper>
+    );
   }
 
   function getWordCloud() {
@@ -366,6 +383,16 @@ export default function Results({ allData }) {
             Market Trends
           </Title>
           {getLineChart()}
+        </Box>
+
+        <Divider my="xl" />
+
+        {/* Geographic Distribution */}
+        <Box>
+          <Title order={2} mb="lg">
+            Geographic Distribution
+          </Title>
+          {getChoropleth()}
         </Box>
 
         <Divider my="xl" />
