@@ -78,8 +78,12 @@ class JobScraper:
         except TimeoutException:
             pass  # no new content appeared — scroll loop will detect the stall
 
-    def _scroll_to_bottom(self) -> None:
-        self.driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
+    def _scroll_last_job_into_view(self) -> None:
+        # scrollIntoView triggers Intersection Observers used by infinite-scroll
+        # implementations; window.scrollTo bypasses them
+        elements = self.driver.find_elements(By.CSS_SELECTOR, 'a[href*="/job/"]')
+        if elements:
+            self.driver.execute_script('arguments[0].scrollIntoView()', elements[-1])
 
     def collect_job_urls(self) -> list[str]:
         """
@@ -111,7 +115,7 @@ class JobScraper:
             if self.limit != -1 and len(new_urls) >= self.limit:
                 break
 
-            self._scroll_to_bottom()
+            self._scroll_last_job_into_view()
             self._wait_for_more_elements('a[href*="/job/"]', element_count)
 
         return [u for u in seen if u not in self.scraped_urls]
@@ -214,12 +218,17 @@ class JobScraper:
 
 if __name__ == '__main__':
     import json
-    with JobScraper([], -1) as job_scraper:
-        # test 1: scrape list of jobs from page
+    max_job_limit = 5
+    with JobScraper([], max_job_limit) as job_scraper:
+        # test 1: scrape list of job urls on listing page
+        # job_url_list = job_scraper.collect_job_urls()
+        # print(len(job_url_list), "jobs found")
+
+        # test 2: scrape list of jobs from page
         job_list = job_scraper.scrape()
         print(len(job_list), "jobs found")
-        # print(json.dumps(job_list, indent=2, default=str, ensure_ascii=False))
+        print(json.dumps(job_list, indent=2, default=str, ensure_ascii=False))
 
-        # test 2: scrape details of a single job
-        out = job_scraper.scrape_job_page("https://www.myjob.mu/job/99534/systems-and-network-engineer")
-        print(json.dumps(out.__dict__, indent=2, default=str, ensure_ascii=False))
+        # test 3: scrape details of a single job
+        # out = job_scraper.scrape_job_page("https://www.myjob.mu/job/99534/systems-and-network-engineer")
+        # print(json.dumps(out.__dict__, indent=2, default=str, ensure_ascii=False))

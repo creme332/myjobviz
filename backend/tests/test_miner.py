@@ -115,8 +115,8 @@ class TestJobScraper(unittest.TestCase):
         ]
         scraper = JobScraper([], limit=2)
         scraper.collect_job_urls()
-        # _scroll_to_bottom calls execute_script; it should not be called
-        # because the limit was already met after the first batch
+        # _scroll_last_job_into_view calls execute_script; it should not be
+        # called because the limit was already met after the first batch
         self.mock_driver.execute_script.assert_not_called()
 
     # ------------------------------------------------------------------ #
