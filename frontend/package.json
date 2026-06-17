@@ -27,11 +27,6 @@
     "preview": "vite preview"
   },
   "overrides": {
-    "shell-quote": ">=1.7.4",
-    "ws": ">=8.17.1",
-    "qs": ">=6.13.0",
-    "uuid": ">=11.1.1",
-    "fast-uri": ">=3.1.2",
     "d3-color": ">=3.1.0",
     "@grpc/grpc-js": "1.9.16",
     "protobufjs": "7.6.4"
