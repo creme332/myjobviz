@@ -1,8 +1,41 @@
+import logging
+import logging.handlers
+import os
+
 from classes.database import Database
 from miner import JobScraper
 from analyser.runner import update_analytics
 from utils.service_key import get_service_account_key
 from badge_generator import update_job_count_badge
+
+log = logging.getLogger(__name__)
+
+
+def _setup_logging() -> None:
+    log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
+    os.makedirs(log_dir, exist_ok=True)
+
+    fmt = logging.Formatter(
+        '%(asctime)s %(levelname)-8s %(name)s  %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S',
+    )
+
+    console = logging.StreamHandler()
+    console.setLevel(logging.INFO)
+    console.setFormatter(fmt)
+
+    file_handler = logging.handlers.RotatingFileHandler(
+        os.path.join(log_dir, 'main.log'),
+        maxBytes=5 * 1024 * 1024,
+        backupCount=3,
+    )
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(fmt)
+
+    root = logging.getLogger()
+    root.setLevel(logging.DEBUG)
+    root.addHandler(console)
+    root.addHandler(file_handler)
 
 
 def rebase_stats() -> None:
@@ -69,14 +102,15 @@ def main():
     """
     # setup database and scraper.
     main_db = Database(get_service_account_key(True))
-    my_scraper = JobScraper(main_db.get_recent_urls())
-
-    # fetch new jobs from myjob.mu
-    new_jobs = my_scraper.scrape()
+    with JobScraper(main_db.get_recent_urls()) as my_scraper:
+        new_jobs = my_scraper.scrape()
 
     # if no new jobs found exit
     if (len(new_jobs) == 0):
+        log.info('No new jobs found — exiting')
         return
+
+    log.info('%d new jobs found', len(new_jobs))
 
     # get data to be analysed in a list
     job_details_list = [job['job_details'] for job in new_jobs]
@@ -84,9 +118,7 @@ def main():
     location_list = [job['location'] for job in new_jobs]
     job_title_list = [job['job_title'] for job in new_jobs]
 
-    # print some info about new jobs found
-    print(len(new_jobs), ' new jobs found!')
-    print(job_title_list[:5])
+    log.debug('Sample titles: %s', job_title_list[:5])
 
     # update database general stats such as size and last update dates
     new_db_size = main_db.get_size() + len(new_jobs)
@@ -110,4 +142,5 @@ def main():
 
 
 if __name__ == "__main__":
+    _setup_logging()
     main()

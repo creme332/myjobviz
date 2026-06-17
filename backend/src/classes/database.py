@@ -1,10 +1,14 @@
 from __future__ import annotations
+import logging
 import firebase_admin
 from firebase_admin import firestore
 from firebase_admin import credentials
 import pandas as pd
 from utils.dictionary import merge_dicts
 from datetime import datetime
+
+
+log = logging.getLogger(__name__)
 
 
 class Database:
@@ -27,7 +31,7 @@ class Database:
         else:
             app = firebase_admin.initialize_app(cred, name=app_name)
 
-        print(f'Connected to {app.name}')
+        log.info('Connected to Firestore app: %s', app.name)
         self.db = firestore.client(app)
 
         # save reference to collection for saving scraped jobs
@@ -109,7 +113,7 @@ class Database:
 
         # return only the urls
         if len(jobs_list) > 0:
-            return pd.DataFrame(jobs_list)['url'].values.tolist()
+            return pd.DataFrame(jobs_list)['url'].astype(str).tolist()
         return []
 
     def add_job(self, job_dictionary: dict) -> None:
@@ -140,9 +144,9 @@ class Database:
         ids = df["url"]
         df = df[ids.isin(ids[ids.duplicated()])].sort_values("url")
         if (len(df) > 0):
-            print(df)
+            log.warning('Duplicate jobs found:\n%s', df.to_string())
             return True
-        print('No duplicate jobs found.')
+        log.info('No duplicate jobs found')
         return False
 
     def get_size(self) -> int:
@@ -299,7 +303,7 @@ class Database:
             bool: True if document was missing. False otherwise.
         """
         if (not document_ref.get().exists):
-            print("Created a new document", document_ref)
+            log.debug('Created missing document: %s', document_ref)
             document_ref.set(initial_val)
             return True
         return False

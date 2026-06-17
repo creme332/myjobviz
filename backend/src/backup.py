@@ -1,10 +1,42 @@
-from classes.database import Database
-from utils.service_key import get_service_account_key
-from huggingface_hub import HfApi, create_repo, login
-from datetime import datetime
+import logging
+import logging.handlers
 import os
 import json
+from datetime import datetime
 from dotenv import load_dotenv, find_dotenv
+from huggingface_hub import HfApi, create_repo, login
+
+from classes.database import Database
+from utils.service_key import get_service_account_key
+
+log = logging.getLogger(__name__)
+
+
+def _setup_logging() -> None:
+    log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
+    os.makedirs(log_dir, exist_ok=True)
+
+    fmt = logging.Formatter(
+        '%(asctime)s %(levelname)-8s %(name)s  %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S',
+    )
+
+    console = logging.StreamHandler()
+    console.setLevel(logging.INFO)
+    console.setFormatter(fmt)
+
+    file_handler = logging.handlers.RotatingFileHandler(
+        os.path.join(log_dir, 'backup.log'),
+        maxBytes=5 * 1024 * 1024,
+        backupCount=3,
+    )
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(fmt)
+
+    root = logging.getLogger()
+    root.setLevel(logging.DEBUG)
+    root.addHandler(console)
+    root.addHandler(file_handler)
 
 
 def backup_to_huggingface(
@@ -25,7 +57,7 @@ def backup_to_huggingface(
         include_statistics (bool): Whether to backup statistics collection. Defaults to True.
     """
 
-    print("Connecting to Firebase...")
+    log.info('Connecting to Firebase...')
     main_db = Database(get_service_account_key(True))
 
     # Create backup directory
@@ -35,13 +67,13 @@ def backup_to_huggingface(
     # Get current timestamp for versioning
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
-    print("Exporting jobs collection...")
+    log.info('Exporting jobs collection...')
     df = main_db.get_dataframe()
 
     # Save jobs as JSON
     jobs_file = os.path.join(backup_dir, "jobs.json")
     df.to_json(jobs_file, orient='records', indent=2, date_format='iso')
-    print(f"Exported {len(df)} jobs")
+    log.info('Exported %d jobs', len(df))
 
     # Save jobs as CSV (easier to preview on HuggingFace)
     csv_file = os.path.join(backup_dir, "jobs.csv")
@@ -84,7 +116,7 @@ def backup_to_huggingface(
 
     # Optionally backup statistics
     if include_statistics:
-        print("Exporting statistics...")
+        log.info('Exporting statistics...')
         stats = {
             "metadata": main_db.get_doc(main_db.metadata_ref),
             "cloud_data": main_db.get_doc(main_db.cloud_data_ref),
@@ -104,7 +136,7 @@ def backup_to_huggingface(
             json.dump(stats, f, indent=2)
 
     # Upload to HuggingFace
-    print("\nConnecting to HuggingFace...")
+    log.info('Connecting to HuggingFace...')
     login(token=hf_token)
     api = HfApi()
 
@@ -112,7 +144,7 @@ def backup_to_huggingface(
 
     # Create repository if it doesn't exist
     try:
-        print(f"Creating/accessing repository: {repo_id}")
+        log.info('Creating/accessing repository: %s', repo_id)
         create_repo(
             repo_id=repo_id,
             repo_type="dataset",
@@ -120,10 +152,10 @@ def backup_to_huggingface(
             exist_ok=True
         )
     except Exception as e:
-        print(f"Repository might already exist: {e}")
+        log.warning('Repository creation raised an exception (may already exist): %s', e)
 
     # Upload files
-    print("\nUploading files to HuggingFace...")
+    log.info('Uploading files to HuggingFace...')
 
     files_to_upload = [
         ("jobs.json", "Primary jobs data in JSON format"),
@@ -136,7 +168,7 @@ def backup_to_huggingface(
 
     for filename, description in files_to_upload:
         file_path = os.path.join(backup_dir, filename)
-        print(f"  Uploading {filename}...")
+        log.info('Uploading %s...', filename)
         api.upload_file(
             path_or_fileobj=file_path,
             path_in_repo=filename,
@@ -169,7 +201,7 @@ def backup_to_huggingface(
     with open(readme_file, 'w') as f:
         f.write(readme_content)
 
-    print("  Uploading README.md...")
+    log.info('Uploading README.md...')
     api.upload_file(
         path_or_fileobj=readme_file,
         path_in_repo="README.md",
@@ -178,12 +210,11 @@ def backup_to_huggingface(
         commit_message=f"Update README: {timestamp}"
     )
 
-    print(f"\n✓ Backup complete!")
-    print(f"✓ Dataset URL: https://huggingface.co/datasets/{repo_id}")
-    print(f"✓ Total files uploaded: {len(files_to_upload) + 1}")
+    log.info('Backup complete — %d files uploaded', len(files_to_upload) + 1)
+    log.info('Dataset URL: https://huggingface.co/datasets/%s', repo_id)
 
     # Cleanup
-    print("\nCleaning up temporary files...")
+    log.debug('Cleaning up temporary files...')
     for filename, _ in files_to_upload:
         os.remove(os.path.join(backup_dir, filename))
     os.remove(readme_file)
@@ -191,6 +222,7 @@ def backup_to_huggingface(
 
 
 if __name__ == "__main__":
+    _setup_logging()
     load_dotenv(find_dotenv())
 
     # Configuration
@@ -200,8 +232,8 @@ if __name__ == "__main__":
     PRIVATE = False  # Set to True if you want a private dataset
 
     if not HF_TOKEN:
-        print("Error: Please set HF_TOKEN environment variable")
-        print("Get your token from: https://huggingface.co/settings/tokens")
+        log.error('HF_TOKEN environment variable is not set')
+        log.error('Get your token from: https://huggingface.co/settings/tokens')
         exit(1)
 
     backup_to_huggingface(

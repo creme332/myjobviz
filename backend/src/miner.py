@@ -5,10 +5,14 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import logging
 import re
 from tqdm import tqdm
+from tqdm.contrib.logging import logging_redirect_tqdm
 from datetime import datetime
 from classes.job import Job
+
+log = logging.getLogger(__name__)
 
 
 _DATE_FORMATS = ['%d/%m/%Y', '%Y-%m-%d', '%d %b %Y', '%b %d, %Y', '%B %d, %Y']
@@ -92,11 +96,13 @@ class JobScraper:
         Returns:
             list[str]: Job URLs not already in scraped_urls.
         """
+        log.info('Loading listing page: %s', self.default_url)
         self.driver.get(self.default_url)
         self._wait_for('a[href*="/job/"]')
 
         job_pattern = re.compile(r'/job/\d+')
         seen: set[str] = set()
+        scroll_count = 0
 
         while True:
             prev_count = len(seen)
@@ -107,18 +113,26 @@ class JobScraper:
                 if job_pattern.search(href):
                     seen.add(href)
 
+            log.debug('Scroll %d: %d unique job URLs in DOM', scroll_count, len(seen))
+
             # no new jobs loaded since last scroll — we've reached the end
             if len(seen) == prev_count:
+                log.info('No new URLs after scroll %d — end of listing reached', scroll_count)
                 break
 
             new_urls = [u for u in seen if u not in self.scraped_urls]
             if self.limit != -1 and len(new_urls) >= self.limit:
+                log.info('Limit of %d new URLs reached after scroll %d', self.limit, scroll_count)
                 break
 
             self._scroll_last_job_into_view()
+            scroll_count += 1
             self._wait_for_more_elements('a[href*="/job/"]', element_count)
 
-        return [u for u in seen if u not in self.scraped_urls]
+        result = [u for u in seen if u not in self.scraped_urls]
+        log.info('Collected %d new job URLs (%d already scraped, skipped)',
+                 len(result), len(seen) - len(result))
+        return result
 
     def scrape_job_page(self, url: str) -> Job:
         """
@@ -130,6 +144,7 @@ class JobScraper:
         Returns:
             Job: Populated Job object.
         """
+        log.info('Scraping job page: %s', url)
         jobObj = Job()
         jobObj.url = url
 
@@ -141,7 +156,7 @@ class JobScraper:
             jobObj.job_title = self.driver.find_element(
                 By.CSS_SELECTOR, 'h3').text.strip()
         except NoSuchElementException:
-            pass
+            log.error('Job title (h3) not found: %s', url)
 
         # company name (.text returns empty for off-screen elements in headless)
         try:
@@ -150,6 +165,7 @@ class JobScraper:
             jobObj.company = self.driver.execute_script(
                 'return arguments[0].textContent', el).strip()
         except NoSuchElementException:
+            log.warning('Company name not found, defaulting to "Unknown": %s', url)
             jobObj.company = 'Unknown'
 
         # employment type badge
@@ -157,7 +173,7 @@ class JobScraper:
             jobObj.employment_type = self.driver.find_element(
                 By.CSS_SELECTOR, 'span.rounded-lg').text.strip()
         except NoSuchElementException:
-            pass
+            log.warning('Employment type badge not found: %s', url)
 
         # metadata grid: location, salary, date posted, closing date (in order)
         meta_items = self.driver.find_elements(
@@ -167,9 +183,17 @@ class JobScraper:
         if len(meta_items) >= 2:
             jobObj.salary = meta_items[1].text.strip()
         if len(meta_items) >= 3:
-            jobObj.date_posted = _parse_date(meta_items[2].text)
+            raw = meta_items[2].text
+            jobObj.date_posted = _parse_date(raw)
+            if jobObj.date_posted is None:
+                log.warning('Could not parse date_posted %r: %s', raw, url)
         if len(meta_items) >= 4:
-            jobObj.closing_date = _parse_date(meta_items[3].text)
+            raw = meta_items[3].text
+            jobObj.closing_date = _parse_date(raw)
+            if jobObj.closing_date is None:
+                log.warning('Could not parse closing_date %r: %s', raw, url)
+        if len(meta_items) == 0:
+            log.warning('Metadata grid missing entirely: %s', url)
 
         # job description — container starts with a "Job Description" heading
         try:
@@ -181,8 +205,10 @@ class JobScraper:
                 jobObj.job_details = self.driver.find_element(
                     By.CSS_SELECTOR, 'div.py-5').text.strip()
             except NoSuchElementException:
-                pass
+                log.warning('Job description not found: %s', url)
 
+        log.debug('Scraped: title=%r company=%r location=%r',
+                  jobObj.job_title, jobObj.company, jobObj.location)
         return jobObj
 
     def close(self) -> None:
@@ -203,22 +229,31 @@ class JobScraper:
         Returns:
             list[dict]: New jobs found.
         """
+        log.info('Starting scrape (limit=%s)', self.limit if self.limit != -1 else 'none')
         job_urls = self.collect_job_urls()
 
         if self.limit != -1:
             job_urls = job_urls[:self.limit]
 
-        for url in tqdm(job_urls):
-            jobObj = self.scrape_job_page(url)
-            self.new_jobs.append(jobObj)
-            self.scraped_urls.add(url)
+        log.info('Scraping %d job pages', len(job_urls))
+        with logging_redirect_tqdm():
+            for url in tqdm(job_urls):
+                jobObj = self.scrape_job_page(url)
+                self.new_jobs.append(jobObj)
+                self.scraped_urls.add(url)
 
+        log.info('Scrape complete: %d jobs collected', len(self.new_jobs))
         return [x.__dict__ for x in self.new_jobs]
 
 
 if __name__ == '__main__':
     import json
-    max_job_limit = 5
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s %(levelname)-8s %(name)s  %(message)s',
+        datefmt='%H:%M:%S',
+    )
+    max_job_limit = 20
     with JobScraper([], max_job_limit) as job_scraper:
         # test 1: scrape list of job urls on listing page
         # job_url_list = job_scraper.collect_job_urls()
