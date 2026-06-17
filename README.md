@@ -4,7 +4,7 @@
 
 myjobviz is a data visualization platform that analyzes and presents trends from IT job postings in Mauritius. The application automatically scrapes job data, processes it to extract meaningful statistics, and presents insights through interactive charts and graphs.
 
-![GIF of website](archive/website-v2.gif)
+![GIF of website](archive/myjobviz-v0.1.gif)
 
 [🌐 Live Demo](https://myjobviz.web.app/) | [📖 Setup Guide](docs/setup.md) | [📊 Dataset on HuggingFace](https://huggingface.co/datasets/goated69/mauritius-it-jobs)
 
