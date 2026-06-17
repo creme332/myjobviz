@@ -26,6 +26,7 @@ import {
 } from "@tabler/icons-react";
 import WordCloud from "../components/graphs/WordCloud";
 import ChoroplethMap from "../components/graphs/ChoroplethMap";
+import TableOfContents from "../components/TableOfContents";
 
 export default function Results({ allData }) {
   if (!allData) {
@@ -347,6 +348,8 @@ export default function Results({ allData }) {
   }
 
   return (
+    <>
+    <TableOfContents />
     <Container size="xl" mt={30} mb={60}>
       <Stack spacing="xl">
         {/* Header Section */}
@@ -378,7 +381,7 @@ export default function Results({ allData }) {
         <Divider my="xl" />
 
         {/* Trends Section */}
-        <Box>
+        <Box id="section-trends">
           <Title order={2} mb="lg">
             Market Trends
           </Title>
@@ -388,7 +391,7 @@ export default function Results({ allData }) {
         <Divider my="xl" />
 
         {/* Geographic Distribution */}
-        <Box>
+        <Box id="section-geo">
           <Title order={2} mb="lg">
             Geographic Distribution
           </Title>
@@ -398,7 +401,7 @@ export default function Results({ allData }) {
         <Divider my="xl" />
 
         {/* Overview Section - Pie Charts */}
-        <Box>
+        <Box id="section-overview">
           <Title order={2} mb="lg">
             Market Overview
           </Title>
@@ -414,7 +417,7 @@ export default function Results({ allData }) {
         <Divider my="xl" />
 
         {/* Technology Breakdown */}
-        <Box>
+        <Box id="section-tech">
           <Title order={2} mb="lg">
             Technology Breakdown
           </Title>
@@ -428,7 +431,7 @@ export default function Results({ allData }) {
         <Divider my="xl" />
 
         {/* Word Cloud Section */}
-        <Box>
+        <Box id="section-titles">
           <Title order={2} mb="lg">
             Job Title Analysis
           </Title>
@@ -436,5 +439,6 @@ export default function Results({ allData }) {
         </Box>
       </Stack>
     </Container>
+    </>
   );
 }
